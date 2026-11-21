@@ -1,0 +1,8 @@
+[
+  "przelew_bankowy.data_operacji",
+  "przelew_bankowy.kwota",
+  "przelew_bankowy.na_rachunek",
+  "przelew_bankowy.numer_transakcji",
+  "przelew_bankowy.tytul",
+  "przelew_bankowy.z_rachunku"
+]

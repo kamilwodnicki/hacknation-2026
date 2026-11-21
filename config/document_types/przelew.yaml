@@ -1,0 +1,135 @@
+# Potwierdzenie przelewu (wpis od odwołania / opłata skarbowa od pełnomocnictwa).
+# Struktura `output` odpowiada 1:1 plikowi oczekiwane-json/przelew.json organizatora.
+#
+# Każde pole (liść z kluczem `type`) ma listę strategii `extract`, próbowanych po kolei —
+# pierwsza poprawna wartość wygrywa. Typy wartości: date, amount, iban_pl, nip, regon, krs,
+# pesel, ted, bzp, reference, text (src/validation/normalizers.py).
+#
+# Strategie:
+#   label     — wartość po etykiecie (ta sama linia lub `lookahead` kolejnych linii);
+#               `multiline: true` zbiera tekst aż do etykiety innego pola / `stop_labels`.
+#   regex     — własne wyrażenie regularne (pierwsza grupa = wartość), działa na całej stronie
+#               (\s obejmuje też koniec linii); `{value}` = wzorzec typu pola, np. 'w dniu\s+({value})'.
+#   nth_match — n-ta (unikalna) wartość danego typu w dokumencie.
+
+name: przelew
+description: Potwierdzenie wykonania przelewu bankowego
+
+classification:
+  keywords:
+    - potwierdzenie przelewu
+    - potwierdzenie wykonania przelewu
+    - potwierdzenie realizacji polecenia przelewu
+    - polecenie przelewu
+    - potwierdzenie operacji bankowej
+    - potwierdzenie transakcji
+    - dowód wykonania przelewu
+    - rachunek odbiorcy
+    - rachunek zleceniodawcy
+    - tytuł przelewu
+  min_matches: 2
+
+# Etykiety, które kończą wartość wieloliniową (np. tytuł), choć same nie są polami.
+stop_labels:
+  - Typ operacji
+  - Kanał
+  - Status
+  - Waluta
+  - Opłata
+  - Opłata/prowizja
+  - Prowizja
+  - Tryb
+  - Nr klienta
+  - Numer klienta
+  - Godz.
+  - Godzina
+  - Data wydruku
+  - Data wygenerowania
+  - Wydrukowano
+  - Bank nie ponosi
+  - Potwierdzenie ma charakter
+  - Dokument wygenerowany
+  - W razie pytań
+  - Płatnik
+  - Nadawca
+  - Dane nadawcy
+  - Zleceniodawca
+  - Odbiorca
+  - Dane odbiorcy
+  - Beneficjent
+  - Adresat przelewu
+  - ZREALIZOWANO
+
+output:
+  przelew_bankowy:
+    data_operacji:
+      type: date
+      description: Data wykonania/realizacji przelewu (nie data wydruku potwierdzenia).
+      extract:
+        - method: label
+          labels: [Data operacji, Data transakcji, Data wykonania, Data realizacji, Data księgowania, Data zlecenia]
+          lookahead: 2
+        # Potwierdzenie w formie pisma: "Bank potwierdza, że w dniu 2026-10-26 z rachunku ..."
+        - method: regex
+          pattern: '\bw\s+dniu\s+({value})'
+
+    kwota:
+      type: amount
+      description: Kwota przelewu jako liczba (np. 10000.00).
+      extract:
+        - method: label
+          labels: [Kwota przelewu, Kwota operacji, Kwota transakcji, Kwota, Wartość]
+          lookahead: 2
+        - method: regex
+          pattern: '\bw\s+kwocie\s+({value})'
+        - method: regex
+          pattern: '(\d{1,3}(?:[  .]\d{3})*(?:,\d{2})|\d+[.,]\d{2})\s*(?:PLN|zł)\b'
+        - method: regex
+          pattern: '\b(?:PLN|zł)\s*(\d{1,3}(?:[  .]\d{3})*(?:,\d{2})|\d+[.,]\d{2})'
+
+    na_rachunek:
+      type: iban_pl
+      description: Numer rachunku odbiorcy (26 cyfr, bez PL i spacji).
+      extract:
+        - method: label
+          labels: [Rachunek odbiorcy, Rachunek beneficjenta, Rachunek uznawany, Na rachunek, Rachunek adresata]
+          lookahead: 2
+        - method: regex
+          pattern: '\bna\s+rachunek(?:\s+nr)?[\s:.]*({value})'
+        - method: label
+          labels: [Odbiorca, Dane odbiorcy, Beneficjent, Adresat przelewu]
+          lookahead: 3
+        - method: nth_match
+          n: 2
+
+    numer_transakcji:
+      type: reference
+      description: Numer referencyjny / identyfikator transakcji nadany przez bank.
+      extract:
+        - method: label
+          labels: [Numer referencyjny operacji, Numer transakcji operacji, Numer referencyjny, Nr referencyjny, Nr ref., Numer transakcji, Nr transakcji, Identyfikator operacji, Identyfikator transakcji, Numer operacji]
+          lookahead: 1
+
+    tytul:
+      type: text
+      description: Pełny tytuł przelewu w jednej linii.
+      extract:
+        - method: label
+          labels: [Tytuł przelewu, Tytułem, Tytuł operacji, Tytuł, Opis operacji, Opis]
+          multiline: true
+          max_lines: 6
+
+    z_rachunku:
+      type: iban_pl
+      description: Numer rachunku nadawcy/zleceniodawcy (26 cyfr, bez PL i spacji).
+      extract:
+        - method: label
+          labels: [Rachunek zleceniodawcy, Rachunek nadawcy, Rachunek obciążany, Rachunek płatnika, Z rachunku]
+          lookahead: 2
+        - method: regex
+          pattern: '\bz\s+rachunku(?:\s+nr)?[\s:.]*({value})'
+        - method: label
+          labels: [Płatnik, Nadawca, Dane nadawcy, Zleceniodawca]
+          lookahead: 3
+        - method: nth_match
+          n: 1

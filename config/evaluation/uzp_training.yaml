@@ -1,0 +1,21 @@
+# Zbiór treningowy organizatora (repozytorium hacknation-2026, katalog `dane/`).
+# Ścieżka `data_dir` jest względna do katalogu danych przekazanego w --data-dir
+# (w Dockerze: /data, montowane z UZP_DATA_DIR).
+#
+# Każdy przypadek (`cases`) to katalog zawierający PDF-y i wzorcowe JSON-y.
+# `document_type` to oczekiwana klasa dokumentu — dopóki nie ma klasyfikatora,
+# ewaluacja używa jej do wyboru typu (tryb "oracle"); później posłuży do oceny klasyfikacji.
+
+name: uzp_training
+data_dir: dane
+cases: "przyklad_*"
+documents:
+  - pdf: odwolanie.pdf
+    reference: odwolanie.json
+    document_type: odwolanie
+  - pdf: pelnomocnictwo.pdf
+    reference: pelnomocnictwo.json
+    document_type: pelnomocnictwo
+  - pdf: potwierdzenie_przelewu.pdf
+    reference: przelew.json
+    document_type: przelew

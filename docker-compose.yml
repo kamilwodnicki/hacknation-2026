@@ -43,5 +43,6 @@ services:
       - ./config:/app/config:ro
       - ./src:/app/src
       - ./tests:/app/tests
+      - ./reports:/app/reports
       - ${UZP_DATA_DIR:-./dane}:/data:ro
     profiles: ["tools"]
