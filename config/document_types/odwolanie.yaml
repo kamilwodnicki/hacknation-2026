@@ -81,10 +81,20 @@ output:
 
     czynnosc_powod_id:
       type: integer
-      llm: prefer  # j.w. — reguły trafiają tylko w typowym zdaniu "Zamawiający w dniu ..."
+      # Reguła i model się nie zgadzają -> krótkie drugie zapytanie (arbiter) wybiera na podstawie
+      # obu fragmentów. Model sam często gubi przeczenie ("nie wykluczył" vs "wykluczył").
+      llm: arbitrate
+      llm_evidence: true
       description: >-
-        Identyfikator powodu odwołania 1-12, ustalany wyłącznie na podstawie pierwszego
-        zarzutu (słownik config/dictionaries/czynnosc_powody.yaml).
+        Identyfikator powodu odwołania 1-12, ustalany wyłącznie na podstawie PIERWSZEJ zaskarżonej
+        czynności lub zaniechania zamawiającego (pierwszy zarzut). Rozróżniaj: "Decyzja o ..." =
+        zamawiający DOKONAŁ czynności (odrzucił ofertę, wykluczył wykonawcę, unieważnił postępowanie);
+        "Zaniechanie ..." = zamawiający czegoś NIE zrobił (nie odrzucił oferty, nie wykluczył wykonawcy,
+        nie unieważnił postępowania, zaniechał). Przykłady: "Zamawiający nie wykluczył wykonawcy X" -> 8;
+        "Zamawiający wykluczył Odwołującego" -> 3; "Zamawiający nie odrzucił oferty" -> 7;
+        "Zamawiający odrzucił ofertę Odwołującego" -> 1; "Zamawiający zaniechał unieważnienia" -> 10;
+        "unieważnił postępowanie" -> 9; "wybór oferty najkorzystniejszej" -> 2;
+        "odpowiedzi/wyjaśnienia treści SWZ" -> 6 (nie 5); "zmiana/modyfikacja treści SWZ" -> 5.
       extract:
         # Zdanie "Zamawiający w dniu <data> roku <czynność>." — kolejność reguł ma znaczenie:
         # zaniechania ("nie odrzucił") muszą być sprawdzone przed czynnościami ("odrzucił").
@@ -186,6 +196,7 @@ output:
       pelnomocnik:
         imie_nazwisko:
           type: person
+          llm: prefer  # mianownik zapewnia AI (reguły zwracają formę z dokumentu)
           description: Imię i nazwisko (pierwszego) pełnomocnika Odwołującego, w mianowniku.
           extract:
             - method: regex

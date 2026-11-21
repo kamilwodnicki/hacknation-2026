@@ -34,7 +34,7 @@ TYPE_HINTS = {
     "text": "tekst przepisany z dokumentu",
     "integer": "liczba całkowita",
     "email": "adres e-mail",
-    "person": "imię i nazwisko w mianowniku",
+    "person": "imię i nazwisko w MIANOWNIKU (kto?), np. 'Jan Kowalski', nie 'Janowi Kowalskiemu'",
     "company": "pełna nazwa podmiotu z formą prawną",
     "place": "nazwa miejscowości w mianowniku",
 }
@@ -45,9 +45,27 @@ SYSTEM_PROMPT = (
     "jak podany szablon (te same klucze, bez dodatkowych pól). Zasady:\n"
     "- wartości bierz wyłącznie z treści dokumentu; jeśli informacji nie ma — wpisz null, nigdy nie zgaduj;\n"
     "- daty w formacie RRRR-MM-DD; NIP, REGON, KRS, PESEL i numery rachunków jako same cyfry;\n"
-    "- imiona i nazwiska w mianowniku (np. 'Janowi Kowalskiemu' -> 'Jan Kowalski');\n"
+    "- imiona i nazwiska przepisuj DOKŁADNIE tak, jak w dokumencie — nie zmieniaj płci, pisowni ani "
+    "formy nazwiska (np. 'Dorota Zawadzki' zostaje 'Dorota Zawadzki', 'Aleksandra' zostaje 'Aleksandra'); "
+    "zmieniaj wyłącznie przypadek na mianownik (kto?), gdy w dokumencie stoi inny przypadek — patrz przykłady niżej;\n"
+    "- jedno pole osoby = jedna osoba; gdy osób jest kilka, a pole nie jest listą, podaj pierwszą;\n"
     "- listy: podaj wszystkie elementy występujące w dokumencie; pusta lista, jeśli brak;\n"
-    "- pola liczbowe jako liczby JSON, pozostałe jako tekst."
+    "- pola liczbowe jako liczby JSON, pozostałe jako tekst.\n\n"
+    "Przykłady zamiany imion i nazwisk na mianownik (tekst w dokumencie -> wartość w JSON):\n"
+    "- 'udzielam pełnomocnictwa Janowi Kowalskiemu' -> 'Jan Kowalski'\n"
+    "- 'Grzegorzowi Wiśniewskiemu' -> 'Grzegorz Wiśniewski'\n"
+    "- 'Leszkowi Wieczorkowi' -> 'Leszek Wieczorek'\n"
+    "- 'Sebastianowi Baranowi' -> 'Sebastian Baran'\n"
+    "- 'Iwonie Rutkowskiej' -> 'Iwona Rutkowska'\n"
+    "- 'Annie Nowak' -> 'Anna Nowak'\n"
+    "- 'przez adw. Piotra Zielińskiego' -> 'Piotr Zieliński'\n"
+    "- 'z Katarzyną Lis' -> 'Katarzyna Lis'"
+)
+
+# Repeated after the document text: a small model follows the instruction closest to its answer.
+FINAL_REMINDER = (
+    "PRZYPOMNIENIE przed odpowiedzią: zwróć wyłącznie obiekt JSON zgodny z szablonem; brakujące dane = null; "
+    "każde imię i nazwisko w MIANOWNIKU (np. 'Grzegorz Wiśniewski', nie 'Grzegorzowi Wiśniewskiemu')."
 )
 
 # Grounding: how a model value is checked against the document text.
@@ -59,12 +77,21 @@ _WORD_TYPES = {"text", "person", "company", "place"}
 # --- prompt ---------------------------------------------------------------------------------
 
 
+EVIDENCE_SUFFIX = "_cytat"
+"""Auxiliary key the model fills BEFORE a field with `llm_evidence` (never written to output)."""
+
+
 def _skeleton(node: Any) -> Any:
     if isinstance(node, FieldSpec):
         return None
     if isinstance(node, ListSpec):
         return [_skeleton(node.item)]
-    return {key: _skeleton(child) for key, child in node.items()}
+    out: dict[str, Any] = {}
+    for key, child in node.items():
+        if isinstance(child, FieldSpec) and child.llm_evidence:
+            out[f"{key}{EVIDENCE_SUFFIX}"] = None
+        out[key] = _skeleton(child)
+    return out
 
 
 def _allowed_values(doc_type: DocumentType, container: dict, key: str) -> str | None:
@@ -91,6 +118,11 @@ def _schema_lines(doc_type: DocumentType) -> list[str]:
             if isinstance(child, FieldSpec):
                 if child.is_dependent:
                     continue  # computed by the application, the model may leave it null
+                if child.llm_evidence:
+                    lines.append(
+                        f"- {child_path}{EVIDENCE_SUFFIX}: najpierw przepisz dosłownie zdanie z dokumentu, "
+                        f"na podstawie którego ustalasz pole {key} (uzupełnij przed polem {key})"
+                    )
                 line = f"- {child_path}: {TYPE_HINTS.get(child.type, child.type)}"
                 if child.description:
                     line += f" — {child.description}"
@@ -116,6 +148,8 @@ def build_messages(doc: IngestedDocument, doc_type: DocumentType, max_chars: int
         + json.dumps(_skeleton(doc_type.output), ensure_ascii=False, indent=1)
         + "\n\nTreść dokumentu (strony oznaczone '=== Strona N ==='):\n"
         + text
+        + "\n\n"
+        + FINAL_REMINDER
     )
     return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}]
 
@@ -188,26 +222,131 @@ def validate_value(spec: FieldSpec, value: Any, grounding: _Grounding) -> tuple[
 # --- merge ------------------------------------------------------------------------------------
 
 
+# Endings of Polish oblique cases in names ("Leszkowi Wieczorkowi", "Iwonie Rutkowskiej",
+# "Piotra Zielińskiego", "z Katarzyną"). Only used as a GATE: the model may replace a rule
+# name only when the rule name looks declined — the code never declines names itself.
+_DECLINED_ENDINGS = ("owi", "emu", "iemu", "ej", "iej", "ego", "iego", "ą", "em", "iem")
+
+
+def _looks_declined(name: str) -> bool:
+    return any(word.endswith(_DECLINED_ENDINGS) for word in re.findall(r"\w+", str(name).casefold()))
+
+
+def _words(value: Any) -> list[str]:
+    return re.findall(r"\w+", str(value))
+
+
+ARBITER_PROMPT = (
+    "Jesteś weryfikatorem danych wyciągniętych z polskiego dokumentu prawnego. Dwa źródła podały różne "
+    "wartości tego samego pola. Na podstawie fragmentów dokumentu wybierz wartość poprawną zgodnie z opisem "
+    'pola. Odpowiedz WYŁĄCZNIE obiektem JSON: {"wybor": "A"} albo {"wybor": "B"}.'
+)
+
+
 class _Merger:
-    def __init__(self, doc_type: DocumentType, traces: dict[str, FieldTrace], grounding: _Grounding, model: str):
+    def __init__(
+        self,
+        doc_type: DocumentType,
+        traces: dict[str, FieldTrace],
+        grounding: _Grounding,
+        model: str,
+        doc_text: str = "",
+        arbiter: Any = None,
+    ):
         self.doc_type = doc_type
         self.traces = traces
         self.grounding = grounding
         self.rule = f"LLM {model}"
+        self.doc_text = doc_text
+        self.arbiter = arbiter
+        """LLM client used to settle `arbitrate` conflicts (None = keep the rule value)."""
 
-    def field(self, spec: FieldSpec, rule_value: Any, llm_value: Any, path: str) -> Any:
+    # --- fields ---------------------------------------------------------------------------
+
+    def _gate(self, spec: FieldSpec, rule_value: Any, value: Any) -> str | None:
+        """Type-specific reasons not to let a model value replace / fill a field."""
+        if spec.type == "person":
+            if len(_words(value)) > 3 or "," in str(value) or " i " in str(value):
+                return f"AI: '{value}' to więcej niż jedna osoba"
+            if rule_value is not None and value != rule_value:
+                if len(_words(value)) != len(_words(rule_value)):
+                    return f"AI: '{value}' ma inną liczbę wyrazów niż '{rule_value}'"
+                if not _looks_declined(rule_value):
+                    return f"AI: reguła ma już mianownik ('{rule_value}'), pominięto '{value}'"
+        return None
+
+    def _arbitrate(
+        self, spec: FieldSpec, rule_value: Any, value: Any, path: str, allowed: str | None, evidence: str | None
+    ) -> Any:
+        trace = self.traces.get(path)
+        rule_snippet = (trace.snippet if trace else None) or "(brak)"
+        user = (
+            f"Pole: {path}\nOpis pola: {spec.description or ''}\n"
+            + (f"Dozwolone wartości: {allowed}\n" if allowed else "")
+            + f"\nKandydat A: {rule_value}\nFragment, na podstawie którego wskazano A:\n{rule_snippet}\n"
+            + f"\nKandydat B: {value}\nFragment, na podstawie którego wskazano B:\n{evidence or '(brak)'}\n"
+            + f"\nPoczątek dokumentu:\n{self.doc_text[:6000]}"
+        )
+        try:
+            response = self.arbiter.chat(
+                [{"role": "system", "content": ARBITER_PROMPT}, {"role": "user", "content": user}],
+                max_tokens=20,
+                temperature=0.0,
+                json_mode=True,
+            )
+            choice = str(parse_json(response.text).get("wybor", "")).strip().upper()
+        except LLMError as exc:
+            if trace is not None:
+                trace.warnings.append(f"AI-arbiter niedostępny ({exc}); zostaje reguła")
+            return rule_value
+        if choice == "B":
+            self.traces[path] = FieldTrace(
+                value=value,
+                method="llm",
+                rule=f"{self.rule} (arbitraż)",
+                snippet=evidence,
+                raw=value,
+                warnings=[f"reguła: {rule_value} — arbiter wybrał AI"],
+            )
+            return value
+        if trace is not None:
+            trace.warnings.append(f"AI podaje {value}; arbiter wybrał regułę")
+        return rule_value
+
+    def field(
+        self,
+        spec: FieldSpec,
+        rule_value: Any,
+        llm_value: Any,
+        path: str,
+        evidence: str | None = None,
+        allowed: str | None = None,
+    ) -> Any:
         if spec.is_dependent or spec.llm == "never":
             return rule_value
         value, problem = validate_value(spec, llm_value, self.grounding)
+        if value is not None and (reason := self._gate(spec, rule_value, value)):
+            value, problem = None, reason
         trace = self.traces.get(path)
         if value is None:
             if problem and trace is not None:
                 trace.warnings.append(problem)
             return rule_value
+        if rule_value is not None and value != rule_value and spec.llm == "arbitrate":
+            if self.arbiter is not None:
+                return self._arbitrate(spec, rule_value, value, path, allowed, evidence)
+            if trace is not None:
+                trace.warnings.append(f"AI podaje inną wartość: {value} (bez arbitrażu zostaje reguła)")
+            return rule_value
         if rule_value is None or spec.llm == "prefer":
             previous = f"reguła: {rule_value}" if rule_value is not None and rule_value != value else None
             self.traces[path] = FieldTrace(
-                value=value, method="llm", rule=self.rule, raw=llm_value, warnings=[previous] if previous else []
+                value=value,
+                method="llm",
+                rule=self.rule,
+                snippet=evidence,
+                raw=llm_value,
+                warnings=[previous] if previous else [],
             )
             return value
         if trace is not None:
@@ -216,6 +355,8 @@ class _Merger:
                 trace.method = "rule+llm"
         return rule_value
 
+    # --- containers -------------------------------------------------------------------------
+
     def node(self, node: Any, rule_value: Any, llm_value: Any, path: str) -> Any:
         if isinstance(node, FieldSpec):
             return self.field(node, rule_value, llm_value, path)
@@ -223,10 +364,22 @@ class _Merger:
             return self.list(node, rule_value or [], llm_value if isinstance(llm_value, list) else [], path)
         rule_dict = rule_value if isinstance(rule_value, dict) else {}
         llm_dict = llm_value if isinstance(llm_value, dict) else {}
-        return {
-            key: self.node(child, rule_dict.get(key), llm_dict.get(key), f"{path}.{key}" if path else key)
-            for key, child in node.items()
-        }
+        out = {}
+        for key, child in node.items():
+            child_path = f"{path}.{key}" if path else key
+            if isinstance(child, FieldSpec):
+                evidence = llm_dict.get(f"{key}{EVIDENCE_SUFFIX}") if child.llm_evidence else None
+                out[key] = self.field(
+                    child,
+                    rule_dict.get(key),
+                    llm_dict.get(key),
+                    child_path,
+                    evidence=str(evidence) if evidence else None,
+                    allowed=_allowed_values(self.doc_type, node, key),
+                )
+            else:
+                out[key] = self.node(child, rule_dict.get(key), llm_dict.get(key), child_path)
+        return out
 
     def _key(self, spec: ListSpec, item: Any, normalize: bool = False) -> tuple | None:
         """Identity of a list item from its `unique_by` fields (model values normalized first)."""
@@ -241,8 +394,23 @@ class _Merger:
                 node = node.get(part) if isinstance(node, dict) else None
             if normalize and value is not None and isinstance(node, FieldSpec):
                 value = VALUE_TYPES[node.type].normalize(_as_raw(value))
-            key.append(fold(str(value)) if value is not None else None)
+            key.append(_stems(value) if value is not None else None)
         return tuple(key) if any(k is not None for k in key) else None
+
+    def _redistribute(self, spec: ListSpec, pairs: list[tuple[Any, Any]]) -> list[tuple[Any, Any]]:
+        """Document-scope nested lists (e.g. signers of each consortium member): rules cannot tell
+        who signed for whom and list everyone under the first parent. When the model distributes
+        the SAME people among the parents, its distribution is used instead."""
+        if not isinstance(spec.item, dict) or len(pairs) < 2 or any(not isinstance(m, dict) for _, m in pairs):
+            return pairs
+        for key, child in spec.item.items():
+            if not (isinstance(child, ListSpec) and child.scope == "document"):
+                continue
+            rule_people = sorted(self._key(child, i) or () for r, _ in pairs for i in (r or {}).get(key) or [])
+            llm_people = sorted(self._key(child, i, normalize=True) or () for _, m in pairs for i in m.get(key) or [])
+            if rule_people and rule_people == llm_people:
+                pairs = [({**r, key: []} if isinstance(r, dict) else r, m) for r, m in pairs]
+        return pairs
 
     def list(self, spec: ListSpec, rule_items: list, llm_items: list, path: str) -> list:
         llm_items = [i for i in llm_items if i is not None]
@@ -264,6 +432,7 @@ class _Merger:
                 pairs.append((rule_item, match))
             # Items the rules did not find are NOT added: the model often repeats an item in
             # another form (e.g. a declined name), which would create false duplicates.
+            pairs = self._redistribute(spec, pairs)
 
         merged = []
         for rule_item, llm_item in pairs:
@@ -273,6 +442,12 @@ class _Merger:
                 continue
             merged.append(value)
         return merged[: spec.max_items]
+
+
+def _stems(value: Any) -> str:
+    """Declension-tolerant identity: first 4 letters of each word
+    ("Janowi Kowalskiemu" and "Jan Kowalski" -> "jan kowa")."""
+    return " ".join(word[:4] for word in re.findall(r"\w+", fold(str(value))))
 
 
 def _is_blank(value: Any) -> bool:
@@ -303,10 +478,16 @@ def _remove_dropped_traces(traces: dict[str, FieldTrace], data: dict[str, Any]) 
 
 
 def merge(
-    rule_result: ExtractionResult, llm_data: dict[str, Any], doc: IngestedDocument, doc_type: DocumentType, model: str
+    rule_result: ExtractionResult,
+    llm_data: dict[str, Any],
+    doc: IngestedDocument,
+    doc_type: DocumentType,
+    model: str,
+    arbiter: Any = None,
 ) -> ExtractionResult:
+    """`arbiter`: LLM client for `llm: arbitrate` conflicts (None = the rule value is kept)."""
     traces = {path: trace.model_copy(deep=True) for path, trace in rule_result.fields.items()}
-    merger = _Merger(doc_type, traces, _Grounding(doc), model)
+    merger = _Merger(doc_type, traces, _Grounding(doc), model, doc.full_text(), arbiter)
     data = merger.node(doc_type.output, rule_result.data, llm_data, "")
     apply_dependents(doc_type, data, traces)
     _remove_dropped_traces(traces, data)
@@ -334,7 +515,7 @@ def has_gaps(result: ExtractionResult, doc_type: DocumentType) -> bool:
         if isinstance(node, FieldSpec):
             if node.is_dependent or node.llm == "never":
                 return False
-            return value is None or node.llm == "prefer"
+            return value is None or node.llm in ("prefer", "arbitrate")
         if isinstance(node, ListSpec):
             return not value or any(walk(node.item, item) for item in value)
         return any(walk(child, (value or {}).get(key)) for key, child in node.items())

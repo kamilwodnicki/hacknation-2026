@@ -1,35 +1,34 @@
+# Wersje przypięte do zestawu, na którym przechodzą wszystkie testy (Python 3.13, obraz Docker).
+# Wszystkie biblioteki na licencjach otwartych (MIT / BSD / Apache-2.0).
+
 # Backend
-fastapi>=0.115
-uvicorn[standard]>=0.30
-python-multipart>=0.0.9
-pydantic>=2.7
-pydantic-settings>=2.3
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+python-multipart==0.0.34
+pydantic==2.14.4
+pydantic-settings==2.16.3
+python-dotenv==1.2.4
 
 # PDF & OCR (CPU-only)
 # pypdfium2 (Apache-2.0 / BSD-3): warstwa tekstowa + renderowanie stron pod OCR
-pypdfium2>=4.30
-pillow>=10.4
-rapidocr>=2.0
-onnxruntime>=1.18
-opencv-python-headless>=4.10
-numpy>=1.26
+pypdfium2==5.15.2
+pillow==13.0.0
+rapidocr==3.10.0
+onnxruntime==1.32.0
+opencv-python-headless==5.1.0.95
+numpy==2.5.5
 
-# LLM
-openai>=1.40
-instructor>=1.4
+# LLM (API zgodne z OpenAI: Mistral EU) + Google Vertex AI (zapasowo, tokeny z konta usługi)
+openai==3.3.0
+google-auth==2.63.0
 
-# Konfiguracja / narzędzia
-PyYAML>=6.0
-python-dotenv>=1.0
-python-dateutil>=2.9
+# Konfiguracja
+PyYAML==6.0.4
 
 # UI
-streamlit>=1.37
-requests>=2.32
-
-# Google Cloud (Vertex AI): tokeny z konta usługi (Apache-2.0)
-google-auth>=2.30
+streamlit==1.67.0
+requests==2.34.2
 
 # Testy
-pytest>=8.0
-httpx>=0.27
+pytest==9.2.0
+httpx==0.28.1

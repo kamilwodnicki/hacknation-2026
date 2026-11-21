@@ -116,7 +116,10 @@ class OpenAICompatibleClient:
             raise LLMError("LLM_API_KEY w .env to wciąż wartość przykładowa — wklej swój klucz API")
         from openai import OpenAI
 
-        self._client = OpenAI(base_url=settings.llm_api_base_url, api_key=settings.llm_api_key, timeout=settings.llm_timeout)
+        # max_retries: automatic back-off retries on rate limits (429) and server errors (5xx).
+        self._client = OpenAI(
+            base_url=settings.llm_api_base_url, api_key=settings.llm_api_key, timeout=settings.llm_timeout, max_retries=5
+        )
         self.model = settings.llm_model_name
         self.description = f"API zgodne z OpenAI · {self.model} · {settings.llm_api_base_url}"
 

@@ -127,7 +127,7 @@ def extract_with_llm(
         return base, info
     info.used, info.model, info.cached = True, response.model, response.cached
     info.input_tokens, info.output_tokens = response.input_tokens, response.output_tokens
-    return merge(base, llm_data, doc, doc_type, response.model), info
+    return merge(base, llm_data, doc, doc_type, response.model, arbiter=llm_client(s)), info
 
 
 def process_ingested(

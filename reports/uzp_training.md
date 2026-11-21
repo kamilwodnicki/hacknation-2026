@@ -1,12 +1,14 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 13:57
+Wygenerowano: 2026-11-21 16:54
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
 
 **F1 (UZP)** — zasada organizatora: pola typu „długi string” (nazwy firm, tytuły) zaliczane przy podobieństwie ≥ 80%, pozostałe muszą być identyczne. **F1 (dokładne)** — wszystkie pola identyczne.
 
 Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
+
+Tryb ekstrakcji: **rules**.
 
 ## Podsumowanie
 

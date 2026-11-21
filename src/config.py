@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     """rules = YAML rules only; llm = the model fills the whole JSON; hybrid = rules first,
     the model fills what the rules left empty (per-field policy `llm:` in YAML).
     Without a configured provider every mode falls back to rules."""
-    llm_max_chars: int = 30000
-    """Document text sent to the model is cut to this many characters (~8.5k tokens)."""
+    llm_max_chars: int = 40000
+    """Document text sent to the model is cut to this many characters (~11k tokens)."""
     llm_max_output_tokens: int = 2000
     llm_cache_dir: Path = Path("cache/llm")
     """On-disk response cache: the same prompt is never paid for twice."""

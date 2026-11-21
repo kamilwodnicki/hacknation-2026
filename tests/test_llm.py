@@ -58,6 +58,14 @@ def test_prompt_contains_schema_skeleton_and_text():
     assert "Janowi Kowalskiemu" in user
 
 
+def test_prompt_insists_on_nominative_names():
+    t = doc_type(TYPE)
+    system, user = (m["content"] for m in build_messages(doc(TEXT), t, 10_000))
+    assert "'Leszkowi Wieczorkowi' -> 'Leszek Wieczorek'" in system
+    assert "- osoba: imię i nazwisko w MIANOWNIKU" in user
+    assert user.rstrip().endswith("nie 'Grzegorzowi Wiśniewskiemu').")  # reminder after the document
+
+
 def test_prompt_lists_dictionary_values_for_lookup_source():
     t = load_document_types(ROOT / "config" / "document_types")["odwolanie"]
     user = build_messages(doc("x"), t, 1000)[1]["content"]
@@ -204,6 +212,71 @@ def test_rules_list_items_are_not_duplicated_by_model_variants():
     d = doc("pełnomocnictwa adw. Grzegorz Wiśniewski")
     merged = merge(extract(d, t), {"osoby": [{"imie": "Grzegorz Wiśniewski"}, {"imie": "Grzegorzowi Wiśniewskiemu"}]}, d, t, "f")
     assert merged.data == {"osoby": [{"imie": "Grzegorz Wiśniewski"}]}
+
+
+def test_model_turns_declined_rule_name_into_nominative():
+    t = doc_type(
+        {
+            "osoby": {
+                "type": "list",
+                "unique_by": ["imie"],
+                "split": {"method": "matches", "pattern": r"pełnomocnictwa\s+(?P<imie>{person})"},
+                "item": {"imie": {"type": "person", "llm": "prefer"}},
+            }
+        }
+    )
+    d = doc("udzielam pełnomocnictwa Leszkowi Wieczorkowi")
+    rules = extract(d, t)
+    assert rules.data == {"osoby": [{"imie": "Leszkowi Wieczorkowi"}]}  # rules keep the document form
+    merged = merge(rules, {"osoby": [{"imie": "Leszek Wieczorek"}]}, d, t, "f")
+    assert merged.data == {"osoby": [{"imie": "Leszek Wieczorek"}]}
+    assert merged.fields["osoby[0].imie"].method == "llm"
+    assert "reguła: Leszkowi Wieczorkowi" in merged.fields["osoby[0].imie"].warnings
+
+
+ARB_TYPE = {
+    "id": {
+        "type": "integer",
+        "llm": "arbitrate",
+        "llm_evidence": True,
+        "extract": [{"method": "regex", "pattern": r"powód (\d+)"}],
+    }
+}
+
+
+def test_evidence_key_is_requested_before_the_field():
+    user = build_messages(doc("x"), doc_type(ARB_TYPE), 1000)[1]["content"]
+    assert user.index('"id_cytat"') < user.index('"id"')
+    assert "- id_cytat: najpierw przepisz dosłownie zdanie" in user
+
+
+@pytest.mark.parametrize(("choice", "expected"), [("B", 8), ("A", 3)])
+def test_arbitrate_asks_second_call_on_disagreement(choice, expected):
+    t = doc_type(ARB_TYPE)
+    d = doc("powód 3\nZamawiający nie wykluczył wykonawcy")
+    arbiter = FakeLLM({"wybor": choice})
+    merged = merge(extract(d, t), {"id_cytat": "Zamawiający nie wykluczył wykonawcy", "id": 8}, d, t, "f", arbiter=arbiter)
+    assert merged.data == {"id": expected}
+    assert len(arbiter.calls) == 1
+    assert "Kandydat B: 8" in arbiter.calls[0][1]["content"]
+    assert "id_cytat" not in merged.data
+
+
+def test_arbitrate_without_arbiter_keeps_rule_and_agreement_needs_no_call():
+    t = doc_type(ARB_TYPE)
+    d = doc("powód 3")
+    assert merge(extract(d, t), {"id": 8}, d, t, "f").data == {"id": 3}
+    arbiter = FakeLLM({"wybor": "B"})
+    assert merge(extract(d, t), {"id": 3}, d, t, "f", arbiter=arbiter).data == {"id": 3}
+    assert arbiter.calls == []
+
+
+def test_name_gate_keeps_nominative_rule_value_and_rejects_two_people():
+    t = doc_type({"p": {"type": "person", "llm": "prefer", "extract": [{"method": "label", "labels": ["Pełnomocnik"]}]}})
+    d = doc("Pełnomocnik: Dorota Zawadzki\noraz Michał Borkowski")
+    assert merge(extract(d, t), {"p": "Dorota Zawadzka"}, d, t, "f").data == {"p": "Dorota Zawadzki"}
+    t2 = doc_type({"p": {"type": "person"}})
+    assert merge(extract(d, t2), {"p": "Dorota Zawadzki, Michał Borkowski"}, d, t2, "f").data == {"p": None}
 
 
 def test_pipeline_llm_mode_ignores_rules(fake_llm):

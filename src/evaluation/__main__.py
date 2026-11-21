@@ -35,9 +35,12 @@ def main() -> int:
     parser.add_argument("--limit", type=int, help="only the first N cases (cheap LLM trials)")
     parser.add_argument("--cases", nargs="+", help="only these case directories, e.g. przyklad_49")
     parser.add_argument("--estimate", action="store_true", help="estimate LLM tokens without calling the API")
+    parser.add_argument("--types", nargs="+", help="only these document types, e.g. odwolanie")
     args = parser.parse_args()
 
     dataset = load_dataset(args.dataset)
+    if args.types:
+        dataset.documents = [d for d in dataset.documents if d.document_type in args.types]
     if not (args.data_dir / dataset.data_dir).exists():
         print(f"Data directory not found: {args.data_dir / dataset.data_dir}", file=sys.stderr)
         return 2
@@ -65,7 +68,8 @@ def main() -> int:
     if args.mode != "rules":
         print(f"Zużycie LLM w tym przebiegu: {USAGE.summary()}")
 
-    suffix = "" if args.mode == "rules" and not (args.limit or args.cases) else f"_{args.mode}" + ("_partial" if args.limit or args.cases else "")
+    partial = bool(args.limit or args.cases or args.types)
+    suffix = "" if args.mode == "rules" and not partial else f"_{args.mode}" + ("_partial" if partial else "")
     args.report_dir.mkdir(parents=True, exist_ok=True)
     (args.report_dir / f"{dataset.name}{suffix}.md").write_text(markdown, encoding="utf-8")
     (args.report_dir / f"{dataset.name}{suffix}.json").write_text(to_json(report), encoding="utf-8")

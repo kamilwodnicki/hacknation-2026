@@ -183,7 +183,7 @@ def evaluate(
                     target[path] += counts
             report.errors.extend((case.name, m) for m in comparison.mismatches)
 
-    for extra in ([] if limit or only else dataset.extra):
+    for extra in ([] if limit or only or len(dataset.documents) < 3 else dataset.extra):
         pdfs = sorted(data_root.glob(extra.pdf)) if any(c in extra.pdf for c in "*?[") else [data_root / extra.pdf]
         for pdf in pdfs:
             if not pdf.exists():
