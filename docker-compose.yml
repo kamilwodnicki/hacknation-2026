@@ -1,0 +1,41 @@
+x-app: &app
+  build: .
+  image: odwolania2json:latest
+  env_file:
+    - .env
+  volumes:
+    - ./input:/app/input
+    - ./output:/app/output
+    - ./config:/app/config:ro
+
+services:
+  api:
+    <<: *app
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ui:
+    <<: *app
+    command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501
+    ports:
+      - "${UI_PORT:-8501}:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # Testy: docker compose run --rm tests
+  tests:
+    <<: *app
+    command: pytest -q
+    volumes:
+      - ./input:/app/input
+      - ./output:/app/output
+      - ./config:/app/config:ro
+      - ./tests:/app/tests
+    profiles: ["tools"]

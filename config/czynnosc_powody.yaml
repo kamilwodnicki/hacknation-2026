@@ -1,0 +1,20 @@
+# Słownik powodów odwołania (czynnosc_powod_id -> czynnosc_opis).
+# Źródło: zbiór treningowy organizatora (dane/przyklad_01..60/odwolanie.json).
+# Opisy muszą być zwracane 1:1 (kanonicznie) w polu OdwolanieKIO.czynnosc_opis.
+#
+# UWAGA: specyfikacja mówi o zakresie 1-12, ale w danych treningowych występuje
+# tylko 11 wartości. Opis dla id=12 nie jest nigdzie zdefiniowany przez organizatora
+# i wymaga potwierdzenia (pytanie do UZP). Do tego czasu pozostaje null.
+powody:
+  1: "Decyzja o odrzuceniu oferty"
+  2: "Ogłoszenie wyboru oferty"
+  3: "Decyzja o wykluczeniu wykonawcy"
+  4: "Publikacja specyfikacji warunków zamówienia (SWZ)"
+  5: "Modyfikacja treści SWZ"
+  6: "Odpowiedzi i wyjaśnienia do SWZ"
+  7: "Zaniechanie odrzucenia oferty"
+  8: "Zaniechanie wykluczenia wykonawcy"
+  9: "Decyzja o unieważnieniu postępowania"
+  10: "Zaniechanie unieważnienia postępowania"
+  11: "Opis przedmiotu zamówienia (OPZ)"
+  12: null  # TODO: nieznany — brak w danych i dokumentacji organizatora

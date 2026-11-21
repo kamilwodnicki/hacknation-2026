@@ -1,0 +1,9 @@
+.git
+.env
+**/__pycache__
+**/*.pyc
+.pytest_cache
+input/*
+output/*
+!input/.gitkeep
+!output/.gitkeep
