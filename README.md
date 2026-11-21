@@ -147,3 +147,7 @@ tests/                   testy automatyczne (AI zastąpione atrapą — bez kosz
 ```
 
 Wszystkie komponenty są open source (MIT / BSD / Apache-2.0); wersje bibliotek przypięte w `requirements.txt`.
+
+## Licencja
+
+Projekt jest udostępniony na licencji [Apache License 2.0](LICENSE).
