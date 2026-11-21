@@ -11,3 +11,6 @@ meta/*
 !meta/.gitkeep
 reports
 dane
+secrets
+*-sa.json
+cache

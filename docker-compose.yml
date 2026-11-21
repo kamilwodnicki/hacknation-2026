@@ -9,6 +9,9 @@ x-app: &app
     - ./output:/app/output
     - ./meta:/app/meta
     - ./config:/app/config:ro
+    # Klucz LLM (np. konto usługi Google) — montowany tylko do odczytu, nigdy w obrazie.
+    - ./secrets:/app/secrets:ro
+    - ./cache:/app/cache
 
 services:
   # Przetwarzanie wsadowe input/ -> output/ (uruchamiane przez start.bat / start.sh):
@@ -49,6 +52,9 @@ services:
     command: pytest -q
     environment:
       DATA_DIR: /data
+      # Ochrona budżetu: kontener narzędziowy domyślnie NIE woła płatnego API.
+      # Świadome użycie LLM: docker compose run --rm -e LLM_PROVIDER=openai tests ...
+      LLM_PROVIDER: none
     volumes:
       - ./input:/app/input
       - ./output:/app/output
@@ -58,5 +64,7 @@ services:
       - ./ui:/app/ui
       - ./tests:/app/tests
       - ./reports:/app/reports
+      - ./secrets:/app/secrets:ro
+      - ./cache:/app/cache
       - ${UZP_DATA_DIR:-./dane}:/data:ro
     profiles: ["tools"]

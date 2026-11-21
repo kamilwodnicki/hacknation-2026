@@ -289,6 +289,47 @@ def _is_empty(value: Any) -> bool:
     return value is None
 
 
+def _dependent_trace(spec: FieldSpec, context: dict[str, Any], doc_type: DocumentType) -> FieldTrace:
+    for index, strategy in enumerate(spec.extract, start=1):
+        if isinstance(strategy, DerivedStrategy):
+            present = _resolve(context, strategy.source) not in (None, "", [])
+            value = strategy.if_present if present else strategy.if_absent
+            if value is not None:
+                return _trace(value, f"#{index} derived from {strategy.source}", None, [])
+        elif isinstance(strategy, LookupStrategy):
+            key = _resolve(context, strategy.source)
+            value = _lookup(doc_type.dictionary(strategy.dictionary), key)
+            if value is not None:
+                return _trace(value, f"#{index} {strategy.dictionary}[{key}]", None, [])
+    return FieldTrace()
+
+
+def apply_dependents(doc_type: DocumentType, data: dict[str, Any], traces: dict[str, FieldTrace]) -> None:
+    """Recompute derived / lookup fields of already filled data (e.g. after merging LLM values)."""
+
+    def walk(node: Any, value: Any, path: str) -> None:
+        if isinstance(node, ListSpec):
+            for i, item in enumerate(value or []):
+                walk(node.item, item, f"{path}[{i}]")
+            return
+        if not isinstance(node, dict) or not isinstance(value, dict):
+            return
+        dependent = []
+        for key, child in node.items():
+            child_path = f"{path}.{key}" if path else key
+            if isinstance(child, FieldSpec):
+                if child.is_dependent:
+                    dependent.append((key, child, child_path))
+            else:
+                walk(child, value.get(key), child_path)
+        for key, child, child_path in dependent:
+            trace = _dependent_trace(child, value, doc_type)
+            value[key] = trace.value
+            traces[child_path] = trace
+
+    walk(doc_type.output, data, "")
+
+
 def extract(doc: IngestedDocument, doc_type: DocumentType) -> ExtractionResult:
     lines = document_lines(doc)
     extractor = _Extractor(doc_type, lines)

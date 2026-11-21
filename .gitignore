@@ -10,3 +10,10 @@ output/*
 dane/
 meta/*
 !meta/.gitkeep
+
+secrets/*
+!secrets/.gitkeep
+*-sa.json
+
+# Pamięć odpowiedzi LLM (może zawierać treść dokumentów)
+cache/

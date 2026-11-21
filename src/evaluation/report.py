@@ -33,6 +33,15 @@ def to_markdown(report: EvaluationReport, max_errors: int = 20) -> str:
         "Typ dokumentu do ekstrakcji: "
         + ("**oczekiwany (oracle)** — klasyfikator pominięty." if report.oracle else "**z klasyfikatora** (pełny pipeline)."),
         "",
+        f"Tryb ekstrakcji: **{report.mode}**"
+        + (
+            f" — do modelu wysłano {report.llm.documents_sent} dok. (z pamięci podręcznej: {report.llm.cached}), "
+            f"pominięto {report.llm.skipped} (reguły kompletne), błędy LLM: {report.llm.errors}; "
+            f"nowe tokeny: wejście {report.llm.input_tokens}, wyjście {report.llm.output_tokens}."
+            if report.mode != "rules"
+            else "."
+        ),
+        "",
         "## Podsumowanie",
         "",
         _HEADER,

@@ -61,6 +61,7 @@ output:
   OdwolanieKIO:
     data:
       type: date
+      llm: never   # reguły 45/45; null = brak nagłówka (model brał datę z innych miejsc)
       description: Data z nagłówka pierwszej strony (linia "Miejscowość, dnia DD.MM.RRRR").
       extract:
         - method: regex
@@ -70,6 +71,7 @@ output:
 
     czynnosc_dzien:
       type: date
+      llm: prefer  # model rozumie pierwszy zarzut lepiej niż wzorzec zdania
       description: >-
         Data czynności zamawiającego uruchamiającej bieg terminu odwołania dla pierwszego
         zarzutu. Brak wiarygodnej daty = null.
@@ -79,6 +81,7 @@ output:
 
     czynnosc_powod_id:
       type: integer
+      llm: prefer  # j.w. — reguły trafiają tylko w typowym zdaniu "Zamawiający w dniu ..."
       description: >-
         Identyfikator powodu odwołania 1-12, ustalany wyłącznie na podstawie pierwszego
         zarzutu (słownik config/dictionaries/czynnosc_powody.yaml).
@@ -123,6 +126,7 @@ output:
 
     miejscowosc:
       type: text
+      llm: never   # reguły 45/45; null = brak nagłówka
       description: Miejscowość z nagłówka pierwszej strony ("X, dnia ..." albo "X DD.MM.RRRR").
       extract:
         - method: regex
@@ -246,6 +250,7 @@ output:
             lookahead: 0
       prowadzacy_postepowanie:
         type: integer
+        llm: never   # null przy jednym zamawiającym jest poprawną odpowiedzią
         description: >-
           null — jeden zamawiający; 1 — jeden z kilku, oznaczony jako prowadzący/lider;
           0 — jeden z kilku, nieoznaczony.

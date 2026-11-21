@@ -27,6 +27,9 @@ python-dateutil>=2.9
 streamlit>=1.37
 requests>=2.32
 
+# Google Cloud (Vertex AI): tokeny z konta usługi (Apache-2.0)
+google-auth>=2.30
+
 # Testy
 pytest>=8.0
 httpx>=0.27

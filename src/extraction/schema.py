@@ -141,6 +141,10 @@ class FieldSpec(_Strict):
     A candidate that does not match is skipped — a wrong value costs more than null."""
     reject: list[str] = []
     """Regexes of values to skip, e.g. bare labels such as '^(KRS|NIP|tel)\\b'."""
+    llm: Literal["fill", "prefer", "never"] = "fill"
+    """Hybrid mode: fill = the model only fills a value the rules did not find;
+    prefer = a valid model value wins over the rule; never = the model is ignored.
+    Fields computed from other fields (derived / lookup) are always recomputed."""
 
     @field_validator("must_match")
     @classmethod

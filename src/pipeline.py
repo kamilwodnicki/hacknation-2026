@@ -19,6 +19,9 @@ from src.classification import ClassificationResult, classify
 from src.config import Settings, get_settings
 from src.extraction import DocumentType, FieldTrace, extract, load_document_types
 from src.ingestion import IngestedDocument, IngestionError, read_pdf
+from src.llm import LLMError, get_llm_client
+from src.llm.cache import CachedLLM
+from src.llm.extractor import empty_result, has_gaps, llm_extract, merge
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +36,19 @@ class IngestionInfo(BaseModel):
     skipped_pages: list[int]
 
 
+class LLMInfo(BaseModel):
+    """How the language model was used for this document (transparency)."""
+
+    mode: str
+    used: bool = False
+    model: str | None = None
+    cached: bool = False
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    error: str | None = None
+    skipped_reason: str | None = None
+
+
 class PipelineResult(BaseModel):
     filename: str
     document_type: str | None
@@ -42,6 +58,7 @@ class PipelineResult(BaseModel):
     classification: ClassificationResult | None = None
     fields: dict[str, FieldTrace] = {}
     ingestion: IngestionInfo | None = None
+    llm: LLMInfo | None = None
     error: str | None = None
     seconds: float = 0.0
     pages_text: list[str] | None = None
@@ -59,11 +76,69 @@ def document_types(settings: Settings | None = None) -> dict[str, DocumentType]:
     return _cached_types(str(s.config_dir))
 
 
-def process_ingested(doc: IngestedDocument, types: dict[str, DocumentType]) -> tuple[ClassificationResult, Any]:
+_llm_client: Any = None
+_llm_client_error: str | None = None
+_llm_lock = threading.Lock()
+
+
+def llm_client(settings: Settings | None = None) -> Any:
+    """The configured, cached LLM client or None (rules only). Created once per process."""
+    global _llm_client, _llm_client_error
+    s = settings or get_settings()
+    with _llm_lock:
+        if _llm_client is None and _llm_client_error is None:
+            try:
+                client = get_llm_client(s)
+                _llm_client = CachedLLM(client, s.llm_cache_dir) if client else False
+            except LLMError as exc:
+                _llm_client_error = str(exc)
+                log.warning("LLM wyłączony: %s", exc)
+                _llm_client = False
+    return _llm_client or None
+
+
+def effective_mode(settings: Settings) -> str:
+    return settings.extraction_mode if llm_client(settings) else "rules"
+
+
+def extract_with_llm(
+    doc: IngestedDocument, doc_type: DocumentType, settings: Settings | None = None, mode: str | None = None
+) -> tuple[Any, LLMInfo]:
+    """Rules, then (depending on the mode) the language model, merged field by field."""
+    s = settings or get_settings()
+    mode = mode or effective_mode(s)
+    info = LLMInfo(mode=mode)
+    if mode != "rules" and not llm_client(s):
+        info.mode, info.error = "rules", _llm_client_error or "LLM nie jest skonfigurowany"
+
+    rules = extract(doc, doc_type)
+    if info.mode == "rules":
+        return rules, info
+    if info.mode == "hybrid" and not has_gaps(rules, doc_type):
+        info.skipped_reason = "reguły wypełniły wszystkie pola"
+        return rules, info
+
+    base = rules if info.mode == "hybrid" else empty_result(doc_type)
+    try:
+        llm_data, response = llm_extract(doc, doc_type, llm_client(s), s.llm_max_chars, s.llm_max_output_tokens)
+    except LLMError as exc:
+        info.error = str(exc)
+        log.warning("%s: LLM nie zadziałał (%s)", doc.filename, exc)
+        return base, info
+    info.used, info.model, info.cached = True, response.model, response.cached
+    info.input_tokens, info.output_tokens = response.input_tokens, response.output_tokens
+    return merge(base, llm_data, doc, doc_type, response.model), info
+
+
+def process_ingested(
+    doc: IngestedDocument, types: dict[str, DocumentType], settings: Settings | None = None, mode: str | None = None
+) -> tuple[ClassificationResult, Any, LLMInfo]:
+    s = settings or get_settings()
     classification = classify(doc, types)
     if classification.document_type is None:
-        return classification, None
-    return classification, extract(doc, types[classification.document_type])
+        return classification, None, LLMInfo(mode=mode or effective_mode(s))
+    extraction, info = extract_with_llm(doc, types[classification.document_type], s, mode)
+    return classification, extraction, info
 
 
 def process_pdf(
@@ -83,7 +158,7 @@ def process_pdf(
             return PipelineResult(
                 filename=name, document_type=None, output={}, error=str(exc), seconds=time.perf_counter() - start
             )
-        classification, extraction = process_ingested(doc, document_types(s))
+        classification, extraction, llm_info = process_ingested(doc, document_types(s), s)
 
     return PipelineResult(
         filename=name,
@@ -92,6 +167,7 @@ def process_pdf(
         classification=classification,
         fields=extraction.fields if extraction else {},
         ingestion=IngestionInfo(page_count=doc.page_count, ocr_pages=doc.ocr_pages, skipped_pages=doc.skipped_pages),
+        llm=llm_info,
         seconds=round(time.perf_counter() - start, 2),
         pages_text=[p.text for p in doc.pages] if include_text else None,
     )
