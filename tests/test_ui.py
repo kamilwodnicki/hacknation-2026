@@ -43,3 +43,14 @@ def test_ui_renders_page_next_to_data_and_field_source():
     at.selectbox(key="field-potwierdzenie_przelewu.pdf").set_value("przelew_bankowy.kwota").run()
     assert not at.exception
     assert any("przelew_bankowy.kwota" in i.value and "strona 1" in i.value for i in at.info)
+
+    # Hiding a document leaves only its header (name + type) with a button to show it again.
+    images = len(at.get("image"))
+    at.button(key="toggle-odwolanie.pdf").click().run()
+    assert not at.exception
+    assert "### odwolanie.pdf — `odwolanie`" in [m.value for m in at.markdown if m.value.startswith("### ")]
+    assert not [s for s in at.selectbox if s.key == "field-odwolanie.pdf"]
+    assert len(at.get("image")) == images - 1
+    assert at.button(key="toggle-odwolanie.pdf").proto.icon == ":material/keyboard_arrow_down:"
+    at.button(key="toggle-odwolanie.pdf").click().run()
+    assert len(at.get("image")) == images

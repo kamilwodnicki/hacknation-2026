@@ -153,10 +153,30 @@ st.download_button("Pobierz wszystkie JSON-y (ZIP)", data=zip_outputs(results), 
 
 # --- per document: source page | extracted data ---------------------------------------------
 
+hidden: set[str] = st.session_state.setdefault("hidden", set())
+
+
+def toggle_hidden(name: str) -> None:
+    hidden.symmetric_difference_update({name})
+
+
 for name, r in results.items():
     st.divider()
     doc_type = r.get("document_type")
-    st.markdown(f"### {name} — `{doc_type or 'nierozpoznany'}`")
+    is_hidden = name in hidden
+    arrow, title = st.columns([1, 30], vertical_alignment="center", gap="small")
+    arrow.button(
+        "",
+        key=f"toggle-{name}",
+        icon=":material/keyboard_arrow_down:" if is_hidden else ":material/keyboard_arrow_up:",
+        help="Rozwiń" if is_hidden else "Zwiń",
+        type="tertiary",
+        on_click=toggle_hidden,
+        args=(name,),
+    )
+    title.markdown(f"### {name} — `{doc_type or 'nierozpoznany'}`")
+    if is_hidden:
+        continue
     if r.get("error"):
         st.error(r["error"])
         continue

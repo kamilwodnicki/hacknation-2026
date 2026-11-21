@@ -4,15 +4,22 @@ rem Wymaga: Docker Desktop (docker compose). Uzycie: start.bat
 setlocal
 cd /d "%~dp0"
 
+rem Uruchomienie dwuklikiem (Eksplorator: cmd /c ""...\start.bat" ") - na koncu czekamy na klawisz,
+rem zeby okno nie zniknelo przed przeczytaniem wyniku. Z terminala / skryptu - bez pauzy.
+set "DBLCLICK="
+echo(%CMDCMDLINE%| findstr /i /c:"%~nx0\" \"" >nul && set "DBLCLICK=1"
+
 where docker >nul 2>nul
 if errorlevel 1 (
     echo [BLAD] Nie znaleziono polecenia "docker". Zainstaluj i uruchom Docker Desktop.
-    exit /b 2
+    set RESULT=2
+    goto end
 )
 docker info >nul 2>nul
 if errorlevel 1 (
     echo [BLAD] Docker nie dziala. Uruchom Docker Desktop i sprobuj ponownie.
-    exit /b 2
+    set RESULT=2
+    goto end
 )
 
 rem Ustawienia: .env.overdrive (jesli istnieje, .env jest pomijany) albo .env
@@ -37,5 +44,11 @@ if %RESULT%==0 (
 ) else (
     echo.
     echo [UWAGA] Zakonczono z bledami ^(kod %RESULT%^) - szczegoly powyzej.
+)
+
+:end
+if defined DBLCLICK (
+    echo.
+    pause
 )
 exit /b %RESULT%
