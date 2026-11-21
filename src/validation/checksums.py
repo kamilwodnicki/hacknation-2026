@@ -33,7 +33,8 @@ def pesel_valid(value: str) -> bool:
 
 
 def iban_pl_valid(value: str) -> bool:
-    """26-digit Polish account number (NRB) without the PL prefix."""
+    """26-digit Polish account number (NRB), with or without the PL prefix."""
+    value = value.removeprefix("PL")
     if len(value) != 26 or not value.isdigit():
         return False
     # Move "PL" + check digits to the end; P=25, L=21

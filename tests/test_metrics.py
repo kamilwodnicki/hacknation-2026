@@ -68,3 +68,11 @@ def test_uzp_mode_rejects_dissimilar_strings_and_pairs_list_items_once():
 def test_similarity_bounds():
     assert similarity("abc", "abc") == 1.0
     assert similarity("abc", "xyz") == 0.0
+
+
+def test_digits_only_paths_ignore_account_prefix_in_uzp_mode():
+    pred = {"r": "PL61109010140000071219812874"}
+    ref = {"r": "61109010140000071219812874"}
+    result = compare(pred, ref, digits_only={"r"})
+    assert result.uzp["r"].tp == 1
+    assert result.exact["r"].tp == 0

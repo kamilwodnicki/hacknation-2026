@@ -51,6 +51,8 @@ class Dataset(BaseModel):
     fuzzy_fields: list[str] = []
     """Paths of "long string" fields compared by similarity in the uzp metric."""
     fuzzy_threshold: float = 0.8
+    digits_only_fields: list[str] = []
+    """Paths compared by digits only in the uzp metric (reference files inconsistent about "PL")."""
 
     def fuzzy_paths(self) -> dict[str, float]:
         return {path: self.fuzzy_threshold for path in self.fuzzy_fields}
@@ -187,7 +189,9 @@ def evaluate(
                 extraction, info = extract_with_llm(doc, used_type, mode=mode)
                 predicted = extraction.data
                 llm_stats.add(info)
-            comparison = compare(predicted, _load_reference(ref_path), dataset.fuzzy_paths())
+            comparison = compare(
+                predicted, _load_reference(ref_path), dataset.fuzzy_paths(), set(dataset.digits_only_fields)
+            )
 
             for target, source in ((report.exact, comparison.exact), (report.uzp, comparison.uzp)):
                 for path, counts in source.items():

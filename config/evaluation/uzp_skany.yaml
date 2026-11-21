@@ -6,6 +6,13 @@ name: uzp_skany
 data_dir: dane/skany
 cases: "*/*"
 
+# Rachunek: wynik ma "PL", jeśli zapisano go tak w dokumencie (organizator, Discord 2026-11-21);
+# wzorce są w tym niespójne (zwykle bez "PL" — według organizatora to błąd wzorców),
+# więc metryka UZP porównuje tu same cyfry. Metryka dokładna pokazuje różnicę.
+digits_only_fields:
+  - przelew_bankowy.na_rachunek
+  - przelew_bankowy.z_rachunku
+
 fuzzy_threshold: 0.8
 fuzzy_fields:
   - Odwolujacy[].pelnomocnik.nazwa

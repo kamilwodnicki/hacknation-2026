@@ -7,7 +7,7 @@ import yaml
 
 from src.extraction import DocumentType, extract, load_document_types
 from src.ingestion import IngestedDocument, Page, PageSource, read_pdf
-from tests.conftest import transfer_pdf
+from tests.conftest import transfer_pdf, without_account_prefix
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
@@ -46,7 +46,7 @@ def test_lookahead_stops_at_label_of_another_field():
         }
     )
     text = "Nadawca\nFirma A\nOdbiorca\nFirma B\nPL61 1090 1014 0000 0712 1981 2874"
-    assert extract(doc(text), t).data == {"z": None, "na": "61109010140000071219812874"}
+    assert extract(doc(text), t).data == {"z": None, "na": "PL61109010140000071219812874"}
 
 
 def test_multiline_value_until_stop_label():
@@ -65,7 +65,7 @@ def test_regex_with_value_placeholder_spans_lines():
         {"na": {"type": "iban_pl", "extract": [{"method": "regex", "pattern": r"na\s+rachunek\s+nr\s+({value})"}]}}
     )
     text = "wykonano przelew na rachunek nr PL61 1090 1014 0000 0712\n1981 2874, prowadzony dla X"
-    assert extract(doc(text), t).data == {"na": "61109010140000071219812874"}
+    assert extract(doc(text), t).data == {"na": "PL61109010140000071219812874"}
 
 
 def test_nth_match_skips_duplicates():
@@ -116,4 +116,4 @@ def test_powody_dictionary_matches_training_data():
 def test_przelew_matches_reference(case):
     t = load_document_types(ROOT / "config" / "document_types")["przelew"]
     expected = json.loads((case / "przelew.json").read_text(encoding="utf-8-sig"))
-    assert extract(read_pdf(transfer_pdf(case)), t).data == expected
+    assert without_account_prefix(extract(read_pdf(transfer_pdf(case)), t).data) == expected

@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_skany
 
-Wygenerowano: 2026-11-21 19:18
+Wygenerowano: 2026-11-21 20:46
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
 
@@ -8,16 +8,16 @@ Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartoś
 
 Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
-Tryb ekstrakcji: **hybrid** — do modelu wysłano 30 dok. (z pamięci podręcznej: 30), pominięto 0 (reguły kompletne), błędy LLM: 0; nowe tokeny: wejście 0, wyjście 0.
+Tryb ekstrakcji: **hybrid** — do modelu wysłano 30 dok. (z pamięci podręcznej: 10), pominięto 0 (reguły kompletne), błędy LLM: 0; nowe tokeny: wejście 33885, wyjście 4036.
 
 ## Podsumowanie
 
 | | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
-| **RAZEM** | 297 | 11 | 12 | 0.964 | 0.961 | **0.963** | 0.940 |
+| **RAZEM** | 299 | 9 | 10 | 0.971 | 0.968 | **0.969** | 0.947 |
 | odwolanie (10 dok.) | 170 | 6 | 7 | 0.966 | 0.960 | **0.963** | 0.958 |
 | pelnomocnictwo (10 dok.) | 75 | 3 | 3 | 0.962 | 0.962 | **0.962** | 0.962 |
-| przelew (10 dok.) | 52 | 2 | 2 | 0.963 | 0.963 | **0.963** | 0.852 |
+| przelew (10 dok.) | 54 | 0 | 0 | 1.000 | 1.000 | **1.000** | 0.889 |
 
 ## Klasyfikacja
 
@@ -97,15 +97,13 @@ Przykładowe różnice dokładne (4 z 4):
 | `przelew_bankowy.na_rachunek` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.numer_transakcji` | 4 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.tytul` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 0.400 |
-| `przelew_bankowy.z_rachunku` | 8 | 2 | 2 | 0.800 | 0.800 | **0.800** | 0.800 |
+| `przelew_bankowy.z_rachunku` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
-Przykładowe różnice dokładne (8 z 8):
+Przykładowe różnice dokładne (6 z 6):
 
 - `0001` `przelew_bankowy.tytul`: oczekiwano ["wpis od odwołania - postępowanie nr DA.ZP.242.50.2026 CEN9057564440515"], otrzymano ["wpis od odwolania - postępowanie nr DA.ZP.242.50.2026 CEN9057564440515"]
-- `0001` `przelew_bankowy.z_rachunku`: oczekiwano ["PL62217000089152501756617062"], otrzymano ["62217000089152501756617062"]
-- `0004` `przelew_bankowy.tytul`: oczekiwano ["OPŁATA SKARBOWA OD PEŁNOMOCNICTWA DLA RADCA PRAWNY KRZYSZTOF JODŁOWSKI W POSTĘPOWANIU PRZED KIO W PRZETARGU DZP.260.69.2026"], otrzymano ["OPLATA SKARBOWA OD PELNOMOCNICTWA DLA RADCA PRAWNY KRZYSZTOF JODŁOWSKI W POSTĘPOWANIU PRZED KIO W PRZETARGU DZP.260.69.2026"]
+- `0004` `przelew_bankowy.tytul`: oczekiwano ["OPŁATA SKARBOWA OD PEŁNOMOCNICTWA DLA RADCA PRAWNY KRZYSZTOF JODŁOWSKI W POSTĘPOWANIU PRZED KIO W PRZETARGU DZP.260.69.2026"], otrzymano ["OPLATA SKARBOWA OD PELNOMOCNICTWA DLA RADCA PRAWNY KRZYSZTOF JODŁOWSKI W POSTEPOWANIU PRZED KIO W PRZETARGU DZP.260.69.2026"]
 - `0005` `przelew_bankowy.tytul`: oczekiwano ["Wpis od odwołania, ZP/12/2026, REGIONALNE CENTRUM ZDROWIA PUBLICZNEGO W DĘBNICY GÓRNEJ"], otrzymano ["Wpis od odwolania, ZP/12/2026, REGIONALNE CENTRUM ZDROWIA PUBLICZNEGO W DEBNICY GÓRNEJ"]
-- `0006` `przelew_bankowy.z_rachunku`: oczekiwano ["PL75217000080889261999999470"], otrzymano ["75217000080889261999999470"]
 - `0007` `przelew_bankowy.tytul`: oczekiwano ["Wpis od odwołania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE"], otrzymano ["Wpis od odwolania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE"]
 - `0008` `przelew_bankowy.tytul`: oczekiwano ["opłata skarbowa od pełnomocnictwa dla adw. Rafał Malinowski w postępowaniu przed KIO w przetargu ZP/134/2026"], otrzymano ["opłata skarbowa od pełnomocnictwa dla adw Rafał Maknowski w postępowaniu przed KIO w przetargu ZP/134/2026"]
 - `0009` `przelew_bankowy.tytul`: oczekiwano ["WPIS OD ODWOŁANIA, DA.ZP.242.13.2026, MIEJSKI OŚRODEK SPORTU I REKREACJI W OLSZANOWIE"], otrzymano ["WPIS OD ODWOLANIA, DA.ZP:242.13.2026, MIEJSKI OŚRODEK SPORTU I REKREACJI W OLSZANOWIE"]

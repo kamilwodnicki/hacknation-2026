@@ -23,7 +23,7 @@ from src.validation.normalizers import VALUE_TYPES, fold
 TYPE_HINTS = {
     "date": "data w formacie RRRR-MM-DD",
     "amount": "liczba (np. 10000.00)",
-    "iban_pl": "numer rachunku: 26 cyfr bez spacji i bez PL",
+    "iban_pl": "numer rachunku: 26 cyfr bez spacji; z prefiksem PL tylko wtedy, gdy ma go dokument",
     "nip": "NIP: 10 cyfr bez kresek",
     "regon": "REGON: 9 lub 14 cyfr",
     "krs": "KRS: 10 cyfr",
@@ -35,7 +35,10 @@ TYPE_HINTS = {
     "integer": "liczba całkowita",
     "email": "adres e-mail",
     "person": "imię i nazwisko w MIANOWNIKU (kto?), np. 'Jan Kowalski', nie 'Janowi Kowalskiemu'",
-    "company": "pełna nazwa podmiotu z formą prawną",
+    "company": (
+        "nazwa podmiotu DOKŁADNIE tak, jak zapisano w dokumencie, z formą prawną — bez rozwijania "
+        "i skracania skrótów ('sp. k.' zostaje 'sp. k.', 'spółka akcyjna' zostaje 'spółka akcyjna')"
+    ),
     "place": "nazwa miejscowości w mianowniku",
 }
 
@@ -183,9 +186,14 @@ class _Grounding:
         self.folded = fold(text)
         self.compact = re.sub(r"\s+", "", self.folded)
 
+    def iban_as_in_document(self, value: str) -> str:
+        """Account number with "PL" exactly when the document writes it with "PL"."""
+        digits = value.removeprefix("PL")
+        return f"PL{digits}" if f"pl{digits}" in self.compact else digits
+
     def check(self, value_type: str, value: Any) -> bool:
         if value_type in _DIGIT_TYPES:
-            return str(value) in self.digits
+            return str(value).removeprefix("PL") in self.digits
         if value_type in _EXACT_TYPES:
             return re.sub(r"\s+", "", fold(str(value))) in self.compact
         if value_type in _WORD_TYPES:
@@ -218,6 +226,8 @@ def validate_value(spec: FieldSpec, value: Any, grounding: _Grounding) -> tuple[
         return None, f"AI: zła suma kontrolna {normalized}"
     if not grounding.check(spec.type, normalized):
         return None, f"AI: wartości '{normalized}' nie ma w treści dokumentu"
+    if spec.type == "iban_pl":
+        normalized = grounding.iban_as_in_document(normalized)
     return normalized, None
 
 
@@ -267,6 +277,10 @@ class _Merger:
 
     def _gate(self, spec: FieldSpec, rule_value: Any, value: Any) -> str | None:
         """Type-specific reasons not to let a model value replace / fill a field."""
+        if spec.type == "text" and rule_value is not None and value != rule_value:
+            shorter, longer = fold(str(value)), fold(str(rule_value))
+            if shorter and shorter != longer and shorter in longer:
+                return f"AI: '{value}' to tylko fragment wartości reguły"
         if spec.type == "person":
             if len(_words(value)) > 3 or "," in str(value) or " i " in str(value):
                 return f"AI: '{value}' to więcej niż jedna osoba"

@@ -80,7 +80,7 @@ Typ odpowiada za **wzorzec wyszukiwania** i **normalizację** do formatu UZP.
 |---|---|---|
 | `date` | `5 marca 2026 r.`, `05.03.2026`, `2026-03-05` | `2026-03-05` |
 | `amount` | `10 000,00 zł`, `PLN 34.00` | `10000.0` |
-| `iban_pl` | `PL61 1090 1014 0000 0712 1981 2874` | `61109010140000071219812874` |
+| `iban_pl` | `PL61 1090 1014 0000 0712 1981 2874` / `61 1090 ...` | `PL61109010140000071219812874` / `611090...` (prefiks PL tylko, gdy jest w dokumencie) |
 | `nip`, `regon`, `krs`, `pesel` | `NIP: 554-024-05-49` | `5540240549` (+ suma kontrolna) |
 | `ted` | `2025/S 112-383751` | `383751-2025` |
 | `bzp` | `2025/BZP 00270698` | `2025/BZP00270698` |

@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_skany
 
-Wygenerowano: 2026-11-21 19:15
+Wygenerowano: 2026-11-21 20:47
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
 
@@ -14,10 +14,10 @@ Tryb ekstrakcji: **rules**.
 
 | | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
-| **RAZEM** | 190 | 14 | 119 | 0.931 | 0.615 | **0.741** | 0.729 |
+| **RAZEM** | 193 | 11 | 116 | 0.946 | 0.625 | **0.752** | 0.741 |
 | odwolanie (10 dok.) | 113 | 7 | 64 | 0.942 | 0.638 | **0.761** | 0.761 |
 | pelnomocnictwo (10 dok.) | 41 | 2 | 37 | 0.953 | 0.526 | **0.678** | 0.678 |
-| przelew (10 dok.) | 36 | 5 | 18 | 0.878 | 0.667 | **0.758** | 0.695 |
+| przelew (10 dok.) | 39 | 2 | 15 | 0.951 | 0.722 | **0.821** | 0.758 |
 
 ## Klasyfikacja
 
@@ -56,7 +56,7 @@ Trafność: **1.000** (30/30)
 | `ZamowieniePubliczne.numer_ted` | 7 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `ZamowieniePubliczne.tytul` | 9 | 0 | 1 | 1.000 | 0.900 | **0.947** | 0.947 |
 
-Przykładowe różnice dokładne (40 z 64):
+Przykładowe różnice dokładne (20 z 64):
 
 - `0001` `OdwolanieKIO.czynnosc_dzien`: oczekiwano ["2026-09-06"], otrzymano [null]
 - `0001` `Odwolujacy[].pelnomocnik.imie_nazwisko`: oczekiwano ["Aleksandra Rybak"], otrzymano [null]
@@ -78,26 +78,6 @@ Przykładowe różnice dokładne (40 z 64):
 - `0004` `Odwolujacy[].pelnomocnik.imie_nazwisko`: oczekiwano ["Krzysztof Jodłowski"], otrzymano [null]
 - `0004` `Odwolujacy[].przez-pelnomocnika`: oczekiwano [1], otrzymano [0]
 - `0005` `OdwolanieKIO.czynnosc_dzien`: oczekiwano ["2026-03-23"], otrzymano [null]
-- `0005` `OdwolanieKIO.czynnosc_opis`: oczekiwano ["Opis przedmiotu zamówienia (OPZ)"], otrzymano [null]
-- `0005` `OdwolanieKIO.czynnosc_powod_id`: oczekiwano [11], otrzymano [null]
-- `0005` `Odwolujacy[].nazwa`: oczekiwano ["Medicor IT Solutions S.A."], otrzymano []
-- `0005` `Odwolujacy[].nip`: oczekiwano ["9992326754"], otrzymano []
-- `0005` `Odwolujacy[].pelnomocnik.imie_nazwisko`: oczekiwano ["Grzegorz Kaczmarek"], otrzymano []
-- `0005` `Odwolujacy[].pelnomocnik.mail`: oczekiwano ["g.kaczmarek@kaczmarek-kancelaria.example"], otrzymano []
-- `0005` `Odwolujacy[].pelnomocnik.nazwa`: oczekiwano ["Kancelaria Adwokacka adw. Grzegorz Kaczmarek"], otrzymano []
-- `0005` `Odwolujacy[].przez-pelnomocnika`: oczekiwano [1], otrzymano []
-- `0005` `Odwolujacy[].regon`: oczekiwano ["999749508"], otrzymano []
-- `0005` `Zamawiajacy[].nazwa`: oczekiwano ["Regionalne Centrum Zdrowia Publicznego w Dębnicy Górnej"], otrzymano []
-- `0005` `Zamawiajacy[].nip`: oczekiwano ["9996245053"], otrzymano []
-- `0005` `ZamowieniePubliczne.numer_bzp`: oczekiwano ["2026/BZP00879135/03"], otrzymano [null]
-- `0005` `ZamowieniePubliczne.numer_postepowania`: oczekiwano ["ZP/12/2026"], otrzymano [null]
-- `0006` `OdwolanieKIO.czynnosc_dzien`: oczekiwano ["2026-05-11"], otrzymano [null]
-- `0006` `Odwolujacy[].krs`: oczekiwano ["9997873010"], otrzymano []
-- `0006` `Odwolujacy[].nazwa`: oczekiwano ["Nordenix Automatyka Sp. z o.o."], otrzymano []
-- `0006` `Odwolujacy[].nip`: oczekiwano ["9991785572"], otrzymano []
-- `0006` `Odwolujacy[].pelnomocnik.imie_nazwisko`: oczekiwano ["Sylwia Sikora"], otrzymano []
-- `0006` `Odwolujacy[].pelnomocnik.mail`: oczekiwano ["s.sikora@olszewski-kancelaria.example"], otrzymano []
-- `0006` `Odwolujacy[].pelnomocnik.nazwa`: oczekiwano ["Kancelaria Prawna Olszewski & Partnerzy sp. k."], otrzymano []
 
 ## pelnomocnictwo
 
@@ -112,7 +92,7 @@ Przykładowe różnice dokładne (40 z 64):
 | `pelnomocnicy[].imie_nazwisko` | 1 | 0 | 16 | 1.000 | 0.059 | **0.111** | 0.111 |
 | `pelnomocnicy[].pesel` | 0 | 0 | 4 | 0.000 | 0.000 | **0.000** | 0.000 |
 
-Przykładowe różnice dokładne (25 z 25):
+Przykładowe różnice dokładne (20 z 25):
 
 - `0001` `mocodawca[].podpisujacy[].imie_nazwisko`: oczekiwano ["Szymon Brzozowski"], otrzymano []
 - `0001` `pelnomocnicy[].imie_nazwisko`: oczekiwano ["Aleksandra Rybak", "Halina Jodłowska", "Wojciech Kaczmarek"], otrzymano []
@@ -134,11 +114,6 @@ Przykładowe różnice dokładne (25 z 25):
 - `0008` `pelnomocnicy[].imie_nazwisko`: oczekiwano ["Rafał Malinowski"], otrzymano []
 - `0009` `mocodawca[].podpisujacy[].imie_nazwisko`: oczekiwano ["Żaneta Rybak", "Jakub Zawadzki"], otrzymano []
 - `0009` `pelnomocnicy[].imie_nazwisko`: oczekiwano ["Anna Topolska", "Piotr Wróbel"], otrzymano []
-- `0009` `pelnomocnicy[].pesel`: oczekiwano ["68091502944", "82070226436"], otrzymano []
-- `0010` `mocodawca[].data.imie_nazwisko`: oczekiwano ["Paweł Brzozowski"], otrzymano [null]
-- `0010` `mocodawca[].data.typ`: oczekiwano ["osoba_fizyczna"], otrzymano ["osoba_prawna"]
-- `0010` `mocodawca[].podpisujacy[].imie_nazwisko`: oczekiwano ["Paweł Brzozowski"], otrzymano []
-- `0010` `pelnomocnicy[].imie_nazwisko`: oczekiwano ["Andrzej Wróbel", "Monika Zawadzka"], otrzymano []
 
 ## przelew
 
@@ -148,26 +123,23 @@ Przykładowe różnice dokładne (25 z 25):
 | `przelew_bankowy.kwota` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.na_rachunek` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.numer_transakcji` | 1 | 0 | 3 | 1.000 | 0.250 | **0.400** | 0.400 |
-| `przelew_bankowy.tytul` | 4 | 3 | 6 | 0.571 | 0.400 | **0.471** | 0.118 |
-| `przelew_bankowy.z_rachunku` | 8 | 2 | 2 | 0.800 | 0.800 | **0.800** | 0.800 |
+| `przelew_bankowy.tytul` | 5 | 2 | 5 | 0.714 | 0.500 | **0.588** | 0.235 |
+| `przelew_bankowy.z_rachunku` | 10 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
-Przykładowe różnice dokładne (21 z 21):
+Przykładowe różnice dokładne (18 z 18):
 
 - `0001` `przelew_bankowy.numer_transakcji`: oczekiwano ["CEN9057564440515"], otrzymano [null]
 - `0001` `przelew_bankowy.tytul`: oczekiwano ["wpis od odwołania - postępowanie nr DA.ZP.242.50.2026 CEN9057564440515"], otrzymano ["wpis od odwolania - postępowanie nr DA.ZP.242.50.2026 CEN9057564440515"]
-- `0001` `przelew_bankowy.z_rachunku`: oczekiwano ["PL62217000089152501756617062"], otrzymano ["62217000089152501756617062"]
 - `0002` `przelew_bankowy.data_operacji`: oczekiwano ["2026-04-09"], otrzymano [null]
-- `0002` `przelew_bankowy.tytul`: oczekiwano ["opłata skarbowa od pełnomocnictwa dla adw. Mateusz Wierzbicki w postępowaniu przed KIO w przetargu ZG.261.8.2026"], otrzymano ["opłata skarbowa od pełnomocnictwa dla adw. Mateusz Wierzbicki w postępowaniu przed KIO w przetargu ZG.261.8.2026 Dok od go. Bank Centralny Polska S.A. z siedzibą w Warszawie, al. Finansowa 1, 00-001 Warszawa, zarejestrowany w Sądzie Rejonowym dla m.st. Warszawy, XIl"]
 - `0003` `przelew_bankowy.data_operacji`: oczekiwano ["2026-07-15"], otrzymano [null]
-- `0003` `przelew_bankowy.tytul`: oczekiwano ["WPIS OD ODW., ZAM: KOMENDA WOJEWÓDZKA PAŃSTWOWEJ STRAŻY POŻARNEJ W JA, PN/58/2026/DOS"], otrzymano ["WPIS OD ODW., ZAM: KOMENDA WOJEWÓDZKA PAÑSTWOWEJ STRAŻY POŻARNEJ W JA, PN/58/2026/DOS Signature Not Verified"]
+- `0003` `przelew_bankowy.tytul`: oczekiwano ["WPIS OD ODW., ZAM: KOMENDA WOJEWÓDZKA PAŃSTWOWEJ STRAŻY POŻARNEJ W JA, PN/58/2026/DOS"], otrzymano ["WPIS OD ODW., ZAM: KOMENDA WOJEWÓDZKA PAÑSTWOWEJ STRAŻY POŻARNEJ W JA, PN/58/2026/DOS"]
 - `0004` `przelew_bankowy.tytul`: oczekiwano ["OPŁATA SKARBOWA OD PEŁNOMOCNICTWA DLA RADCA PRAWNY KRZYSZTOF JODŁOWSKI W POSTĘPOWANIU PRZED KIO W PRZETARGU DZP.260.69.2026"], otrzymano ["Rachunek odbiorcy: 90103015082458665313544731 Nazwa odbiorcy: URZAD MIASTA WRZOSOWO Tytut: OPLATA SKARBOWA OD PELNOMOCNICTWA DLA"]
 - `0005` `przelew_bankowy.data_operacji`: oczekiwano ["2026-03-26"], otrzymano [null]
 - `0005` `przelew_bankowy.numer_transakcji`: oczekiwano ["305494"], otrzymano [null]
 - `0005` `przelew_bankowy.tytul`: oczekiwano ["Wpis od odwołania, ZP/12/2026, REGIONALNE CENTRUM ZDROWIA PUBLICZNEGO W DĘBNICY GÓRNEJ"], otrzymano [null]
 - `0006` `przelew_bankowy.data_operacji`: oczekiwano ["2026-05-20"], otrzymano [null]
-- `0006` `przelew_bankowy.z_rachunku`: oczekiwano ["PL75217000080889261999999470"], otrzymano ["75217000080889261999999470"]
 - `0007` `przelew_bankowy.data_operacji`: oczekiwano ["2026-03-17"], otrzymano [null]
-- `0007` `przelew_bankowy.tytul`: oczekiwano ["Wpis od odwołania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE"], otrzymano ["Wpis od odwolania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE Dok e ego"]
+- `0007` `przelew_bankowy.tytul`: oczekiwano ["Wpis od odwołania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE"], otrzymano ["Wpis od odwolania, ZP.271.59.2026, MUZEUM REGIONALNE W OLSZANOWIE"]
 - `0008` `przelew_bankowy.data_operacji`: oczekiwano ["2026-04-20"], otrzymano [null]
 - `0008` `przelew_bankowy.tytul`: oczekiwano ["opłata skarbowa od pełnomocnictwa dla adw. Rafał Malinowski w postępowaniu przed KIO w przetargu ZP/134/2026"], otrzymano [null]
 - `0009` `przelew_bankowy.tytul`: oczekiwano ["WPIS OD ODWOŁANIA, DA.ZP.242.13.2026, MIEJSKI OŚRODEK SPORTU I REKREACJI W OLSZANOWIE"], otrzymano ["Rachunek odbiorcy: 60101010100081362231000000 Nazwa odbiorcy: URZAD ZAMÓWIEÑ PUBLICZNYCH Tytul: WPIS OD ODWOLANIA, DA.ZP:242.13.2026, MIEJSKI"]

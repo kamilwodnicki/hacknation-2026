@@ -139,7 +139,7 @@ output:
 
     na_rachunek:
       type: iban_pl
-      description: Numer rachunku odbiorcy (26 cyfr, bez PL i spacji).
+      description: Numer rachunku odbiorcy (26 cyfr bez spacji; z "PL", jeśli tak zapisano w dokumencie).
       extract:
         - method: label
           labels: [Rachunek odbiorcy, Rachunek beneficjenta, Rachunek uznawany, Na rachunek, Rachunek adresata, Rachunek kontrahenta]
@@ -173,16 +173,17 @@ output:
           labels: [Tytuł przelewu, Tytułem, Tytuł operacji, Tytuł, Szczegóły płatności]
           multiline: true
           max_lines: 6
-          until: '\s(?:Strona\s+\d|\S+\s+Bank\s+Polska\s+S\.A\.)'
+          # stopka wydruku: "Dok...", "Strona 1/1", "Signature Not Verified", "X Bank Polska S.A. z siedzibą ..."
+          until: '\s(?:Dok\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
         - method: label
           labels: [Opis operacji, Opis]
           multiline: true
           max_lines: 6
-          until: '\s(?:Strona\s+\d|\S+\s+Bank\s+Polska\s+S\.A\.)'
+          until: '\s(?:Dok\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
 
     z_rachunku:
       type: iban_pl
-      description: Numer rachunku nadawcy/zleceniodawcy (26 cyfr, bez PL i spacji).
+      description: Numer rachunku nadawcy/zleceniodawcy (26 cyfr bez spacji; z "PL", jeśli tak zapisano w dokumencie).
       extract:
         - method: label
           labels: [Rachunek zleceniodawcy, Rachunek nadawcy, Rachunek obciążany, Rachunek płatnika, Z rachunku]

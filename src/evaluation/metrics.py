@@ -131,10 +131,22 @@ def _score(
     return result
 
 
-def compare(predicted: Any, reference: Any, fuzzy_fields: dict[str, float] | None = None) -> Comparison:
-    """`fuzzy_fields`: path ('a[].b') -> similarity threshold for the uzp mode."""
+def _digits(values: dict[str, list[str]], paths: set[str]) -> dict[str, list[str]]:
+    return {p: ["".join(ch for ch in v if ch.isdigit()) if p in paths else v for v in vs] for p, vs in values.items()}
+
+
+def compare(
+    predicted: Any,
+    reference: Any,
+    fuzzy_fields: dict[str, float] | None = None,
+    digits_only: set[str] | None = None,
+) -> Comparison:
+    """`fuzzy_fields`: path ('a[].b') -> similarity threshold for the uzp mode.
+    `digits_only`: paths compared by their digits only in the uzp mode (e.g. an account number
+    with / without the "PL" prefix, where the reference files are inconsistent)."""
     pred, ref = _values_by_path(predicted), _values_by_path(reference)
-    comparison = Comparison(exact=_score(pred, ref, {}), uzp=_score(pred, ref, fuzzy_fields or {}))
+    uzp_pred, uzp_ref = (_digits(pred, digits_only), _digits(ref, digits_only)) if digits_only else (pred, ref)
+    comparison = Comparison(exact=_score(pred, ref, {}), uzp=_score(uzp_pred, uzp_ref, fuzzy_fields or {}))
 
     raw_pred: dict[str, list[Any]] = {}
     raw_ref: dict[str, list[Any]] = {}

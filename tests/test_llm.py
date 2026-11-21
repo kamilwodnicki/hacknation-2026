@@ -117,6 +117,14 @@ def test_prefer_and_never_policies():
     assert "reguła: stara wartość" in merged.fields["a"].warnings
 
 
+def test_prefer_does_not_replace_rule_with_its_own_fragment():
+    t = doc_type({"a": {"type": "text", "llm": "prefer", "extract": [{"method": "label", "labels": ["Tytuł"]}]}})
+    d = doc("Tytuł: wpis od odwołania ZP.1.2026 CEN123456")
+    merged = merge(extract(d, t), {"a": "wpis od odwołania ZP.1.2026"}, d, t, "fake")
+    assert merged.data == {"a": "wpis od odwołania ZP.1.2026 CEN123456"}
+    assert any("fragment" in w for w in merged.fields["a"].warnings)
+
+
 def test_lists_from_model_when_rules_found_none_and_pairing_by_key():
     t = doc_type(
         {
@@ -354,3 +362,13 @@ def test_rules_mode_without_provider_never_calls_model(fake_llm):
     fake = fake_llm({"osoba": "Jan Kowalski"})
     pipeline.extract_with_llm(doc(TEXT), doc_type(TYPE), mode="rules")
     assert fake.calls == []
+
+
+def test_account_prefix_follows_the_document_not_the_model():
+    t = doc_type({"z": {"type": "iban_pl", "llm": "prefer"}, "na": {"type": "iban_pl", "llm": "prefer"}})
+    d = doc("Z rachunku PL61 1090 1014 0000 0712 1981 2874\nNa rachunek 60 1010 1010 0081 3622 3100 0000")
+    llm = {"z": "61109010140000071219812874", "na": "PL60101010100081362231000000"}
+    assert merge(extract(d, t), llm, d, t, "fake").data == {
+        "z": "PL61109010140000071219812874",
+        "na": "60101010100081362231000000",
+    }

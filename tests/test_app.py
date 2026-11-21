@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from src.api.main import app
 from src.cli import main as cli_main
 from src.cli import output_path
-from tests.conftest import transfer_pdf
+from tests.conftest import transfer_pdf, without_account_prefix
 
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
 CASE = DATA_DIR / "dane" / "przyklad_01"
@@ -60,7 +60,7 @@ def test_cli_processes_case_tree(tmp_path):
         "case2/ogloszenie.json",
     ]
     przelew = json.loads((output_dir / "case1" / "potwierdzenie_przelewu.json").read_text(encoding="utf-8"))
-    assert przelew == json.loads((CASE / "przelew.json").read_text(encoding="utf-8-sig"))
+    assert without_account_prefix(przelew) == json.loads((CASE / "przelew.json").read_text(encoding="utf-8-sig"))
     assert json.loads((output_dir / "case2" / "ogloszenie.json").read_text(encoding="utf-8")) == {}
 
     meta = json.loads((meta_dir / "case1" / "odwolanie.meta.json").read_text(encoding="utf-8"))
@@ -91,7 +91,7 @@ def test_api_extract_returns_uzp_json_and_provenance():
     assert response.status_code == 200
     body = response.json()
     assert body["document_type"] == "przelew"
-    assert body["output"] == json.loads((CASE / "przelew.json").read_text(encoding="utf-8-sig"))
+    assert without_account_prefix(body["output"]) == json.loads((CASE / "przelew.json").read_text(encoding="utf-8-sig"))
     assert body["fields"]["przelew_bankowy.kwota"]["page"] == 1
     assert body["classification"]["scores"]["przelew"]["score"] > 0
     assert body["pages_text"] and "przelew" in body["pages_text"][0].lower()

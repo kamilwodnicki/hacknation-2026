@@ -85,6 +85,15 @@ def _fixed_digits(lengths: tuple[int, ...]) -> Callable[[str], str | None]:
     return normalize
 
 
+def normalize_iban_pl(raw: str) -> str | None:
+    """26 digits without spaces; the "PL" prefix is kept when the document has it
+    (organizer, Discord 2026-11-21: the number as written in the document)."""
+    digits = _digits_only(raw)
+    if len(digits) != 26:
+        return None
+    return f"PL{digits}" if re.match(r"\s*PL", raw, re.IGNORECASE) else digits
+
+
 def normalize_ted(raw: str) -> str | None:
     s = raw.strip()
     if m := re.search(r"(\d{4})\s*/\s*S\s*\d{1,3}\s*-\s*(\d{5,6})", s):
@@ -199,7 +208,7 @@ VALUE_TYPES: dict[str, ValueType] = {
     "date": ValueType(DATE_PATTERN, normalize_date),
     "amount": ValueType(AMOUNT_PATTERN, normalize_amount),
     # Digit groups may be separated by a space or a line break (wrapped account number).
-    "iban_pl": ValueType(r"(?<![\dA-Z])(?:PL)?\s?\d{2}(?:\s?\d{4}){6}(?!\d)", _fixed_digits((26,)), "iban_pl"),
+    "iban_pl": ValueType(r"(?<![\dA-Z])(?:PL)?\s?\d{2}(?:\s?\d{4}){6}(?!\d)", normalize_iban_pl, "iban_pl"),
     "nip": ValueType(r"(?<!\d)\d{3}[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}(?!\d)|(?<!\d)\d{3}[- ]?\d{2}[- ]?\d{2}[- ]?\d{3}(?!\d)", _fixed_digits((10,)), "nip"),
     "regon": ValueType(r"(?<!\d)\d{9}(?:\d{5})?(?!\d)", _fixed_digits((9, 14)), "regon"),
     "krs": ValueType(r"(?<!\d)\d{10}(?!\d)", _fixed_digits((10,)), "krs"),

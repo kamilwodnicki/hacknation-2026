@@ -65,7 +65,8 @@ def test_normalize_text_strips_quotes_and_whitespace():
 
 
 def test_iban_digits():
-    assert VALUE_TYPES["iban_pl"].normalize("PL61 1090 1014 0000 0712 1981 2874") == "61109010140000071219812874"
+    assert VALUE_TYPES["iban_pl"].normalize("PL61 1090 1014 0000 0712 1981 2874") == "PL61109010140000071219812874"
+    assert VALUE_TYPES["iban_pl"].normalize("61 1090 1014 0000 0712 1981 2874") == "61109010140000071219812874"
     assert VALUE_TYPES["iban_pl"].normalize("PL61 1090") is None
 
 
@@ -81,7 +82,7 @@ def test_checksums():
     assert not regon_valid("000279078")
     assert pesel_valid("44051401359")
     assert not pesel_valid("44051401358")
-    assert iban_pl_valid("61109010140000071219812874")
+    assert iban_pl_valid("61109010140000071219812874") and iban_pl_valid("PL61109010140000071219812874")
     assert not iban_pl_valid("61109010140000071219812875")
 
 
