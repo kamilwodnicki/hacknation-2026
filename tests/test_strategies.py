@@ -172,6 +172,6 @@ def test_training_f1_does_not_regress(kind):
     total = Counts()
     for case in TRAINING:
         reference = json.loads((case / f"{kind}.json").read_text(encoding="utf-8-sig"))
-        for counts in compare(extract(read_pdf(case / f"{kind}.pdf"), t).data, reference).strict.values():
+        for counts in compare(extract(read_pdf(case / f"{kind}.pdf"), t).data, reference).exact.values():
             total += counts
     assert total.f1 >= {"odwolanie": 0.995, "pelnomocnictwo": 0.995}[kind]

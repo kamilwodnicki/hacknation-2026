@@ -34,6 +34,10 @@ classification:
     - Pełnomocnictwo ogólne
   exclude:
     - ogłoszenie o zamówieniu lub ogłoszenie o koncesji
+    # orzeczenia KIO (wyroki, postanowienia) dotyczą odwołań, ale nimi nie są
+    - sygn. akt kio
+    - wyrok z dnia
+    - postanowienie z dnia
     - see the notice on ted website
     - potwierdzenie przelewu
   min_score: 4

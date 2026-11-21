@@ -9,6 +9,16 @@
 name: uzp_training
 data_dir: dane
 cases: "przyklad_*"
+
+# Pola typu "długi string" — wg organizatora (Discord, 2026-11-21) zaliczane przy podobieństwie
+# >= 80%; pozostałe pola (KRS, NIP, daty, kwoty, ...) muszą się zgadzać dokładnie.
+fuzzy_threshold: 0.8
+fuzzy_fields:
+  - Odwolujacy[].pelnomocnik.nazwa          # nazwa firmy pełnomocnika
+  - przelew_bankowy.tytul                   # tytuł przelewu
+  - Odwolujacy[].nazwa                      # nazwa Odwołującego
+  - Zamawiajacy[].nazwa                     # nazwa Zamawiającego
+  - ZamowieniePubliczne.tytul               # tytuł zamówienia publicznego
 documents:
   - pdf: odwolanie.pdf
     reference: odwolanie.json
@@ -20,10 +30,22 @@ documents:
     reference: przelew.json
     document_type: przelew
 
-# Dokumenty sprawdzane tylko pod kątem klasyfikacji (ścieżki względem katalogu danych).
-# document_type: null = dokument spoza klas → oczekiwany pusty JSON.
+# Dokumenty sprawdzane tylko pod kątem klasyfikacji (ścieżki względem katalogu danych,
+# można używać wzorców glob). document_type: null = dokument spoza klas → pusty JSON.
 extra:
   - pdf: szablon-aplikacja/input/case1/negatywny przyklad.pdf
     document_type: null
   - pdf: szablon-aplikacja/input/case1/przyklad odwolanie.pdf
     document_type: odwolanie
+  # Negatywy organizatora (aktualizacja z 2026-11-21): katalog dane/negatywne ...
+  - pdf: dane/negatywne/*.pdf
+    document_type: null
+  # ... oraz dokumenty dołożone do wybranych przykładów (nazwy spoza schematu sprawy).
+  - pdf: dane/przyklad_04/2025_S 112-383751.pdf
+    document_type: null
+  - pdf: dane/przyklad_10/2025-OJS107-00364525-pl-ts.pdf
+    document_type: null
+  - pdf: dane/przyklad_24/prowadzenie_postepowania_odwolawczego.pdf
+    document_type: null
+  - pdf: dane/przyklad_37/2025_BZP 00143067_01.pdf
+    document_type: null

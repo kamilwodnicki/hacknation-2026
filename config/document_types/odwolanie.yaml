@@ -30,6 +30,10 @@ classification:
   # Dokumenty z tymi frazami w nagłówku to nie odwołanie, choć mówią o tym samym postępowaniu.
   exclude:
     - ogłoszenie o zamówieniu lub ogłoszenie o koncesji
+    # orzeczenia KIO (wyroki, postanowienia) dotyczą odwołań, ale nimi nie są
+    - sygn. akt kio
+    - wyrok z dnia
+    - postanowienie z dnia
     - see the notice on ted website
     - odpowiedź na odwołanie
     - zgłoszenie przystąpienia
@@ -106,6 +110,8 @@ output:
               any: [opublikował specyfikację, specyfikację warunków zamówienia, opublikował swz]
             - value: 11
               any: [opis przedmiotu zamówienia, udostępnił opis]
+            - value: 12
+              any: [projektowane postanowienia umowy, projektowanych postanowień umowy, postanowienia umowy, wzór umowy, wzoru umowy]
 
     czynnosc_opis:
       type: text

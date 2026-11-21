@@ -2,13 +2,23 @@ x-app: &app
   build: .
   image: odwolania2json:latest
   env_file:
-    - .env
+    - path: .env
+      required: false
   volumes:
     - ./input:/app/input
     - ./output:/app/output
+    - ./meta:/app/meta
     - ./config:/app/config:ro
 
 services:
+  # Przetwarzanie wsadowe input/ -> output/ (uruchamiane przez start.bat / start.sh):
+  #   docker compose run --rm cli
+  cli:
+    <<: *app
+    command: python -m src process
+    profiles: ["batch"]
+
+  # API + GUI: docker compose up -d  ->  http://localhost:8501
   api:
     <<: *app
     command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
@@ -22,7 +32,9 @@ services:
 
   ui:
     <<: *app
-    command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501
+    command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501 --server.maxUploadSize 50 --client.toolbarMode viewer
+    environment:
+      API_URL: http://api:8000
     ports:
       - "${UI_PORT:-8501}:8501"
     depends_on:
@@ -30,7 +42,7 @@ services:
         condition: service_healthy
 
   # Testy / narzędzia deweloperskie: docker compose run --rm tests
-  # Kod (src, tests) montowany z dysku — zmiany nie wymagają przebudowy obrazu.
+  # Kod (src, tests, ui) montowany z dysku — zmiany nie wymagają przebudowy obrazu.
   # Dane organizatora (UZP_DATA_DIR) montowane tylko do odczytu w /data.
   tests:
     <<: *app
@@ -40,8 +52,10 @@ services:
     volumes:
       - ./input:/app/input
       - ./output:/app/output
+      - ./meta:/app/meta
       - ./config:/app/config:ro
       - ./src:/app/src
+      - ./ui:/app/ui
       - ./tests:/app/tests
       - ./reports:/app/reports
       - ${UZP_DATA_DIR:-./dane}:/data:ro

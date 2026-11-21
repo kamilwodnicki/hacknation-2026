@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from src.classification import classify
 from src.evaluation.metrics import Counts, Mismatch, compare
 from src.extraction import DocumentType, extract
-from src.ingestion import read_pdf
+from src.ingestion import IngestionError, read_pdf
 
 
 class DatasetDocument(BaseModel):
@@ -36,6 +36,12 @@ class Dataset(BaseModel):
     cases: str
     documents: list[DatasetDocument]
     extra: list[ExtraDocument] = []
+    fuzzy_fields: list[str] = []
+    """Paths of "long string" fields compared by similarity in the uzp metric."""
+    fuzzy_threshold: float = 0.8
+
+    def fuzzy_paths(self) -> dict[str, float]:
+        return {path: self.fuzzy_threshold for path in self.fuzzy_fields}
 
 
 def load_dataset(path: Path) -> Dataset:
@@ -47,14 +53,14 @@ class TypeReport:
     documents: int = 0
     defined: bool = True
     """False when the YAML definition has no output fields yet (all values count as FN)."""
-    strict: dict[str, Counts] = field(default_factory=dict)
-    lenient: dict[str, Counts] = field(default_factory=dict)
+    exact: dict[str, Counts] = field(default_factory=dict)
+    uzp: dict[str, Counts] = field(default_factory=dict)
     errors: list[tuple[str, Mismatch]] = field(default_factory=list)
     """(case name, mismatch)"""
 
-    def total(self, lenient: bool = False) -> Counts:
+    def total(self, mode: str = "uzp") -> Counts:
         total = Counts()
-        for counts in (self.lenient if lenient else self.strict).values():
+        for counts in getattr(self, mode).values():
             total += counts
         return total
 
@@ -76,10 +82,10 @@ class EvaluationReport:
     classifications: list[ClassificationOutcome]
     missing_files: list[str]
 
-    def total(self, lenient: bool = False) -> Counts:
+    def total(self, mode: str = "uzp") -> Counts:
         total = Counts()
         for report in self.types.values():
-            total += report.total(lenient)
+            total += report.total(mode)
         return total
 
     def confusion(self) -> Counter[tuple[str | None, str | None]]:
@@ -126,21 +132,27 @@ def evaluate(
             )
             used_type = expected_type if oracle else document_types.get(result.document_type or "")
             predicted = extract(doc, used_type).data if used_type else {}
-            comparison = compare(predicted, _load_reference(ref_path))
+            comparison = compare(predicted, _load_reference(ref_path), dataset.fuzzy_paths())
 
-            for target, source in ((report.strict, comparison.strict), (report.lenient, comparison.lenient)):
+            for target, source in ((report.exact, comparison.exact), (report.uzp, comparison.uzp)):
                 for path, counts in source.items():
                     target.setdefault(path, Counts())
                     target[path] += counts
             report.errors.extend((case.name, m) for m in comparison.mismatches)
 
     for extra in dataset.extra:
-        pdf = data_root / extra.pdf
-        if not pdf.exists():
-            missing.append(extra.pdf)
-            continue
-        result = classify(read_pdf(pdf), document_types)
-        outcomes.append(ClassificationOutcome(extra.pdf, extra.document_type, result.document_type, result.reason))
+        pdfs = sorted(data_root.glob(extra.pdf)) if any(c in extra.pdf for c in "*?[") else [data_root / extra.pdf]
+        for pdf in pdfs:
+            if not pdf.exists():
+                missing.append(extra.pdf)
+                continue
+            try:
+                result = classify(read_pdf(pdf), document_types)
+                predicted, reason = result.document_type, result.reason
+            except IngestionError as exc:
+                predicted, reason = None, f"unreadable: {exc}"
+            name = str(pdf.relative_to(data_root)).replace("\\", "/")
+            outcomes.append(ClassificationOutcome(name, extra.document_type, predicted, reason))
 
     return EvaluationReport(
         dataset=dataset.name, oracle=oracle, types=reports, classifications=outcomes, missing_files=missing

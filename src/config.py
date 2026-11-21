@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     input_dir: Path = Path("input")
     output_dir: Path = Path("output")
     config_dir: Path = Path("config")
+    meta_dir: Path = Path("meta")
+    """Extraction metadata (classification, per-field provenance), kept out of `output`
+    so the output tree contains only the UZP JSON files."""
+    write_meta: bool = True
 
     # Ingestion / OCR
     ocr_dpi: int = 200

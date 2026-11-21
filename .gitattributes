@@ -1,0 +1,3 @@
+# Skrypty uruchomieniowe: .bat wymaga CRLF (cmd.exe), .sh wymaga LF
+*.bat text eol=crlf
+*.sh text eol=lf

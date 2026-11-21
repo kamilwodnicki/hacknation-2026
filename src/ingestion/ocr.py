@@ -1,5 +1,6 @@
 """OCR of rendered page images with RapidOCR (ONNX Runtime, CPU)."""
 
+import logging
 import threading
 from dataclasses import dataclass
 from statistics import mean, median
@@ -19,6 +20,8 @@ def _get_engine():
                 from rapidocr import RapidOCR
 
                 _engine = RapidOCR()
+                # RapidOCR logs every model load at INFO level; keep the console readable.
+                logging.getLogger("RapidOCR").setLevel(logging.WARNING)
     return _engine
 
 

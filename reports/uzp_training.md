@@ -1,14 +1,16 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 13:31
+Wygenerowano: 2026-11-21 13:57
 
-Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).
+Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
+
+**F1 (UZP)** — zasada organizatora: pola typu „długi string” (nazwy firm, tytuły) zaliczane przy podobieństwie ≥ 80%, pozostałe muszą być identyczne. **F1 (dokładne)** — wszystkie pola identyczne.
 
 Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
 ## Podsumowanie
 
-| | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
+| | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
 | **RAZEM** | 2027 | 5 | 5 | 0.998 | 0.998 | **0.998** | 0.998 |
 | odwolanie (60 dok.) | 1209 | 5 | 5 | 0.996 | 0.996 | **0.996** | 0.996 |
@@ -17,18 +19,18 @@ Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
 ## Klasyfikacja
 
-Trafność: **1.000** (182/182)
+Trafność: **1.000** (198/198)
 
 | oczekiwany \ przewidziany | odwolanie | pelnomocnictwo | przelew | ∅ (nierozpoznany) |
 |---|---|---|---|---|
 | odwolanie | 61 | 0 | 0 | 0 |
 | pelnomocnictwo | 0 | 60 | 0 | 0 |
 | przelew | 0 | 0 | 60 | 0 |
-| ∅ (nierozpoznany) | 0 | 0 | 0 | 1 |
+| ∅ (nierozpoznany) | 0 | 0 | 0 | 17 |
 
 ## odwolanie
 
-| Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
+| Pole | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
 | `OdwolanieKIO.czynnosc_dzien` | 59 | 1 | 1 | 0.983 | 0.983 | **0.983** | 0.983 |
 | `OdwolanieKIO.czynnosc_opis` | 58 | 2 | 2 | 0.967 | 0.967 | **0.967** | 0.967 |
@@ -55,7 +57,7 @@ Trafność: **1.000** (182/182)
 
 ## pelnomocnictwo
 
-| Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
+| Pole | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
 | `mocodawca[].data.imie_nazwisko` | 4 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `mocodawca[].data.krs` | 62 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
@@ -68,7 +70,7 @@ Trafność: **1.000** (182/182)
 
 ## przelew
 
-| Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
+| Pole | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
 | `przelew_bankowy.data_operacji` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.kwota` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |

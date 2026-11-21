@@ -7,24 +7,28 @@ from src.evaluation.metrics import Counts
 from src.evaluation.runner import EvaluationReport
 
 
-def _row(name: str, strict: Counts, lenient: Counts) -> str:
+def _row(name: str, uzp: Counts, exact: Counts) -> str:
     return (
-        f"| {name} | {strict.tp} | {strict.fp} | {strict.fn} | {strict.precision:.3f} | "
-        f"{strict.recall:.3f} | **{strict.f1:.3f}** | {lenient.f1:.3f} |"
+        f"| {name} | {uzp.tp} | {uzp.fp} | {uzp.fn} | {uzp.precision:.3f} | "
+        f"{uzp.recall:.3f} | **{uzp.f1:.3f}** | {exact.f1:.3f} |"
     )
 
 
-_HEADER = "| | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |\n|---|---|---|---|---|---|---|---|"
+_HEADER = "| | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |\n|---|---|---|---|---|---|---|---|"
 
 
 def to_markdown(report: EvaluationReport, max_errors: int = 20) -> str:
-    total_s, total_l = report.total(), report.total(lenient=True)
+    total_u, total_e = report.total("uzp"), report.total("exact")
     lines = [
         f"# Ewaluacja: {report.dataset}",
         "",
         f"Wygenerowano: {datetime.now():%Y-%m-%d %H:%M}",
         "",
-        "Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).",
+        "Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; "
+        "listy dopasowywane po treści).",
+        "",
+        "**F1 (UZP)** — zasada organizatora: pola typu „długi string” (nazwy firm, tytuły) zaliczane przy "
+        "podobieństwie ≥ 80%, pozostałe muszą być identyczne. **F1 (dokładne)** — wszystkie pola identyczne.",
         "",
         "Typ dokumentu do ekstrakcji: "
         + ("**oczekiwany (oracle)** — klasyfikator pominięty." if report.oracle else "**z klasyfikatora** (pełny pipeline)."),
@@ -32,11 +36,11 @@ def to_markdown(report: EvaluationReport, max_errors: int = 20) -> str:
         "## Podsumowanie",
         "",
         _HEADER,
-        _row("**RAZEM**", total_s, total_l),
+        _row("**RAZEM**", total_u, total_e),
     ]
     for name, t in sorted(report.types.items()):
         label = f"{name} ({t.documents} dok.)" + ("" if t.defined else " — brak pól w YAML")
-        lines.append(_row(label, t.total(), t.total(lenient=True)))
+        lines.append(_row(label, t.total("uzp"), t.total("exact")))
 
     if report.classifications:
         none = "∅ (nierozpoznany)"
@@ -61,10 +65,10 @@ def to_markdown(report: EvaluationReport, max_errors: int = 20) -> str:
 
     for name, t in sorted(report.types.items()):
         lines += ["", f"## {name}", "", _HEADER.replace("| |", "| Pole |", 1)]
-        for path in sorted(t.strict):
-            lines.append(_row(f"`{path}`", t.strict[path], t.lenient[path]))
+        for path in sorted(t.exact):
+            lines.append(_row(f"`{path}`", t.uzp[path], t.exact[path]))
         if t.errors and max_errors:
-            lines += ["", f"Przykładowe błędy ({min(max_errors, len(t.errors))} z {len(t.errors)}):", ""]
+            lines += ["", f"Przykładowe różnice dokładne ({min(max_errors, len(t.errors))} z {len(t.errors)}):", ""]
             for case, m in t.errors[:max_errors]:
                 expected = json.dumps(m.expected, ensure_ascii=False)
                 predicted = json.dumps(m.predicted, ensure_ascii=False)
@@ -86,14 +90,14 @@ def to_json(report: EvaluationReport) -> str:
             "accuracy": report.classification_accuracy,
             "documents": [c.__dict__ for c in report.classifications],
         },
-        "total": {"strict": counts(report.total()), "lenient": counts(report.total(lenient=True))},
+        "total": {"uzp": counts(report.total("uzp")), "exact": counts(report.total("exact"))},
         "types": {
             name: {
                 "documents": t.documents,
                 "defined": t.defined,
-                "strict": counts(t.total()),
-                "lenient": counts(t.total(lenient=True)),
-                "fields": {p: {"strict": counts(t.strict[p]), "lenient": counts(t.lenient[p])} for p in sorted(t.strict)},
+                "uzp": counts(t.total("uzp")),
+                "exact": counts(t.total("exact")),
+                "fields": {p: {"uzp": counts(t.uzp[p]), "exact": counts(t.exact[p])} for p in sorted(t.exact)},
             }
             for name, t in sorted(report.types.items())
         },
