@@ -26,14 +26,38 @@ def to_markdown(report: EvaluationReport, max_errors: int = 20) -> str:
         "",
         "Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).",
         "",
+        "Typ dokumentu do ekstrakcji: "
+        + ("**oczekiwany (oracle)** — klasyfikator pominięty." if report.oracle else "**z klasyfikatora** (pełny pipeline)."),
+        "",
         "## Podsumowanie",
         "",
         _HEADER,
         _row("**RAZEM**", total_s, total_l),
     ]
     for name, t in sorted(report.types.items()):
-        label = f"{name} ({t.documents} dok.)" + ("" if t.defined else " — brak definicji YAML")
+        label = f"{name} ({t.documents} dok.)" + ("" if t.defined else " — brak pól w YAML")
         lines.append(_row(label, t.total(), t.total(lenient=True)))
+
+    if report.classifications:
+        none = "∅ (nierozpoznany)"
+        labels = sorted({x for pair in report.confusion() for x in pair}, key=lambda x: (x is None, x or ""))
+        lines += [
+            "",
+            "## Klasyfikacja",
+            "",
+            f"Trafność: **{report.classification_accuracy:.3f}** "
+            f"({sum(c.expected == c.predicted for c in report.classifications)}/{len(report.classifications)})",
+            "",
+            "| oczekiwany \\ przewidziany | " + " | ".join(x or none for x in labels) + " |",
+            "|---|" + "---|" * len(labels),
+        ]
+        for expected in labels:
+            cells = [str(report.confusion()[(expected, predicted)]) for predicted in labels]
+            lines.append(f"| {expected or none} | " + " | ".join(cells) + " |")
+        wrong = [c for c in report.classifications if c.expected != c.predicted]
+        if wrong:
+            lines += ["", "Błędne klasyfikacje:", ""]
+            lines += [f"- `{c.document}`: oczekiwano {c.expected}, otrzymano {c.predicted} ({c.reason})" for c in wrong]
 
     for name, t in sorted(report.types.items()):
         lines += ["", f"## {name}", "", _HEADER.replace("| |", "| Pole |", 1)]
@@ -57,6 +81,11 @@ def to_json(report: EvaluationReport) -> str:
 
     data = {
         "dataset": report.dataset,
+        "oracle": report.oracle,
+        "classification": {
+            "accuracy": report.classification_accuracy,
+            "documents": [c.__dict__ for c in report.classifications],
+        },
         "total": {"strict": counts(report.total()), "lenient": counts(report.total(lenient=True))},
         "types": {
             name: {

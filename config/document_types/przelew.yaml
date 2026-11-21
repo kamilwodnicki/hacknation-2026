@@ -15,6 +15,8 @@
 name: przelew
 description: Potwierdzenie wykonania przelewu bankowego
 
+# Rozpoznawanie typu (src/classification): punkt za każde znalezione słowo kluczowe
+# (bez rozróżniania wielkości liter i polskich znaków), +title_weight za nagłówek z `titles`.
 classification:
   keywords:
     - potwierdzenie przelewu
@@ -24,10 +26,35 @@ classification:
     - potwierdzenie operacji bankowej
     - potwierdzenie transakcji
     - dowód wykonania przelewu
+    - przelew krajowy
     - rachunek odbiorcy
     - rachunek zleceniodawcy
+    - rachunek nadawcy
+    - rachunek beneficjenta
+    - rachunek obciążany
     - tytuł przelewu
-  min_matches: 2
+    - tytułem
+    - kwota operacji
+    - kwota przelewu
+    - numer referencyjny
+    - bankowości internetowej
+    # potwierdzenia w formie pisma: "Bank potwierdza, że w dniu ... wykonano przelew ..."
+    - bank potwierdza
+    - wykonano przelew
+    - z rachunku nr
+    - na rachunek nr
+    - w kwocie
+  titles:
+    - Potwierdzenie przelewu
+    - Potwierdzenie przelewu krajowego
+    - Potwierdzenie wykonania przelewu
+    - Potwierdzenie realizacji polecenia przelewu
+    - Polecenie przelewu
+    - Potwierdzenie operacji bankowej
+    - Potwierdzenie transakcji
+    - Dowód wykonania przelewu
+  min_score: 3
+  pages: 2
 
 # Etykiety, które kończą wartość wieloliniową (np. tytuł), choć same nie są polami.
 stop_labels:

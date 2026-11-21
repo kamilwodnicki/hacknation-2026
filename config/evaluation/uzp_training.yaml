@@ -19,3 +19,11 @@ documents:
   - pdf: potwierdzenie_przelewu.pdf
     reference: przelew.json
     document_type: przelew
+
+# Dokumenty sprawdzane tylko pod kątem klasyfikacji (ścieżki względem katalogu danych).
+# document_type: null = dokument spoza klas → oczekiwany pusty JSON.
+extra:
+  - pdf: szablon-aplikacja/input/case1/negatywny przyklad.pdf
+    document_type: null
+  - pdf: szablon-aplikacja/input/case1/przyklad odwolanie.pdf
+    document_type: odwolanie

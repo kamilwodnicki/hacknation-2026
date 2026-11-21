@@ -1,0 +1,37 @@
+# Odwołanie do Krajowej Izby Odwoławczej.
+# Struktura `output` (oczekiwane-json/odwolanie.json) zostanie dodana po wprowadzeniu list
+# w silniku ekstrakcji — na razie typ służy tylko do rozpoznawania dokumentu.
+
+name: odwolanie
+description: Odwołanie wnoszone do Prezesa Krajowej Izby Odwoławczej
+
+classification:
+  keywords:
+    - prezes krajowej izby odwoławczej
+    - odwołujący
+    - odwołującego
+    - wnoszę o
+    - wnosi o
+    - wnoszę odwołanie
+    - wnosi odwołanie
+    - zarzut
+    - wpis od odwołania
+    - niniejszym odwołaniu
+    - uwzględnienie odwołania
+    - wniesienia odwołania
+    - art. 513
+    - uzasadnienie
+  titles:
+    - Odwołanie
+    - Odwołanie od czynności zamawiającego
+  # Dokumenty z tymi frazami w nagłówku to nie odwołanie, choć mówią o tym samym postępowaniu.
+  exclude:
+    - ogłoszenie o zamówieniu lub ogłoszenie o koncesji
+    - see the notice on ted website
+    - odpowiedź na odwołanie
+    - zgłoszenie przystąpienia
+    - przystąpienie do postępowania odwoławczego
+    - pełnomocnictwo procesowe
+    - potwierdzenie przelewu
+  min_score: 4
+  pages: 2

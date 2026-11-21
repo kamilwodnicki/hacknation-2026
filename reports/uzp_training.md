@@ -1,17 +1,30 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 12:48
+Wygenerowano: 2026-11-21 12:59
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).
+
+Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
 ## Podsumowanie
 
 | | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
 |---|---|---|---|---|---|---|---|
 | **RAZEM** | 360 | 0 | 1672 | 1.000 | 0.177 | **0.301** | 0.301 |
-| odwolanie (60 dok.) — brak definicji YAML | 0 | 0 | 1214 | 0.000 | 0.000 | **0.000** | 0.000 |
-| pelnomocnictwo (60 dok.) — brak definicji YAML | 0 | 0 | 458 | 0.000 | 0.000 | **0.000** | 0.000 |
+| odwolanie (60 dok.) — brak pól w YAML | 0 | 0 | 1214 | 0.000 | 0.000 | **0.000** | 0.000 |
+| pelnomocnictwo (60 dok.) — brak pól w YAML | 0 | 0 | 458 | 0.000 | 0.000 | **0.000** | 0.000 |
 | przelew (60 dok.) | 360 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+
+## Klasyfikacja
+
+Trafność: **1.000** (182/182)
+
+| oczekiwany \ przewidziany | odwolanie | pelnomocnictwo | przelew | ∅ (nierozpoznany) |
+|---|---|---|---|---|
+| odwolanie | 61 | 0 | 0 | 0 |
+| pelnomocnictwo | 0 | 60 | 0 | 0 |
+| przelew | 0 | 0 | 60 | 0 |
+| ∅ (nierozpoznany) | 0 | 0 | 0 | 1 |
 
 ## odwolanie
 
@@ -40,12 +53,6 @@ Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartoś
 | `ZamowieniePubliczne.numer_ted` | 0 | 0 | 47 | 0.000 | 0.000 | **0.000** | 0.000 |
 | `ZamowieniePubliczne.tytul` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
 
-Przykładowe błędy (3 z 1200):
-
-- `przyklad_01` `OdwolanieKIO.czynnosc_dzien`: oczekiwano ["2026-03-20"], otrzymano []
-- `przyklad_01` `OdwolanieKIO.czynnosc_opis`: oczekiwano ["Decyzja o unieważnieniu postępowania"], otrzymano []
-- `przyklad_01` `OdwolanieKIO.czynnosc_powod_id`: oczekiwano [9], otrzymano []
-
 ## pelnomocnictwo
 
 | Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
@@ -58,12 +65,6 @@ Przykładowe błędy (3 z 1200):
 | `mocodawca[].podpisujacy[].imie_nazwisko` | 0 | 0 | 95 | 0.000 | 0.000 | **0.000** | 0.000 |
 | `pelnomocnicy[].imie_nazwisko` | 0 | 0 | 98 | 0.000 | 0.000 | **0.000** | 0.000 |
 | `pelnomocnicy[].pesel` | 0 | 0 | 1 | 0.000 | 0.000 | **0.000** | 0.000 |
-
-Przykładowe błędy (3 z 361):
-
-- `przyklad_01` `mocodawca[].data.krs`: oczekiwano ["9999405188"], otrzymano []
-- `przyklad_01` `mocodawca[].data.nazwa`: oczekiwano ["Belmoria Rozwiązania S.A."], otrzymano []
-- `przyklad_01` `mocodawca[].data.nip`: oczekiwano ["9999284065"], otrzymano []
 
 ## przelew
 

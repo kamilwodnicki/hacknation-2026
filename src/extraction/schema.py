@@ -82,8 +82,24 @@ class FieldSpec(_Strict):
 
 
 class Classification(_Strict):
+    """Rule signals for recognizing a document type.
+
+    Text is compared case- and diacritics-insensitively (OCR often loses Polish letters);
+    keywords are substrings, so a stem like "odwołując" matches "Odwołującego".
+    score = number of distinct `keywords` found in the first `pages` pages
+          + `title_weight` if a line in the header is exactly one of `titles`.
+    The type is a candidate when score >= `min_score` and no `exclude` phrase occurs in
+    the header (first `header_lines` lines). The highest-scoring candidate wins; a tie
+    means the document is not recognized (never guessed).
+    """
+
     keywords: list[str] = []
-    min_matches: int = 1
+    titles: list[str] = []
+    title_weight: int = 3
+    exclude: list[str] = []
+    min_score: int = 2
+    pages: int = 2
+    header_lines: int = 25
 
 
 class DocumentType(_Strict):
@@ -91,7 +107,7 @@ class DocumentType(_Strict):
     description: str | None = None
     classification: Classification = Classification()
     stop_labels: list[str] = []
-    output: dict[str, Any]
+    output: dict[str, Any] = {}
 
     @model_validator(mode="after")
     def _parse_output(self) -> "DocumentType":

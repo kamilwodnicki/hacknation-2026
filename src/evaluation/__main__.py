@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--data-dir", type=Path, default=Path(os.getenv("DATA_DIR", "/data")))
     parser.add_argument("--report-dir", type=Path, default=Path("reports"))
     parser.add_argument("--errors", type=int, default=20, help="mismatches listed per document type")
+    parser.add_argument("--oracle", action="store_true", help="extract with the expected type (skip classifier)")
     args = parser.parse_args()
 
     dataset = load_dataset(args.dataset)
@@ -30,7 +31,9 @@ def main() -> int:
         print(f"Data directory not found: {args.data_dir / dataset.data_dir}", file=sys.stderr)
         return 2
 
-    report = evaluate(dataset, args.data_dir, load_document_types(settings.config_dir / "document_types"))
+    report = evaluate(
+        dataset, args.data_dir, load_document_types(settings.config_dir / "document_types"), oracle=args.oracle
+    )
     markdown = to_markdown(report, max_errors=args.errors)
     print(markdown)
 

@@ -1,0 +1,39 @@
+# Pełnomocnictwo (do reprezentowania w postępowaniu odwoławczym przed KIO).
+# Struktura `output` (oczekiwane-json/pelnomocnictwo.json) zostanie dodana po wprowadzeniu
+# list w silniku ekstrakcji — na razie typ służy tylko do rozpoznawania dokumentu.
+
+name: pelnomocnictwo
+description: Pełnomocnictwo udzielone przez mocodawcę pełnomocnikom
+
+classification:
+  keywords:
+    - udzielam pełnomocnictwa
+    - udziela pełnomocnictwa
+    - udzielamy pełnomocnictwa
+    - niniejszym udzielam
+    - niniejszym ustanawiam
+    - ustanawiam pełnomocnik
+    - pełnomocnictwo przyjmuję
+    - mocodawca
+    - mocodawcy
+    - umocowany
+    - umocowanie
+    - do reprezentowania
+    - udzielania dalszych pełnomocnictw
+    - zakres pełnomocnictwa
+    - pełnomocnik jest umocowany
+    - może zostać odwołane
+    - upoważniam
+    - pełnomocnikom do
+    - pełnomocnicy
+  titles:
+    - Pełnomocnictwo
+    - Pełnomocnictwo procesowe
+    - Pełnomocnictwo szczególne
+    - Pełnomocnictwo ogólne
+  exclude:
+    - ogłoszenie o zamówieniu lub ogłoszenie o koncesji
+    - see the notice on ted website
+    - potwierdzenie przelewu
+  min_score: 4
+  pages: 2
