@@ -8,7 +8,7 @@ import re
 from collections.abc import Iterator
 from dataclasses import dataclass
 
-from src.extraction.schema import LabelStrategy, NthMatchStrategy, RegexStrategy
+from src.extraction.schema import LabelStrategy, MatchesSplit, NthMatchStrategy, RegexStrategy, SectionSplit
 from src.ingestion import IngestedDocument, PageSource
 from src.validation.normalizers import VALUE_TYPES
 
@@ -50,7 +50,8 @@ def _case_variants(label: str) -> set[str]:
 
 
 def compile_labels(labels: list[str]) -> re.Pattern[str]:
-    """Match any label at the start of a line or of a column (after 2+ spaces).
+    """Match any label at the start of a line, of a column (after 2+ spaces) or of an
+    enumeration item ("KRS: 1, NIP: 2", "(KRS 1 · NIP 2)").
 
     Longer labels are tried first so "Tytuł przelewu" wins over "Tytuł".
     """
@@ -59,7 +60,7 @@ def compile_labels(labels: list[str]) -> re.Pattern[str]:
         r"\s+".join(map(re.escape, label.split())) for label in sorted(variants, key=len, reverse=True)
     )
     return re.compile(
-        rf"(?:^|(?<=\s\s))[^\w\s]*(?P<label>{alternatives})(?=[\s:.\-–…]|$){_LABEL_TAIL}(?P<rest>.*)$"
+        rf"(?:^|(?<=\s\s)|(?<=[,;·|•(])\s*)[^\w\s]*(?P<label>{alternatives})(?=[\s:.\-–…]|$){_LABEL_TAIL}(?P<rest>.*)$"
     )
 
 
@@ -127,16 +128,76 @@ def run_regex(strategy: RegexStrategy, lines: list[Line], value_type: str) -> It
     for name in strategy.flags:
         flags |= getattr(re, name)
     pattern = re.compile(strategy.pattern.replace("{value}", f"(?:{VALUE_TYPES[value_type].pattern})"), flags)
-    pages: dict[int, list[str]] = {}
-    for line in lines:
-        pages.setdefault(line.page, []).append(line.text)
-    for page, page_lines in pages.items():
-        text = "\n".join(page_lines)
+    for page, text in _page_texts(lines).items():
         for m in pattern.finditer(text):
             start = text.rfind("\n", 0, m.start()) + 1
             end = text.find("\n", m.end())
             snippet = text[start : end if end != -1 else len(text)]
             yield Candidate(m.group(1) if m.groups() else m.group(0), page, snippet, "regex")
+
+
+@dataclass(frozen=True)
+class ItemText:
+    """Text region of one list item."""
+
+    lines: list[Line]
+    presets: dict[str, str]
+    """Raw values from named regex groups (field name -> text)."""
+    detail: str
+
+
+def _page_texts(lines: list[Line]) -> dict[int, str]:
+    pages: dict[int, list[str]] = {}
+    for line in lines:
+        pages.setdefault(line.page, []).append(line.text)
+    return {page: "\n".join(texts) for page, texts in pages.items()}
+
+
+def split_sections(split: SectionSplit, lines: list[Line]) -> list[ItemText]:
+    start_re = compile_labels(split.start)
+    end_re = compile_labels(split.end) if split.end else None
+    marker_re = re.compile(split.item_marker) if split.item_marker else None
+    items: list[ItemText] = []
+    i = 0
+    while i < len(lines):
+        m = start_re.search(lines[i].text)
+        if not m:
+            i += 1
+            continue
+        label = m.group("label")
+        region = [Line(lines[i].page, m.group("rest"))] if m.group("rest").strip() else []
+        j = i + 1
+        while j < len(lines) and j - i <= split.max_lines:
+            if start_re.search(lines[j].text) or (end_re and end_re.search(lines[j].text)):
+                break
+            region.append(lines[j])
+            j += 1
+        i = j
+
+        if marker_re and any(marker_re.search(line.text) for line in region):
+            current: list[Line] | None = None
+            for line in region:
+                if marker_re.search(line.text):
+                    current = [line]
+                    items.append(ItemText(current, {}, f'section "{label}", item {len(items) + 1}'))
+                elif current is not None:
+                    current.append(line)
+        elif region:
+            items.append(ItemText(region, {}, f'section "{label}"'))
+    return items
+
+
+def split_matches(split: MatchesSplit, lines: list[Line]) -> list[ItemText]:
+    flags = 0
+    for name in split.flags:
+        flags |= getattr(re, name)
+    pattern = re.compile(split.pattern, flags)
+    items = []
+    for page, text in _page_texts(lines).items():
+        for m in pattern.finditer(text):
+            presets = {k: v for k, v in m.groupdict().items() if v is not None}
+            items.append(ItemText([Line(page, m.group(0))], presets, "pattern match"))
+    return items
 
 
 def run_nth_match(strategy: NthMatchStrategy, lines: list[Line], value_type: str) -> Iterator[Candidate]:

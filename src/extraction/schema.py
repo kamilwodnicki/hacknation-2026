@@ -8,6 +8,7 @@ A document type is described entirely in YAML:
 Loading validates the YAML, so configuration errors are reported at startup.
 """
 
+import re
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -39,6 +40,12 @@ class RegexStrategy(_Strict):
     method: Literal["regex"]
     pattern: str
     flags: list[Literal["IGNORECASE", "MULTILINE", "DOTALL"]] = ["IGNORECASE"]
+
+    @field_validator("pattern")
+    @classmethod
+    def _compiles(cls, v: str) -> str:
+        _check_regex(v.replace("{value}", "x"), "pattern")
+        return v
 
 
 class NthMatchStrategy(_Strict):
@@ -102,6 +109,64 @@ class Classification(_Strict):
     header_lines: int = 25
 
 
+class SectionSplit(_Strict):
+    """Items are text sections: from a `start` label to an `end` label (or the next start).
+
+    With `item_marker` a section is further split into several items at lines matching
+    the marker (e.g. '^\\s*\\d+\\)' for "1) ...", "2) ..."); text before the first marker
+    is then dropped. Without markers each section is one item.
+    """
+
+    method: Literal["section"]
+    start: list[str] = Field(min_length=1)
+    end: list[str] = []
+    item_marker: str | None = None
+    max_lines: int = 20
+
+
+class MatchesSplit(_Strict):
+    """Every regex match is one item. A named group whose name equals an item field
+    (e.g. (?P<imie_nazwisko>...)) gives that field's value directly; other fields are
+    extracted from the matched text with their own strategies."""
+
+    method: Literal["matches"]
+    pattern: str
+    flags: list[Literal["IGNORECASE", "MULTILINE", "DOTALL"]] = []
+
+
+Split = Annotated[SectionSplit | MatchesSplit, Field(discriminator="method")]
+
+
+class ListSpec(_Strict):
+    """A JSON array. `item` is the template of one element (fields, containers, lists)."""
+
+    type: Literal["list"]
+    description: str | None = None
+    split: Split | None = None
+    """How to find the items by rules; None = no rule (only an LLM can fill it later)."""
+    scope: Literal["parent", "document"] = "parent"
+    """Text a nested list searches: its parent item's text or the whole document."""
+    item: Any
+    max_items: int = 20
+    unique_by: list[str] = []
+    """Item fields identifying duplicates (e.g. the same person found twice)."""
+
+    @field_validator("split", mode="before")
+    @classmethod
+    def _split_compiles(cls, v: Any) -> Any:
+        for key in ("pattern", "item_marker"):
+            if isinstance(v, dict) and v.get(key):
+                _check_regex(v[key], key)
+        return v
+
+
+def _check_regex(pattern: str, what: str) -> None:
+    try:
+        re.compile(pattern)
+    except re.error as exc:
+        raise ValueError(f"invalid regular expression in '{what}': {exc}") from exc
+
+
 class DocumentType(_Strict):
     name: str
     description: str | None = None
@@ -115,12 +180,14 @@ class DocumentType(_Strict):
         return self
 
     def fields(self) -> dict[str, FieldSpec]:
-        """Flat map 'a.b.c' -> FieldSpec of every leaf in the output template."""
+        """Flat map of every leaf in the output template: 'a.b' (list items as 'a[].b')."""
         out: dict[str, FieldSpec] = {}
 
         def walk(node: Any, prefix: str) -> None:
             if isinstance(node, FieldSpec):
                 out[prefix] = node
+            elif isinstance(node, ListSpec):
+                walk(node.item, f"{prefix}[]")
             else:
                 for key, child in node.items():
                     walk(child, f"{prefix}.{key}" if prefix else key)
@@ -132,6 +199,10 @@ class DocumentType(_Strict):
 def _parse_template(node: Any, path: str) -> Any:
     if not isinstance(node, dict):
         raise ValueError(f"{path}: expected a mapping (container) or a field spec with 'type'")
+    if node.get("type") == "list":
+        spec = ListSpec.model_validate(node)
+        spec.item = _parse_template(spec.item, f"{path}[]")
+        return spec
     if "type" in node:
         return FieldSpec.model_validate(node)
     return {key: _parse_template(child, f"{path}.{key}") for key, child in node.items()}

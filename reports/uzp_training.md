@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 12:59
+Wygenerowano: 2026-11-21 13:06
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).
 
