@@ -1094,7 +1094,7 @@
         "document": "szablon-aplikacja/input/case1/przyklad odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 7)"
+        "reason": "rules (score 9)"
       },
       {
         "document": "dane/negatywne/1648041143_1647951357decyzja-ministrasportu-pzn.pdf",

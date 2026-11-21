@@ -1,6 +1,32 @@
 # PISMO — Parser Inteligentnie Strukturyzujący Materiały Odwoławcze
 
-**Od PDF-a sprawy KIO do danych JSON.** Rozwiązanie wyzwania *Odwołania2json* (HackNation 2026, Urząd Zamówień Publicznych).
+**Od PDF-a sprawy KIO do danych JSON** — rozwiązanie wyzwania *Odwołania2json* (HackNation 2026, Urząd Zamówień Publicznych).
+
+## Uruchomienie
+
+**Wymagania:** tylko **Docker** — [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows / macOS) albo Docker Engine z Docker Compose (Linux), **uruchomiony** przed startem. Do tego dostęp do internetu (pierwsze zbudowanie obrazu, wywołania AI) i ok. 3 GB wolnego miejsca na dysku. Nie trzeba instalować Pythona ani niczego innego; GPU nie jest potrzebne.
+
+1. **Klucz AI:** umieść otrzymany plik `.env.overdrive` w głównym folderze projektu (obok `start.bat`). Bez niego aplikacja też działa, ale na samych regułach (bez AI).
+2. **Dokumenty:** wrzuć pliki PDF do folderu `input/` (dowolne podfoldery i nazwy plików).
+3. **Start:**
+   - **Windows:** dwuklik na `start.bat`
+   - **Linux / macOS:** `sh start.sh`
+
+Wyniki pojawią się w folderze **`output/`** — ta sama struktura folderów i te same nazwy plików, z rozszerzeniem `.json`:
+
+```
+input/case1/odwolanie_nr_1.pdf   ->   output/case1/odwolanie_nr_1.json
+input/case1/przelew.pdf          ->   output/case1/przelew.json
+input/case2/inny_dokument.pdf    ->   output/case2/inny_dokument.json   ({} — dokument spoza obsługiwanych typów)
+```
+
+Pierwsze uruchomienie buduje obraz Dockera (kilka minut, jednorazowo); kolejne startują od razu. Metadane (typ dokumentu, źródło każdej wartości) trafiają osobno do `meta/`, więc `output/` zawiera wyłącznie JSON-y w formacie UZP.
+
+> W terminalu `cmd` uruchamiaj `.\start.bat` (samo `start.bat` cmd myli z wbudowanym poleceniem `START`).
+
+---
+
+## Co robi PISMO
 
 PISMO przyjmuje dokumenty sprawy odwoławczej (odwołanie, pełnomocnictwo, potwierdzenie przelewu — PDF cyfrowe lub skany), **rozpoznaje typ dokumentu po treści**, wyodrębnia dane i zapisuje JSON **ściśle zgodny z modelem UZP** (`oczekiwane-json`). Dokument spoza obsługiwanych klas daje plik z `{}`.
 
@@ -8,41 +34,8 @@ PISMO przyjmuje dokumenty sprawy odwoławczej (odwołanie, pełnomocnictwo, potw
 
 - **Działa lokalnie w Dockerze**, na zwykłym laptopie bez GPU (OCR na CPU).
 - **Konfiguracja zamiast kodu:** typy dokumentów, pola, reguły i rozpoznawanie — w plikach YAML.
-- **Trzy tryby:** same reguły (bez AI, bez kosztów), reguły + AI (hybryda) albo samo AI — otwarty model hostowany w UE.
+- **Trzy tryby:** same reguły (bez AI, bez kosztów), reguły + AI (domyślny) albo samo AI — otwarty model hostowany w UE.
 - **Przejrzystość:** przy każdej wartości wiadomo, z której strony i z jakiego fragmentu pochodzi oraz czy dała ją reguła, czy AI.
-
----
-
-## Szybki start (CLI) — przetwarzanie folderu `input/`
-
-**Wymagania:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows / macOS) albo Docker + Docker Compose (Linux). Nic więcej nie trzeba instalować.
-
-1. Umieść sprawy w folderze `input/` (dowolne podfoldery, dowolne nazwy plików):
-   ```
-   input/
-   ├── case1/
-   │   ├── odwolanie_nr_1.pdf
-   │   ├── pelnomocnictwo_nr_1.pdf
-   │   └── przelew_nr_1.pdf
-   └── case2/ ...
-   ```
-2. Uruchom:
-   - **Windows:** dwuklik na `start.bat` albo w terminalu `.\start.bat`
-     (w `cmd` wpisz `.\start.bat` — samo `start.bat` cmd myli z wbudowanym poleceniem `START`)
-   - **Linux / macOS:** `sh start.sh`
-3. Wyniki pojawią się w `output/` — **ta sama struktura folderów i te same nazwy plików**, z rozszerzeniem `.json`:
-   ```
-   output/
-   ├── case1/
-   │   ├── odwolanie_nr_1.json
-   │   ├── pelnomocnictwo_nr_1.json
-   │   └── przelew_nr_1.json
-   ```
-   Metadane ekstrakcji (klasyfikacja, źródło każdej wartości) trafiają osobno do `meta/`, żeby `output/` zawierał wyłącznie JSON-y w formacie UZP.
-
-Przy pierwszym uruchomieniu Docker buduje obraz (kilka minut); kolejne uruchomienia startują od razu.
-
-Bez Dockera (Python 3.13+): `pip install -r requirements.txt`, potem `python -m src process --input input --output output`.
 
 ## Ustawienia i tryb z AI (klucz API)
 
@@ -68,10 +61,12 @@ EXTRACTION_MODE=hybrid        # rules | hybrid | llm
 | `EXTRACTION_MODE` | Działanie |
 |---|---|
 | `rules` | tylko reguły z YAML (bez AI, bez kosztów) |
-| `hybrid` (zalecany) | najpierw reguły, potem AI uzupełnia luki i rozstrzyga trudne pola (powód odwołania, data czynności, imiona i nazwiska w mianowniku); spory reguła–AI rozstrzyga krótkie drugie zapytanie (arbitraż) |
+| `hybrid` (domyślny, zalecany) | najpierw reguły, potem AI uzupełnia luki i rozstrzyga trudne pola (powód odwołania, data czynności, imiona i nazwiska w mianowniku); spory reguła–AI rozstrzyga krótkie drugie zapytanie (arbitraż) |
 | `llm` | cały JSON od modelu (reguły nieużywane) |
 
-Jeśli API jest niedostępne, aplikacja nie przerywa pracy — zwraca wynik z reguł i zapisuje informację w metadanych.
+Jeśli API jest niedostępne, aplikacja nie przerywa pracy — zwraca wynik z reguł i zapisuje informację w metadanych. CLI przetwarza kilka dokumentów jednocześnie (`WORKERS`, domyślnie 4) — wywołania AI jednych dokumentów nakładają się na OCR innych.
+
+Bez Dockera (Python 3.13+): `pip install -r requirements.txt`, potem `python -m src process --input input --output output`.
 
 ### Użyty model językowy
 
@@ -99,17 +94,20 @@ docker compose up -d --build
 
 ## Jakość — wyniki testów
 
-Ewaluacja na zbiorze treningowym organizatora (60 spraw × 3 dokumenty + 17 dokumentów negatywnych), metodą zgodną z zasadami UZP: F1 na poziomie pól, pola typu „długi string” zaliczane przy podobieństwie ≥ 80%, listy dopasowywane po treści.
+Metoda zgodna z zasadami UZP: F1 na poziomie pól, pola typu „długi string” zaliczane przy podobieństwie ≥ 80%, listy dopasowywane po treści.
 
-| | Tylko reguły | Hybryda (reguły + AI) |
-|---|---|---|
-| **F1 łącznie** | **0,998** | **1,000** |
-| odwołanie | 0,996 | 1,000 |
-| pełnomocnictwo | 1,000 | 1,000 |
-| potwierdzenie przelewu | 1,000 | 1,000 |
-| klasyfikacja (198 dokumentów, w tym 17 negatywnych) | 198/198 | 198/198 |
+- **Zbiór treningowy** organizatora: 60 spraw × 3 dokumenty + 17 dokumentów negatywnych (PDF z warstwą tekstową).
+- **Skany** organizatora: 30 zeskanowanych dokumentów (OCR) **o układach, których reguły nie widziały** — najlepsza miara działania na nowych dokumentach.
 
-Pełne raporty: [`reports/uzp_training.md`](reports/uzp_training.md) (reguły), [`reports/uzp_training_hybrid.md`](reports/uzp_training_hybrid.md) (hybryda). **Uwaga:** to wyniki na danych, na których budowaliśmy reguły — na nowych dokumentach należy spodziewać się niższych wartości; tryb hybrydowy jest na to lepiej przygotowany (AI uzupełnia pola, których reguły nie znajdą).
+| F1 | Tylko reguły | Samo AI | **Reguły + AI** (domyślny) |
+|---|---|---|---|
+| zbiór treningowy | 1,000 | 0,946 | **1,000** |
+| skany (nowe układy, OCR) | 0,752 | 0,932 | **0,987** |
+| klasyfikacja (trening / skany) | 198/198 · 30/30 | 198/198 · 30/30 | 198/198 · 30/30 |
+
+Pełne raporty: [`reports/`](reports/) — `uzp_training*.md` (trening), `uzp_skany*.md` (skany); sufiks `_hybrid` = reguły + AI. Reguły dają pewne formaty i identyfikatory, AI — mianownik nazwisk, nowe układy dokumentów i brakujące pola; każda odpowiedź AI jest sprawdzana z treścią dokumentu.
+
+Numer rachunku jest zapisywany tak, jak w dokumencie (z prefiksem `PL`, jeśli go zawiera — zgodnie z wyjaśnieniem jury). Część wzorców treningowych nie ma `PL`, dlatego metryka UZP porównuje rachunki po cyfrach (`digits_only_fields`), a metryka dokładna pokazuje tę różnicę.
 
 Uruchomienie ewaluacji (dane organizatora wskazane w `.env` jako `UZP_DATA_DIR`):
 ```
@@ -126,8 +124,8 @@ Nowy typ dokumentu to **jeden plik YAML** w `config/document_types/` — po zapi
 ## Znane ograniczenia
 
 - **Imiona i nazwiska w trybie samych reguł** są zwracane w formie z dokumentu. Automatyczna odmiana polskich nazwisk regułami nie może być w 100% poprawna (np. „Leszkowi → Leszek”, ale „Kowalikowi → Kowalik”; nieodmienne nazwiska żeńskie), dlatego mianownik zapewnia tryb z AI.
-- **OCR skanów** działa na CPU — ok. 7–8 s na stronę.
-- **Wyniki 1,000 / 0,998** dotyczą zbioru treningowego (patrz wyżej).
+- **OCR skanów** działa na CPU — ok. 3–5 s na stronę (OpenVINO, model detekcji PP-OCRv6 tiny). Ze skanu czytane są **2 pierwsze strony** (`OCR_MAX_PAGES`) — tam są wszystkie dane, dalej jest uzasadnienie; strony z warstwą tekstową czytane są zawsze w całości. Wynik OCR jest zapamiętywany w `cache/ocr/`.
+- **Wyniki 1,000** dotyczą zbioru treningowego; na nowych układach (skany) reguły + AI dają 0,987.
 
 ## Struktura projektu
 

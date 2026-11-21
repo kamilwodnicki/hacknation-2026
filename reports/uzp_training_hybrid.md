@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 20:45
+Wygenerowano: 2026-11-21 22:38
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
 
@@ -8,7 +8,7 @@ Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartoś
 
 Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
-Tryb ekstrakcji: **hybrid** — do modelu wysłano 180 dok. (z pamięci podręcznej: 60), pominięto 0 (reguły kompletne), błędy LLM: 0; nowe tokeny: wejście 191513, wyjście 24406.
+Tryb ekstrakcji: **hybrid** — do modelu wysłano 180 dok. (z pamięci podręcznej: 180), pominięto 0 (reguły kompletne), błędy LLM: 0; nowe tokeny: wejście 0, wyjście 0.
 
 ## Podsumowanie
 
@@ -81,7 +81,7 @@ Trafność: **1.000** (198/198)
 | `przelew_bankowy.tytul` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `przelew_bankowy.z_rachunku` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 0.200 |
 
-Przykładowe różnice dokładne (40 z 96):
+Przykładowe różnice dokładne (20 z 96):
 
 - `przyklad_01` `przelew_bankowy.na_rachunek`: oczekiwano ["68438223049992295262834736"], otrzymano ["PL68438223049992295262834736"]
 - `przyklad_01` `przelew_bankowy.z_rachunku`: oczekiwano ["05470680287581539721455024"], otrzymano ["PL05470680287581539721455024"]
@@ -103,23 +103,3 @@ Przykładowe różnice dokładne (40 z 96):
 - `przyklad_11` `przelew_bankowy.z_rachunku`: oczekiwano ["55773565366491997400614103"], otrzymano ["PL55773565366491997400614103"]
 - `przyklad_13` `przelew_bankowy.na_rachunek`: oczekiwano ["47326231412257943251088415"], otrzymano ["PL47326231412257943251088415"]
 - `przyklad_13` `przelew_bankowy.z_rachunku`: oczekiwano ["34484587158449675491600836"], otrzymano ["PL34484587158449675491600836"]
-- `przyklad_14` `przelew_bankowy.na_rachunek`: oczekiwano ["70127936703217946356148898"], otrzymano ["PL70127936703217946356148898"]
-- `przyklad_14` `przelew_bankowy.z_rachunku`: oczekiwano ["65163294615868454368277984"], otrzymano ["PL65163294615868454368277984"]
-- `przyklad_17` `przelew_bankowy.na_rachunek`: oczekiwano ["40948702352746681959149838"], otrzymano ["PL40948702352746681959149838"]
-- `przyklad_17` `przelew_bankowy.z_rachunku`: oczekiwano ["21671392196881757429472751"], otrzymano ["PL21671392196881757429472751"]
-- `przyklad_19` `przelew_bankowy.na_rachunek`: oczekiwano ["98259602737060888831984936"], otrzymano ["PL98259602737060888831984936"]
-- `przyklad_19` `przelew_bankowy.z_rachunku`: oczekiwano ["97552076088416465820563693"], otrzymano ["PL97552076088416465820563693"]
-- `przyklad_20` `przelew_bankowy.na_rachunek`: oczekiwano ["81296583508215258243090935"], otrzymano ["PL81296583508215258243090935"]
-- `przyklad_20` `przelew_bankowy.z_rachunku`: oczekiwano ["83849557122740895669356241"], otrzymano ["PL83849557122740895669356241"]
-- `przyklad_23` `przelew_bankowy.na_rachunek`: oczekiwano ["31263692113897855587588527"], otrzymano ["PL31263692113897855587588527"]
-- `przyklad_23` `przelew_bankowy.z_rachunku`: oczekiwano ["40507561379331317832598717"], otrzymano ["PL40507561379331317832598717"]
-- `przyklad_24` `przelew_bankowy.na_rachunek`: oczekiwano ["37497545976859306820772856"], otrzymano ["PL37497545976859306820772856"]
-- `przyklad_24` `przelew_bankowy.z_rachunku`: oczekiwano ["21098240169258849380864560"], otrzymano ["PL21098240169258849380864560"]
-- `przyklad_25` `przelew_bankowy.na_rachunek`: oczekiwano ["26435909972191537905850420"], otrzymano ["PL26435909972191537905850420"]
-- `przyklad_25` `przelew_bankowy.z_rachunku`: oczekiwano ["92476215236332523894371099"], otrzymano ["PL92476215236332523894371099"]
-- `przyklad_26` `przelew_bankowy.na_rachunek`: oczekiwano ["70953449300090369058127127"], otrzymano ["PL70953449300090369058127127"]
-- `przyklad_26` `przelew_bankowy.z_rachunku`: oczekiwano ["00880509913633331687549357"], otrzymano ["PL00880509913633331687549357"]
-- `przyklad_28` `przelew_bankowy.na_rachunek`: oczekiwano ["02985526938978681496365038"], otrzymano ["PL02985526938978681496365038"]
-- `przyklad_28` `przelew_bankowy.z_rachunku`: oczekiwano ["34214818386561206921524195"], otrzymano ["PL34214818386561206921524195"]
-- `przyklad_29` `przelew_bankowy.na_rachunek`: oczekiwano ["04079856982163338024690274"], otrzymano ["PL04079856982163338024690274"]
-- `przyklad_29` `przelew_bankowy.z_rachunku`: oczekiwano ["78686803479783141916212008"], otrzymano ["PL78686803479783141916212008"]

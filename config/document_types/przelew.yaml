@@ -173,13 +173,13 @@ output:
           labels: [Tytuł przelewu, Tytułem, Tytuł operacji, Tytuł, Szczegóły płatności]
           multiline: true
           max_lines: 6
-          # stopka wydruku: "Dok...", "Strona 1/1", "Signature Not Verified", "X Bank Polska S.A. z siedzibą ..."
-          until: '\s(?:Dok\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
+          # stopka wydruku: "Dokument jest wydrukiem...", "Strona 1/1", "Signature Not Verified", "X Bank Polska S.A. z siedzibą ..."
+          until: '\s(?:Dok(?:ument)?\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
         - method: label
           labels: [Opis operacji, Opis]
           multiline: true
           max_lines: 6
-          until: '\s(?:Dok\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
+          until: '\s(?:Dok(?:ument)?\b|Strona\s+\d|Signature\s+Not\s+Verified|(?:\S+\s+){1,4}S\.A\.\s+z\s+siedzib)'
 
     z_rachunku:
       type: iban_pl

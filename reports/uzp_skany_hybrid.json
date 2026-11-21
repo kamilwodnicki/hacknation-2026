@@ -8,7 +8,7 @@
         "document": "0001/0001.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 12)"
+        "reason": "rules (score 13)"
       },
       {
         "document": "0002/0002.pdf",
@@ -26,13 +26,13 @@
         "document": "0004/0004.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 12)"
+        "reason": "rules (score 13)"
       },
       {
         "document": "0005/0005.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 10)"
+        "reason": "rules (score 13)"
       },
       {
         "document": "0006/0006.pdf",
@@ -56,7 +56,7 @@
         "document": "0009/0009.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 14)"
+        "reason": "rules (score 13)"
       },
       {
         "document": "0010/0010.pdf",
@@ -74,7 +74,7 @@
         "document": "0002/0002.pdf",
         "expected": "pelnomocnictwo",
         "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
+        "reason": "rules (score 9)"
       },
       {
         "document": "0003/0003.pdf",
@@ -92,7 +92,7 @@
         "document": "0005/0005.pdf",
         "expected": "pelnomocnictwo",
         "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
+        "reason": "rules (score 7)"
       },
       {
         "document": "0006/0006.pdf",
@@ -188,20 +188,20 @@
   },
   "total": {
     "uzp": {
-      "tp": 299,
-      "fp": 9,
-      "fn": 10,
-      "precision": 0.9707792207792207,
-      "recall": 0.9676375404530745,
-      "f1": 0.9692058346839546
+      "tp": 306,
+      "fp": 5,
+      "fn": 3,
+      "precision": 0.9839228295819936,
+      "recall": 0.9902912621359223,
+      "f1": 0.9870967741935485
     },
     "exact": {
-      "tp": 292,
-      "fp": 16,
-      "fn": 17,
-      "precision": 0.948051948051948,
-      "recall": 0.9449838187702265,
-      "f1": 0.9465153970826581
+      "tp": 299,
+      "fp": 12,
+      "fn": 10,
+      "precision": 0.9614147909967846,
+      "recall": 0.9676375404530745,
+      "f1": 0.964516129032258
     }
   },
   "types": {
@@ -209,74 +209,74 @@
       "documents": 10,
       "defined": true,
       "uzp": {
-        "tp": 170,
-        "fp": 6,
-        "fn": 7,
-        "precision": 0.9659090909090909,
-        "recall": 0.96045197740113,
-        "f1": 0.9631728045325778
+        "tp": 176,
+        "fp": 2,
+        "fn": 1,
+        "precision": 0.9887640449438202,
+        "recall": 0.9943502824858758,
+        "f1": 0.9915492957746479
       },
       "exact": {
-        "tp": 169,
-        "fp": 7,
-        "fn": 8,
-        "precision": 0.9602272727272727,
-        "recall": 0.9548022598870056,
-        "f1": 0.9575070821529744
+        "tp": 174,
+        "fp": 4,
+        "fn": 3,
+        "precision": 0.9775280898876404,
+        "recall": 0.9830508474576272,
+        "f1": 0.9802816901408451
       },
       "fields": {
         "OdwolanieKIO.czynnosc_dzien": {
           "uzp": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.czynnosc_opis": {
           "uzp": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.czynnosc_powod_id": {
           "uzp": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.data": {
@@ -372,37 +372,37 @@
         "Odwolujacy[].pelnomocnik.imie_nazwisko": {
           "uzp": {
             "tp": 9,
-            "fp": 1,
+            "fp": 0,
             "fn": 0,
-            "precision": 0.9,
+            "precision": 1.0,
             "recall": 1.0,
-            "f1": 0.9473684210526316
+            "f1": 1.0
           },
           "exact": {
             "tp": 9,
-            "fp": 1,
+            "fp": 0,
             "fn": 0,
-            "precision": 0.9,
+            "precision": 1.0,
             "recall": 1.0,
-            "f1": 0.9473684210526316
+            "f1": 1.0
           }
         },
         "Odwolujacy[].pelnomocnik.mail": {
           "uzp": {
             "tp": 9,
-            "fp": 0,
+            "fp": 1,
             "fn": 0,
-            "precision": 1.0,
+            "precision": 0.9,
             "recall": 1.0,
-            "f1": 1.0
+            "f1": 0.9473684210526316
           },
           "exact": {
             "tp": 9,
-            "fp": 0,
+            "fp": 1,
             "fn": 0,
-            "precision": 1.0,
+            "precision": 0.9,
             "recall": 1.0,
-            "f1": 1.0
+            "f1": 0.9473684210526316
           }
         },
         "Odwolujacy[].pelnomocnik.nazwa": {
@@ -425,20 +425,20 @@
         },
         "Odwolujacy[].przez-pelnomocnika": {
           "uzp": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 9,
-            "fp": 1,
-            "fn": 1,
-            "precision": 0.9,
-            "recall": 0.9,
-            "f1": 0.9
+            "tp": 10,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].regon": {
@@ -551,38 +551,38 @@
         },
         "ZamowieniePubliczne.numer_bzp": {
           "uzp": {
-            "tp": 4,
+            "tp": 5,
             "fp": 0,
-            "fn": 1,
+            "fn": 0,
             "precision": 1.0,
-            "recall": 0.8,
-            "f1": 0.888888888888889
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 4,
+            "tp": 5,
             "fp": 0,
-            "fn": 1,
+            "fn": 0,
             "precision": 1.0,
-            "recall": 0.8,
-            "f1": 0.888888888888889
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.numer_postepowania": {
           "uzp": {
-            "tp": 9,
+            "tp": 10,
             "fp": 0,
-            "fn": 1,
+            "fn": 0,
             "precision": 1.0,
-            "recall": 0.9,
-            "f1": 0.9473684210526316
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 9,
+            "tp": 10,
             "fp": 0,
-            "fn": 1,
+            "fn": 0,
             "precision": 1.0,
-            "recall": 0.9,
-            "f1": 0.9473684210526316
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.numer_ted": {
@@ -613,12 +613,12 @@
             "f1": 1.0
           },
           "exact": {
-            "tp": 10,
-            "fp": 0,
-            "fn": 0,
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0
+            "tp": 9,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9,
+            "recall": 0.9,
+            "f1": 0.9
           }
         }
       }
@@ -627,38 +627,38 @@
       "documents": 10,
       "defined": true,
       "uzp": {
-        "tp": 75,
+        "tp": 76,
         "fp": 3,
-        "fn": 3,
-        "precision": 0.9615384615384616,
-        "recall": 0.9615384615384616,
-        "f1": 0.9615384615384616
+        "fn": 2,
+        "precision": 0.9620253164556962,
+        "recall": 0.9743589743589743,
+        "f1": 0.9681528662420382
       },
       "exact": {
-        "tp": 75,
+        "tp": 76,
         "fp": 3,
-        "fn": 3,
-        "precision": 0.9615384615384616,
-        "recall": 0.9615384615384616,
-        "f1": 0.9615384615384616
+        "fn": 2,
+        "precision": 0.9620253164556962,
+        "recall": 0.9743589743589743,
+        "f1": 0.9681528662420382
       },
       "fields": {
         "mocodawca[].data.imie_nazwisko": {
           "uzp": {
-            "tp": 0,
+            "tp": 1,
             "fp": 0,
-            "fn": 1,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 0,
+            "tp": 1,
             "fp": 0,
-            "fn": 1,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].data.krs": {
@@ -801,12 +801,12 @@
         "f1": 1.0
       },
       "exact": {
-        "tp": 48,
-        "fp": 6,
-        "fn": 6,
-        "precision": 0.8888888888888888,
-        "recall": 0.8888888888888888,
-        "f1": 0.8888888888888888
+        "tp": 49,
+        "fp": 5,
+        "fn": 5,
+        "precision": 0.9074074074074074,
+        "recall": 0.9074074074074074,
+        "f1": 0.9074074074074074
       },
       "fields": {
         "przelew_bankowy.data_operacji": {
@@ -891,12 +891,12 @@
             "f1": 1.0
           },
           "exact": {
-            "tp": 4,
-            "fp": 6,
-            "fn": 6,
-            "precision": 0.4,
-            "recall": 0.4,
-            "f1": 0.4000000000000001
+            "tp": 5,
+            "fp": 5,
+            "fn": 5,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5
           }
         },
         "przelew_bankowy.z_rachunku": {
