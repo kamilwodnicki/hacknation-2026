@@ -29,13 +29,19 @@ services:
       api:
         condition: service_healthy
 
-  # Testy: docker compose run --rm tests
+  # Testy / narzędzia deweloperskie: docker compose run --rm tests
+  # Kod (src, tests) montowany z dysku — zmiany nie wymagają przebudowy obrazu.
+  # Dane organizatora (UZP_DATA_DIR) montowane tylko do odczytu w /data.
   tests:
     <<: *app
     command: pytest -q
+    environment:
+      DATA_DIR: /data
     volumes:
       - ./input:/app/input
       - ./output:/app/output
       - ./config:/app/config:ro
+      - ./src:/app/src
       - ./tests:/app/tests
+      - ${UZP_DATA_DIR:-./dane}:/data:ro
     profiles: ["tools"]
