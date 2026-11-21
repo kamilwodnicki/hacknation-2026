@@ -17,6 +17,8 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY config ./config
+# Model detekcji tekstu OCR (PP-OCRv6 tiny, Apache-2.0) — w repozytorium, bez pobierania w trakcie działania
+COPY models ./models
 COPY src ./src
 COPY ui ./ui
 COPY tests ./tests

@@ -39,18 +39,23 @@ def _render_bgr(page: pdfium.PdfPage, dpi: int) -> np.ndarray:
 def _cached_ocr(page: pdfium.PdfPage, index: int, source: str | Path | bytes, s: Settings) -> tuple[str, float | None]:
     """OCR of one page, cached on disk by (file content, page, DPI): repeated runs on the same
     scans take seconds instead of minutes. The cache can be deleted at any time."""
+
+    def run() -> tuple[str, float | None]:
+        return ocr_image(_render_bgr(page, s.ocr_dpi), s.ocr_det_model, s.ocr_det_model_path, s.ocr_use_cls, s.ocr_engine)
+
     if not s.ocr_cache_dir:
-        return ocr_image(_render_bgr(page, s.ocr_dpi))
+        return run()
     content = source if isinstance(source, bytes) else Path(source).read_bytes()
     key = hashlib.sha256(content).hexdigest()
-    path = Path(s.ocr_cache_dir) / key[:2] / f"{key}_p{index + 1}_dpi{s.ocr_dpi}.json"
+    model = f"det-{s.ocr_det_model}{'-cls' if s.ocr_use_cls else ''}"
+    path = Path(s.ocr_cache_dir) / key[:2] / f"{key}_p{index + 1}_dpi{s.ocr_dpi}_{model}.json"
     if path.is_file():
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             return data["text"], data.get("confidence")
         except (ValueError, KeyError):
             pass  # damaged entry: OCR again
-    text, confidence = ocr_image(_render_bgr(page, s.ocr_dpi))
+    text, confidence = run()
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps({"text": text, "confidence": confidence}, ensure_ascii=False), encoding="utf-8")

@@ -25,8 +25,8 @@ from src.llm.extractor import empty_result, has_gaps, llm_extract, merge
 
 log = logging.getLogger(__name__)
 
-# OCR and ONNX Runtime already use all CPU cores; processing documents one at a time
-# keeps memory predictable on a 16 GB laptop and avoids sharing the OCR engine.
+# OCR and ONNX Runtime already use all CPU cores: PDFs are read (and OCR-ed) one at a time,
+# which keeps memory predictable; the rest of the pipeline runs in parallel.
 _processing_lock = threading.Lock()
 
 
@@ -150,15 +150,17 @@ def process_pdf(
     s = settings or get_settings()
     name = filename or (Path(source).name if isinstance(source, (str, Path)) else "document.pdf")
     start = time.perf_counter()
-    with _processing_lock:
-        try:
+    try:
+        # Reading / OCR one document at a time (OCR uses every core); classification,
+        # extraction and the LLM calls run in parallel with the next document's OCR.
+        with _processing_lock:
             doc = read_pdf(source, filename=name, settings=s)
-        except IngestionError as exc:
-            log.warning("%s", exc)
-            return PipelineResult(
-                filename=name, document_type=None, output={}, error=str(exc), seconds=time.perf_counter() - start
-            )
-        classification, extraction, llm_info = process_ingested(doc, document_types(s), s)
+    except IngestionError as exc:
+        log.warning("%s", exc)
+        return PipelineResult(
+            filename=name, document_type=None, output={}, error=str(exc), seconds=time.perf_counter() - start
+        )
+    classification, extraction, llm_info = process_ingested(doc, document_types(s), s)
 
     return PipelineResult(
         filename=name,

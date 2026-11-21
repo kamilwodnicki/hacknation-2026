@@ -69,6 +69,7 @@ services:
       - ./ui:/app/ui
       - ./tests:/app/tests
       - ./docs:/app/docs:ro
+      - ./models:/app/models:ro
       - ./reports:/app/reports
       - ./secrets:/app/secrets:ro
       - ./cache:/app/cache

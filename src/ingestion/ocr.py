@@ -3,26 +3,52 @@
 import logging
 import threading
 from dataclasses import dataclass
+from pathlib import Path
 from statistics import mean, median
 
 import numpy as np
 
-_engine = None
+log = logging.getLogger(__name__)
+_engines: dict[tuple, object] = {}
 _engine_lock = threading.Lock()
+_run_lock = threading.Lock()
+"""OCR uses all CPU cores already: one page at a time, also when documents run in parallel."""
 
 
-def _get_engine():
-    """Create the RapidOCR engine once (model loading takes a few seconds)."""
-    global _engine
-    if _engine is None:
+def engine_params(
+    det_model: str = "tiny", det_model_path: Path | None = None, use_cls: bool = False, engine: str = "onnxruntime"
+) -> dict:
+    from rapidocr import EngineType, ModelType
+
+    params: dict = {"Global.use_cls": use_cls, "Global.log_level": "warning"}
+    if engine == "openvino":
+        for stage in ("Det", "Cls", "Rec"):
+            params[f"{stage}.engine_type"] = EngineType.OPENVINO
+    if det_model == "tiny":
+        params["Det.model_type"] = ModelType.TINY
+        if det_model_path and Path(det_model_path).is_file():
+            params["Det.model_path"] = str(det_model_path)
+    return params
+
+
+def _get_engine(det_model: str, det_model_path: Path | None, use_cls: bool, engine: str = "onnxruntime"):
+    """Create each RapidOCR engine once (model loading takes a few seconds)."""
+    key = (det_model, str(det_model_path), use_cls, engine)
+    if key not in _engines:
         with _engine_lock:
-            if _engine is None:
+            if key not in _engines:
                 from rapidocr import RapidOCR
 
-                _engine = RapidOCR()
+                try:
+                    _engines[key] = RapidOCR(params=engine_params(det_model, det_model_path, use_cls, engine))
+                except Exception as exc:
+                    if engine == "onnxruntime":
+                        raise
+                    log.warning("OCR: silnik %s niedostępny (%s) — używam onnxruntime", engine, exc)
+                    _engines[key] = RapidOCR(params=engine_params(det_model, det_model_path, use_cls))
                 # RapidOCR logs every model load at INFO level; keep the console readable.
                 logging.getLogger("RapidOCR").setLevel(logging.WARNING)
-    return _engine
+    return _engines[key]
 
 
 @dataclass(frozen=True)
@@ -70,9 +96,17 @@ def group_into_lines(boxes: list[OcrBox]) -> str:
     return "\n".join(rendered)
 
 
-def ocr_image(image_bgr: np.ndarray) -> tuple[str, float | None]:
+def ocr_image(
+    image_bgr: np.ndarray,
+    det_model: str = "tiny",
+    det_model_path: Path | None = None,
+    use_cls: bool = False,
+    engine_type: str = "onnxruntime",
+) -> tuple[str, float | None]:
     """Return (text, mean confidence) for one page image in BGR channel order."""
-    result = _get_engine()(image_bgr)
+    engine = _get_engine(det_model, det_model_path, use_cls, engine_type)
+    with _run_lock:
+        result = engine(image_bgr)
     if not result.txts:
         return "", None
     boxes = []

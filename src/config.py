@@ -72,10 +72,27 @@ class Settings(BaseSettings):
     """Rendering resolution for scanned pages sent to OCR."""
     ocr_min_text_chars: int = 30
     """A page with fewer alphanumeric characters in its text layer is treated as a scan."""
-    ocr_max_pages: int = 0
-    """Maximum number of pages OCR-ed per document (0 = no limit)."""
+    ocr_max_pages: int = 2
+    """Maximum number of scanned pages OCR-ed per document (0 = no limit). The data of every
+    document type is on the first pages (appeal: header + first charge on pages 1-2; the
+    justification follows), so 2 pages give the same result as the whole document at a
+    fraction of the time. Pages with a text layer are always read in full."""
+    ocr_det_model: Literal["tiny", "small"] = "tiny"
+    """Text detection model (PP-OCRv6): tiny ~3x faster than small, same recognition."""
+    ocr_det_model_path: Path | None = Path("models/ocr/PP-OCRv6_det_tiny.onnx")
+    """Bundled tiny model (no download at runtime); used when ocr_det_model = tiny."""
+    ocr_engine: Literal["openvino", "onnxruntime"] = "openvino"
+    """Inference engine: OpenVINO is ~30% faster on CPU with identical text; when it cannot be
+    loaded, ONNX Runtime is used automatically."""
+    ocr_use_cls: bool = False
+    """Text-line orientation classifier (only needed for upside-down text lines)."""
     ocr_cache_dir: Path | None = Path("cache/ocr")
-    """OCR results cached by file content + page + DPI (empty = no cache)."""
+    """OCR results cached by file content + page + DPI + model (empty = no cache)."""
+
+    # Batch processing
+    workers: int = 4
+    """Documents processed at the same time by the CLI: OCR (CPU) of one document overlaps
+    with the LLM calls (network) of others. OCR itself runs one page at a time."""
 
 
 @lru_cache

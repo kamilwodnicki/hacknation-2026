@@ -71,11 +71,11 @@ def test_bytes_input_matches_path_input():
 def test_ocr_cache_returns_same_text_without_ocr(tmp_path, monkeypatch):
     settings = Settings(ocr_max_pages=1, ocr_cache_dir=tmp_path)
     first = read_pdf(SCAN, settings=settings)
-    assert list(tmp_path.rglob("*_p1_dpi200.json"))
+    assert list(tmp_path.rglob("*_p1_dpi200_det-tiny.json"))
 
     import src.ingestion.pdf_reader as reader
 
-    monkeypatch.setattr(reader, "ocr_image", lambda image: pytest.fail("OCR should come from the cache"))
+    monkeypatch.setattr(reader, "ocr_image", lambda *a, **k: pytest.fail("OCR should come from the cache"))
     assert read_pdf(SCAN, settings=settings).full_text() == first.full_text()
 
 

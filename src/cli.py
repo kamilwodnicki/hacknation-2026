@@ -11,11 +11,12 @@ import json
 import logging
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from src.config import get_settings
-from src.pipeline import PipelineResult, document_types, process_pdf
+from src.pipeline import PipelineResult, document_types, llm_client, process_pdf
 
 log = logging.getLogger("odwolania2json")
 
@@ -57,7 +58,7 @@ class Summary:
             self.ocr_documents += 1
 
 
-def run(input_dir: Path, output_dir: Path, meta_dir: Path | None) -> Summary:
+def run(input_dir: Path, output_dir: Path, meta_dir: Path | None, workers: int = 1) -> Summary:
     pdfs = find_pdfs(input_dir)
     summary = Summary()
     if not pdfs:
@@ -65,18 +66,31 @@ def run(input_dir: Path, output_dir: Path, meta_dir: Path | None) -> Summary:
         return summary
 
     document_types()  # validate the configuration before processing anything
-    for index, pdf in enumerate(pdfs, start=1):
+    llm_client()  # create the LLM client once, before the worker threads
+
+    def handle(pdf: Path) -> PipelineResult:
         relative = pdf.relative_to(input_dir)
-        result = process_pdf(pdf, filename=str(relative))
+        try:
+            result = process_pdf(pdf, filename=str(relative))
+        except Exception as exc:  # one broken document must not stop the batch
+            log.exception("%s", relative)
+            result = PipelineResult(filename=str(relative), document_type=None, output={}, error=f"{type(exc).__name__}: {exc}")
         write_output(output_path(pdf, input_dir, output_dir), result)
         if meta_dir is not None:
             write_meta(output_path(pdf, input_dir, meta_dir, ".meta.json"), result)
-        summary.add(result)
+        return result
 
-        found = sum(1 for t in result.fields.values() if t.value is not None)
-        ocr = f", OCR str. {result.ingestion.ocr_pages}" if result.ingestion and result.ingestion.ocr_pages else ""
-        status = result.error or f"{result.document_type or 'nierozpoznany (pusty JSON)'}, pola: {found}/{len(result.fields)}{ocr}"
-        print(f"[{index}/{len(pdfs)}] {relative} -> {status} ({result.seconds:.1f} s)", flush=True)
+    # Several documents at a time: the OCR of one overlaps with the LLM calls of the others.
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        futures = {pool.submit(handle, pdf): pdf for pdf in pdfs}
+        for done, future in enumerate(as_completed(futures), start=1):
+            relative = futures[future].relative_to(input_dir)
+            result = future.result()
+            summary.add(result)
+            found = sum(1 for t in result.fields.values() if t.value is not None)
+            ocr = f", OCR str. {result.ingestion.ocr_pages}" if result.ingestion and result.ingestion.ocr_pages else ""
+            status = result.error or f"{result.document_type or 'nierozpoznany (pusty JSON)'}, pola: {found}/{len(result.fields)}{ocr}"
+            print(f"[{done}/{len(pdfs)}] {relative} -> {status} ({result.seconds:.1f} s)", flush=True)
     return summary
 
 
@@ -89,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
     process.add_argument("--output", type=Path, default=settings.output_dir)
     process.add_argument("--meta", type=Path, default=settings.meta_dir)
     process.add_argument("--no-meta", action="store_true", help="nie zapisuj metadanych ekstrakcji")
+    process.add_argument("--workers", type=int, default=settings.workers, help="liczba dokumentów przetwarzanych jednocześnie")
     args = parser.parse_args(argv)
     if args.command is None:
         args = parser.parse_args(["process", *(argv or [])])
@@ -100,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
 
     start = time.perf_counter()
     meta_dir = None if args.no_meta or not settings.write_meta else args.meta
-    summary = run(args.input, args.output, meta_dir)
+    summary = run(args.input, args.output, meta_dir, args.workers)
 
     total = sum(summary.by_type.values())
     print(f"\nGotowe: {total} plików w {time.perf_counter() - start:.1f} s -> {args.output}")
