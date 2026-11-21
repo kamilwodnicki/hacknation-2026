@@ -44,7 +44,24 @@ classification:
     - z rachunku nr
     - na rachunek nr
     - w kwocie
-  titles:
+    # wydruki wyciągu / historii operacji z bankowości internetowej (skany organizatora)
+    - z rachunku
+    - na rachunek
+    - przelew elixir
+    - przelew express elixir
+    - data księgowania
+    - data operacji
+    - opłata skarbowa
+    - historia operacji
+    - wyciąg
+    - przelew z rachunku
+    - szczegóły transakcji
+    - szczegóły zlecenia
+    - typ transakcji
+    - data waluty
+    - dane zleceniodawcy
+    - dane kontrahenta
+    - rachunek kontrahenta
     - Potwierdzenie przelewu
     - Potwierdzenie przelewu krajowego
     - Potwierdzenie wykonania przelewu
@@ -86,6 +103,12 @@ stop_labels:
   - Beneficjent
   - Adresat przelewu
   - ZREALIZOWANO
+  - Typ transakcji
+  - Data waluty
+  - Strona
+  - Dokument elektroniczny
+  - Dokument podpisany
+  - Niniejsze potwierdzenie
 
 output:
   przelew_bankowy:
@@ -119,7 +142,7 @@ output:
       description: Numer rachunku odbiorcy (26 cyfr, bez PL i spacji).
       extract:
         - method: label
-          labels: [Rachunek odbiorcy, Rachunek beneficjenta, Rachunek uznawany, Na rachunek, Rachunek adresata]
+          labels: [Rachunek odbiorcy, Rachunek beneficjenta, Rachunek uznawany, Na rachunek, Rachunek adresata, Rachunek kontrahenta]
           lookahead: 2
         - method: regex
           pattern: '\bna\s+rachunek(?:\s+nr)?[\s:.]*({value})'
@@ -131,7 +154,8 @@ output:
 
     numer_transakcji:
       type: reference
-      description: Numer referencyjny / identyfikator transakcji nadany przez bank.
+      description: Numer referencyjny / identyfikator transakcji nadany przez bank (nie nazwa pliku wydruku).
+      reject: ['(?i)\.pdf\b', '_']  # nazwa pliku wydruku, np. "pkr_trans_details_20260212_974925.pdf"
       extract:
         - method: label
           labels: [Numer referencyjny operacji, Numer transakcji operacji, Numer referencyjny, Nr referencyjny, Nr ref., Numer transakcji, Nr transakcji, Identyfikator operacji, Identyfikator transakcji, Numer operacji]
@@ -140,11 +164,21 @@ output:
     tytul:
       type: text
       description: Pełny tytuł przelewu w jednej linii.
+      # Wydruki bankowe mają bardzo różne układy (kolumna "Opis" z kilkoma polami, tytuł w
+      # tabeli) — model czyta tytuł pewniej niż reguły, więc jego poprawna wartość wygrywa.
+      llm: prefer
       extract:
+        # Najpierw etykiety tytułu; "Opis" bywa nagłówkiem kolumny ("Data  Opis  Kwota").
         - method: label
-          labels: [Tytuł przelewu, Tytułem, Tytuł operacji, Tytuł, Opis operacji, Opis]
+          labels: [Tytuł przelewu, Tytułem, Tytuł operacji, Tytuł, Szczegóły płatności]
           multiline: true
           max_lines: 6
+          until: '\s(?:Strona\s+\d|\S+\s+Bank\s+Polska\s+S\.A\.)'
+        - method: label
+          labels: [Opis operacji, Opis]
+          multiline: true
+          max_lines: 6
+          until: '\s(?:Strona\s+\d|\S+\s+Bank\s+Polska\s+S\.A\.)'
 
     z_rachunku:
       type: iban_pl

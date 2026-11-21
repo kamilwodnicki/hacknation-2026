@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 from src.api.main import app
 from src.cli import main as cli_main
 from src.cli import output_path
+from tests.conftest import transfer_pdf
 
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
 CASE = DATA_DIR / "dane" / "przyklad_01"
@@ -44,7 +45,8 @@ def test_cli_processes_case_tree(tmp_path):
     (input_dir / "case1").mkdir(parents=True)
     (input_dir / "case2").mkdir()
     for name in ("odwolanie.pdf", "pelnomocnictwo.pdf", "potwierdzenie_przelewu.pdf"):
-        shutil.copy(CASE / name, input_dir / "case1" / name)
+        source = transfer_pdf(CASE) if name == "potwierdzenie_przelewu.pdf" else CASE / name
+        shutil.copy(source, input_dir / "case1" / name)
     shutil.copy(NEGATIVE, input_dir / "case2" / "ogloszenie.pdf")
 
     code = cli_main(["process", "--input", str(input_dir), "--output", str(output_dir), "--meta", str(meta_dir)])
@@ -80,7 +82,7 @@ def test_api_rejects_non_pdf():
 
 @needs_data
 def test_api_extract_returns_uzp_json_and_provenance():
-    content = (CASE / "potwierdzenie_przelewu.pdf").read_bytes()
+    content = transfer_pdf(CASE).read_bytes()
     response = client.post(
         "/extract",
         params={"include_text": "true"},

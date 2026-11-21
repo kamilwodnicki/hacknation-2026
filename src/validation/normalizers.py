@@ -53,8 +53,9 @@ def normalize_date(raw: str) -> str | None:
 
 # "10 000,00" / "1.234,56" (thousand separators) or plain "200,00" / "34.00" / "17"
 AMOUNT_PATTERN = (
-    r"(?<![\d.,])\d{1,3}(?:[  .]\d{3})+(?:,\d{2})?(?![.,]?\d)"
-    r"|(?<![\d.,])\d+(?:[.,]\d{2})?(?![.,]?\d)"
+    # Not inside a word: in "CEN9057564440515" (a reference) there is no amount.
+    r"(?<![\w.,])\d{1,3}(?:[  .]\d{3})+(?:,\d{2})?(?![.,]?\d)"
+    r"|(?<![\w.,])\d+(?:[.,]\d{2})?(?![.,]?\d)"
 )
 
 
@@ -105,6 +106,8 @@ def normalize_text(raw: str) -> str | None:
     # A value quoted inside a sentence: „...”. / "..." -> without the quotes and final dot
     if m := re.fullmatch(r"[„\"“«»](.+?)[”\"«»]\.?", s):
         s = m.group(1).strip()
+    # OCR reads the "o" of the legal form as zero: "Sp. z 0.0." -> "Sp. z o.o."
+    s = re.sub(r"(?i)\b(sp\.\s?z\s?)[o0]\.\s?[o0]\.", r"\1o.o.", s)
     return s or None
 
 
@@ -145,7 +148,7 @@ _LOWER = "a-ząćęłńóśźż"
 _NAME_WORD = rf"[{_UPPER}][{_LOWER}]+(?:-[{_UPPER}][{_LOWER}]+)?"
 _LEGAL_FORM = "|".join(
     [
-        r"sp\.\s?z\s?o\.\s?o\.(?:\s?sp\.\s?k\.)?",
+        r"sp\.\s?z\s?[o0]\.\s?[o0]\.(?:\s?sp\.\s?k\.)?",  # 0: OCR misread of "o"
         r"spółka z ograniczoną odpowiedzialnością(?: spółka komandytowa)?",
         r"S\.A\.",
         r"spółka akcyjna",
@@ -178,7 +181,8 @@ def fold(text: str) -> str:
     """Case-, whitespace- and diacritics-insensitive form ("Pełnomocnictwo" -> "pelnomocnictwo")."""
     import unicodedata
 
-    text = text.casefold().replace("ł", "l")
+    # "ı" (dotless i) is a frequent OCR misread of "i" and has no Unicode decomposition.
+    text = text.casefold().replace("ł", "l").replace("ı", "i")
     text = "".join(ch for ch in unicodedata.normalize("NFKD", text) if not unicodedata.combining(ch))
     return re.sub(r"\s+", " ", text).strip()
 

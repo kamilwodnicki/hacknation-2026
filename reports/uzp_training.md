@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 16:54
+Wygenerowano: 2026-11-21 19:15
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN; listy dopasowywane po treści).
 
@@ -14,8 +14,8 @@ Tryb ekstrakcji: **rules**.
 
 | | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
-| **RAZEM** | 2027 | 5 | 5 | 0.998 | 0.998 | **0.998** | 0.998 |
-| odwolanie (60 dok.) | 1209 | 5 | 5 | 0.996 | 0.996 | **0.996** | 0.996 |
+| **RAZEM** | 2031 | 1 | 1 | 1.000 | 1.000 | **1.000** | 1.000 |
+| odwolanie (60 dok.) | 1213 | 1 | 1 | 0.999 | 0.999 | **0.999** | 0.999 |
 | pelnomocnictwo (60 dok.) | 458 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | przelew (60 dok.) | 360 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
@@ -35,8 +35,8 @@ Trafność: **1.000** (198/198)
 | Pole | TP | FP | FN | Precision | Recall | F1 (UZP) | F1 (dokładne) |
 |---|---|---|---|---|---|---|---|
 | `OdwolanieKIO.czynnosc_dzien` | 59 | 1 | 1 | 0.983 | 0.983 | **0.983** | 0.983 |
-| `OdwolanieKIO.czynnosc_opis` | 58 | 2 | 2 | 0.967 | 0.967 | **0.967** | 0.967 |
-| `OdwolanieKIO.czynnosc_powod_id` | 58 | 2 | 2 | 0.967 | 0.967 | **0.967** | 0.967 |
+| `OdwolanieKIO.czynnosc_opis` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `OdwolanieKIO.czynnosc_powod_id` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `OdwolanieKIO.data` | 45 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `OdwolanieKIO.miejscowosc` | 45 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `Odwolujacy[].krs` | 56 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
@@ -56,6 +56,10 @@ Trafność: **1.000** (198/198)
 | `ZamowieniePubliczne.numer_postepowania` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `ZamowieniePubliczne.numer_ted` | 47 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | `ZamowieniePubliczne.tytul` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+
+Przykładowe różnice dokładne (1 z 1):
+
+- `przyklad_40` `OdwolanieKIO.czynnosc_dzien`: oczekiwano ["2026-10-09"], otrzymano ["2026-09-18"]
 
 ## pelnomocnictwo
 

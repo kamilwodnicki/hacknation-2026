@@ -18,9 +18,19 @@ from src.pipeline import LLMInfo, extract_with_llm
 
 
 class DatasetDocument(BaseModel):
-    pdf: str
+    pdf: str | list[str]
+    """File name in the case folder; a list = alternative names (first existing is used).
+    `{case}` is replaced with the case folder name (e.g. skany/odwolania/0001/0001.pdf)."""
     reference: str
     document_type: str
+    cases: str | None = None
+    """Glob of case folders for this document only (default: the dataset's `cases`)."""
+
+    def paths(self, case: Path) -> tuple[Path, Path]:
+        names = [self.pdf] if isinstance(self.pdf, str) else self.pdf
+        candidates = [case / n.replace("{case}", case.name) for n in names]
+        pdf = next((c for c in candidates if c.exists()), candidates[0])
+        return pdf, case / self.reference.replace("{case}", case.name)
 
 
 class ExtraDocument(BaseModel):
@@ -129,9 +139,11 @@ def _load_reference(path: Path) -> Any:
     return json.loads(text) if text else {}
 
 
-def _cases(dataset: Dataset, data_root: Path, limit: int | None, only: list[str] | None) -> list[Path]:
+def _cases(
+    dataset: Dataset, data_root: Path, limit: int | None, only: list[str] | None, pattern: str | None = None
+) -> list[Path]:
     base = data_root / dataset.data_dir
-    cases = sorted(p for p in base.glob(dataset.cases) if p.is_dir())
+    cases = sorted(p for p in base.glob(pattern or dataset.cases) if p.is_dir())
     if only:
         cases = [c for c in cases if c.name in only]
     return cases[:limit] if limit else cases
@@ -153,9 +165,9 @@ def evaluate(
     missing: list[str] = []
     llm_stats = LLMStats()
 
-    for case in _cases(dataset, data_root, limit, only):
-        for item in dataset.documents:
-            pdf, ref_path = case / item.pdf, case / item.reference
+    for item in dataset.documents:
+        for case in _cases(dataset, data_root, limit, only, item.cases):
+            pdf, ref_path = item.paths(case)
             if not pdf.exists() or not ref_path.exists():
                 missing.append(str((pdf if not pdf.exists() else ref_path).relative_to(base)))
                 continue
@@ -167,7 +179,7 @@ def evaluate(
             doc = read_pdf(pdf)
             result = classify(doc, document_types)
             outcomes.append(
-                ClassificationOutcome(f"{case.name}/{item.pdf}", item.document_type, result.document_type, result.reason)
+                ClassificationOutcome(f"{case.name}/{pdf.name}", item.document_type, result.document_type, result.reason)
             )
             used_type = expected_type if oracle else document_types.get(result.document_type or "")
             predicted = {}
@@ -219,9 +231,9 @@ def estimate_llm(
 ) -> dict[str, int]:
     """How many documents would be sent to the model and roughly how many tokens — no API call."""
     documents = sent = input_chars = 0
-    for case in _cases(dataset, data_root, limit, only):
-        for item in dataset.documents:
-            pdf = case / item.pdf
+    for item in dataset.documents:
+        for case in _cases(dataset, data_root, limit, only, item.cases):
+            pdf, _ = item.paths(case)
             if not pdf.exists():
                 continue
             documents += 1

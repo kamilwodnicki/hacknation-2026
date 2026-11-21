@@ -26,7 +26,7 @@ documents:
   - pdf: pelnomocnictwo.pdf
     reference: pelnomocnictwo.json
     document_type: pelnomocnictwo
-  - pdf: potwierdzenie_przelewu.pdf
+  - pdf: [potwierdzenie_przelewu.pdf, przelew.pdf]   # organizator zmienił nazwę w części spraw
     reference: przelew.json
     document_type: przelew
 

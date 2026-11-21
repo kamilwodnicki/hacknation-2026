@@ -132,6 +132,9 @@ Model dostaje prompt **budowany automatycznie z tego samego pliku YAML**: szablo
 | `llm: arbitrate` | przy sporze reguła–AI krótkie drugie zapytanie wybiera wartość na podstawie obu fragmentów |
 | `llm: never` | AI nie zmienia pola (np. gdy `null` jest poprawną odpowiedzią) |
 | `llm_evidence: true` | AI najpierw cytuje zdanie z dokumentu, potem podaje wartość (lepsze rozumowanie, cytat widoczny w GUI) |
+| `trusted: true` (opcja **strategii** w `extract`) | wartość znaleziona przez tę strategię zostaje — AI jej nie zastępuje ani nie arbitruje; słabsze strategie tego samego pola nadal mogą być poprawiane |
+
+Przy listach element z reguł i element od AI są parowane po polach `unique_by`, a gdy reguła wzięła złą nazwę — po NIP/KRS/REGON/PESEL. Element, którego reguły nie znalazły, AI dodaje tylko wtedy, gdy ma taki identyfikator, obecny w treści dokumentu.
 
 Typ dokumentu **bez żadnych reguł** (same `type` + `description`) też działa — w trybie `llm` cały JSON wypełnia model.
 

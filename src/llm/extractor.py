@@ -72,6 +72,8 @@ FINAL_REMINDER = (
 _DIGIT_TYPES = {"nip", "regon", "krs", "pesel", "iban_pl"}
 _EXACT_TYPES = {"bzp", "ted", "reference", "email"}
 _WORD_TYPES = {"text", "person", "company", "place"}
+_ID_TYPES = {"nip", "regon", "krs", "pesel"}
+"""Registry identifiers: the same value means the same entity (list item pairing)."""
 
 
 # --- prompt ---------------------------------------------------------------------------------
@@ -332,6 +334,10 @@ class _Merger:
             if problem and trace is not None:
                 trace.warnings.append(problem)
             return rule_value
+        if rule_value is not None and trace is not None and trace.trusted:
+            if value != rule_value:
+                trace.warnings.append(f"AI podaje {value}; zostaje reguła (strategia `trusted`)")
+            return rule_value
         if rule_value is not None and value != rule_value and spec.llm == "arbitrate":
             if self.arbiter is not None:
                 return self._arbitrate(spec, rule_value, value, path, allowed, evidence)
@@ -397,6 +403,26 @@ class _Merger:
             key.append(_stems(value) if value is not None else None)
         return tuple(key) if any(k is not None for k in key) else None
 
+    def _ids(self, node: Any, item: Any, normalize: bool = False) -> set[tuple[str, str]]:
+        """Registry identifiers (NIP, KRS, REGON, PESEL) of a list item, nested lists excluded.
+        Model values are normalized and must be present in the document."""
+        found: set[tuple[str, str]] = set()
+        if not isinstance(item, dict) or not isinstance(node, dict):
+            return found
+        for key, child in node.items():
+            value = item.get(key)
+            if isinstance(child, FieldSpec):
+                if child.type not in _ID_TYPES or value is None:
+                    continue
+                if normalize:
+                    value = VALUE_TYPES[child.type].normalize(_as_raw(value))
+                    if value is None or not self.grounding.check(child.type, value):
+                        continue
+                found.add((child.type, str(value)))
+            elif not isinstance(child, ListSpec):
+                found |= self._ids(child, value, normalize)
+        return found
+
     def _redistribute(self, spec: ListSpec, pairs: list[tuple[Any, Any]]) -> list[tuple[Any, Any]]:
         """Document-scope nested lists (e.g. signers of each consortium member): rules cannot tell
         who signed for whom and list everyone under the first parent. When the model distributes
@@ -425,13 +451,29 @@ class _Merger:
                 key = self._key(spec, rule_item)
                 if key is not None:
                     match = next((m for m in remaining if self._key(spec, m, normalize=True) == key), None)
-                elif len(rule_items) == len(llm_items):
+                if match is None and (ids := self._ids(spec.item, rule_item)):
+                    # Same NIP / KRS / REGON / PESEL = same entity, even if the rule took a wrong name.
+                    match = next((m for m in remaining if ids & self._ids(spec.item, m, normalize=True)), None)
+                if match is None and key is None and len(rule_items) == len(llm_items):
                     match = llm_items[len(pairs)]
                 if match is not None and match in remaining:
                     remaining.remove(match)
                 pairs.append((rule_item, match))
-            # Items the rules did not find are NOT added: the model often repeats an item in
-            # another form (e.g. a declined name), which would create false duplicates.
+            # Equal counts and the same number of unpaired items on both sides: pair them in order.
+            unpaired = [i for i, (_, m) in enumerate(pairs) if m is None]
+            if len(rule_items) == len(llm_items) and unpaired and len(unpaired) == len(remaining):
+                for i, m in zip(unpaired, list(remaining)):
+                    pairs[i] = (pairs[i][0], m)
+                    remaining.remove(m)
+            # Other items the rules did not find are added only when they carry an identifier
+            # (NIP, KRS, ...) present in the document and absent from the rule items — the model
+            # often repeats an item in another form (e.g. a declined name), which would create
+            # false duplicates.
+            known = set().union(*(self._ids(spec.item, r) for r in rule_items))
+            for m in remaining:
+                if (ids := self._ids(spec.item, m, normalize=True)) and not ids & known:
+                    pairs.append((None, m))
+                    known |= ids
             pairs = self._redistribute(spec, pairs)
 
         merged = []

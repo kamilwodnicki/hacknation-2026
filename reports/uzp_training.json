@@ -11,34 +11,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_01/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_01/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_02/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_02/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_02/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_03/odwolanie.pdf",
@@ -47,34 +23,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_03/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_03/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
-      },
-      {
         "document": "przyklad_04/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_04/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_04/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 7)"
       },
       {
         "document": "przyklad_05/odwolanie.pdf",
@@ -83,34 +35,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_05/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_05/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
-      },
-      {
         "document": "przyklad_06/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_06/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_06/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 5)"
       },
       {
         "document": "przyklad_07/odwolanie.pdf",
@@ -119,34 +47,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_07/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_07/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_08/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_08/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_08/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
       },
       {
         "document": "przyklad_09/odwolanie.pdf",
@@ -155,34 +59,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_09/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_09/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_10/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_10/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_10/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
       },
       {
         "document": "przyklad_11/odwolanie.pdf",
@@ -191,34 +71,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_11/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_11/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 7)"
-      },
-      {
         "document": "przyklad_12/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_12/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_12/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_13/odwolanie.pdf",
@@ -227,34 +83,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_13/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_13/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 4)"
-      },
-      {
         "document": "przyklad_14/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 13)"
-      },
-      {
-        "document": "przyklad_14/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_14/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_15/odwolanie.pdf",
@@ -263,34 +95,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_15/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_15/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_16/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_16/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_16/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 7)"
       },
       {
         "document": "przyklad_17/odwolanie.pdf",
@@ -299,34 +107,10 @@
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_17/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_17/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_18/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_18/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_18/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
       },
       {
         "document": "przyklad_19/odwolanie.pdf",
@@ -335,34 +119,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_19/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_19/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 10)"
-      },
-      {
         "document": "przyklad_20/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_20/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_20/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 4)"
       },
       {
         "document": "przyklad_21/odwolanie.pdf",
@@ -371,34 +131,10 @@
         "reason": "rules (score 11)"
       },
       {
-        "document": "przyklad_21/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_21/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_22/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_22/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_22/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_23/odwolanie.pdf",
@@ -407,34 +143,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_23/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_23/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_24/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_24/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_24/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 5)"
       },
       {
         "document": "przyklad_25/odwolanie.pdf",
@@ -443,34 +155,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_25/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_25/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
-      },
-      {
         "document": "przyklad_26/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_26/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_26/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_27/odwolanie.pdf",
@@ -479,34 +167,10 @@
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_27/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_27/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 4)"
-      },
-      {
         "document": "przyklad_28/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_28/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_28/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
       },
       {
         "document": "przyklad_29/odwolanie.pdf",
@@ -515,34 +179,10 @@
         "reason": "rules (score 13)"
       },
       {
-        "document": "przyklad_29/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_29/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 8)"
-      },
-      {
         "document": "przyklad_30/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_30/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_30/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
       },
       {
         "document": "przyklad_31/odwolanie.pdf",
@@ -551,34 +191,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_31/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_31/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_32/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_32/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_32/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 5)"
       },
       {
         "document": "przyklad_33/odwolanie.pdf",
@@ -587,34 +203,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_33/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_33/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_34/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_34/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_34/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 5)"
       },
       {
         "document": "przyklad_35/odwolanie.pdf",
@@ -623,34 +215,10 @@
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_35/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_35/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 7)"
-      },
-      {
         "document": "przyklad_36/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_36/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 6)"
-      },
-      {
-        "document": "przyklad_36/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
       },
       {
         "document": "przyklad_37/odwolanie.pdf",
@@ -659,34 +227,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_37/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_37/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 4)"
-      },
-      {
         "document": "przyklad_38/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_38/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 7)"
-      },
-      {
-        "document": "przyklad_38/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
       },
       {
         "document": "przyklad_39/odwolanie.pdf",
@@ -695,33 +239,9 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_39/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 8)"
-      },
-      {
-        "document": "przyklad_39/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 6)"
-      },
-      {
         "document": "przyklad_40/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_40/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_40/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -731,33 +251,9 @@
         "reason": "rules (score 8)"
       },
       {
-        "document": "przyklad_41/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_41/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_42/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_42/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_42/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -767,33 +263,9 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_43/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_43/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_44/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_44/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_44/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -803,33 +275,9 @@
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_45/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_45/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_46/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_46/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_46/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -839,34 +287,10 @@
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_47/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_47/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_48/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_48/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_48/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
       },
       {
         "document": "przyklad_49/odwolanie.pdf",
@@ -875,33 +299,9 @@
         "reason": "rules (score 8)"
       },
       {
-        "document": "przyklad_49/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_49/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_50/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_50/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_50/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -911,34 +311,10 @@
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_51/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_51/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_52/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_52/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 11)"
-      },
-      {
-        "document": "przyklad_52/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
       },
       {
         "document": "przyklad_53/odwolanie.pdf",
@@ -947,34 +323,10 @@
         "reason": "rules (score 12)"
       },
       {
-        "document": "przyklad_53/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_53/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
         "document": "przyklad_54/odwolanie.pdf",
         "expected": "odwolanie",
         "predicted": "odwolanie",
         "reason": "rules (score 12)"
-      },
-      {
-        "document": "przyklad_54/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_54/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
       },
       {
         "document": "przyklad_55/odwolanie.pdf",
@@ -983,21 +335,363 @@
         "reason": "rules (score 13)"
       },
       {
-        "document": "przyklad_55/pelnomocnictwo.pdf",
+        "document": "przyklad_56/odwolanie.pdf",
+        "expected": "odwolanie",
+        "predicted": "odwolanie",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_57/odwolanie.pdf",
+        "expected": "odwolanie",
+        "predicted": "odwolanie",
+        "reason": "rules (score 12)"
+      },
+      {
+        "document": "przyklad_58/odwolanie.pdf",
+        "expected": "odwolanie",
+        "predicted": "odwolanie",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_59/odwolanie.pdf",
+        "expected": "odwolanie",
+        "predicted": "odwolanie",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_60/odwolanie.pdf",
+        "expected": "odwolanie",
+        "predicted": "odwolanie",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_01/pelnomocnictwo.pdf",
         "expected": "pelnomocnictwo",
         "predicted": "pelnomocnictwo",
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_55/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
+        "document": "przyklad_02/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_03/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_04/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_05/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_56/odwolanie.pdf",
-        "expected": "odwolanie",
-        "predicted": "odwolanie",
+        "document": "przyklad_06/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_07/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_08/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_09/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_10/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_11/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_12/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_13/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_14/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_15/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_16/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_17/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_18/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_19/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_20/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_21/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_22/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_23/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_24/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_25/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_26/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_27/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_28/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_29/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_30/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_31/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_32/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_33/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_34/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_35/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_36/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_37/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_38/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_39/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_40/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_41/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_42/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_43/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_44/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 11)"
+      },
+      {
+        "document": "przyklad_45/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_46/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_47/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 11)"
+      },
+      {
+        "document": "przyklad_48/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_49/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_50/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_51/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 11)"
+      },
+      {
+        "document": "przyklad_52/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 11)"
+      },
+      {
+        "document": "przyklad_53/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_54/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_55/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
         "reason": "rules (score 10)"
       },
       {
@@ -1007,33 +701,9 @@
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_56/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_57/odwolanie.pdf",
-        "expected": "odwolanie",
-        "predicted": "odwolanie",
-        "reason": "rules (score 12)"
-      },
-      {
         "document": "przyklad_57/pelnomocnictwo.pdf",
         "expected": "pelnomocnictwo",
         "predicted": "pelnomocnictwo",
-        "reason": "rules (score 10)"
-      },
-      {
-        "document": "przyklad_57/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_58/odwolanie.pdf",
-        "expected": "odwolanie",
-        "predicted": "odwolanie",
         "reason": "rules (score 10)"
       },
       {
@@ -1043,39 +713,369 @@
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_58/potwierdzenie_przelewu.pdf",
-        "expected": "przelew",
-        "predicted": "przelew",
-        "reason": "rules (score 9)"
-      },
-      {
-        "document": "przyklad_59/odwolanie.pdf",
-        "expected": "odwolanie",
-        "predicted": "odwolanie",
-        "reason": "rules (score 8)"
-      },
-      {
         "document": "przyklad_59/pelnomocnictwo.pdf",
         "expected": "pelnomocnictwo",
         "predicted": "pelnomocnictwo",
         "reason": "rules (score 10)"
       },
       {
-        "document": "przyklad_59/potwierdzenie_przelewu.pdf",
+        "document": "przyklad_60/pelnomocnictwo.pdf",
+        "expected": "pelnomocnictwo",
+        "predicted": "pelnomocnictwo",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_01/przelew.pdf",
         "expected": "przelew",
         "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
-        "document": "przyklad_60/odwolanie.pdf",
-        "expected": "odwolanie",
-        "predicted": "odwolanie",
+        "document": "przyklad_02/przelew.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_03/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_04/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_05/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 13)"
+      },
+      {
+        "document": "przyklad_06/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_07/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_08/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_09/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_10/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_11/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_12/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 12)"
+      },
+      {
+        "document": "przyklad_13/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_14/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_15/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_16/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_17/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_18/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_19/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 14)"
+      },
+      {
+        "document": "przyklad_20/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_21/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 5)"
+      },
+      {
+        "document": "przyklad_22/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
         "reason": "rules (score 8)"
       },
       {
-        "document": "przyklad_60/pelnomocnictwo.pdf",
-        "expected": "pelnomocnictwo",
-        "predicted": "pelnomocnictwo",
+        "document": "przyklad_23/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 5)"
+      },
+      {
+        "document": "przyklad_24/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_25/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_26/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 12)"
+      },
+      {
+        "document": "przyklad_27/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_28/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_29/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_30/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 5)"
+      },
+      {
+        "document": "przyklad_31/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_32/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 5)"
+      },
+      {
+        "document": "przyklad_33/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 13)"
+      },
+      {
+        "document": "przyklad_34/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_35/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 7)"
+      },
+      {
+        "document": "przyklad_36/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_37/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 3)"
+      },
+      {
+        "document": "przyklad_38/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 6)"
+      },
+      {
+        "document": "przyklad_39/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 8)"
+      },
+      {
+        "document": "przyklad_40/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_41/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_42/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_43/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_44/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_45/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_46/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_47/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_48/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_49/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_50/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 10)"
+      },
+      {
+        "document": "przyklad_51/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_52/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_53/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_54/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_55/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_56/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_57/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_58/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
+        "reason": "rules (score 9)"
+      },
+      {
+        "document": "przyklad_59/potwierdzenie_przelewu.pdf",
+        "expected": "przelew",
+        "predicted": "przelew",
         "reason": "rules (score 9)"
       },
       {
@@ -1196,20 +1196,20 @@
   },
   "total": {
     "uzp": {
-      "tp": 2027,
-      "fp": 5,
-      "fn": 5,
-      "precision": 0.9975393700787402,
-      "recall": 0.9975393700787402,
-      "f1": 0.9975393700787402
+      "tp": 2031,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.999507874015748,
+      "recall": 0.999507874015748,
+      "f1": 0.999507874015748
     },
     "exact": {
-      "tp": 2027,
-      "fp": 5,
-      "fn": 5,
-      "precision": 0.9975393700787402,
-      "recall": 0.9975393700787402,
-      "f1": 0.9975393700787402
+      "tp": 2031,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.999507874015748,
+      "recall": 0.999507874015748,
+      "f1": 0.999507874015748
     }
   },
   "types": {
@@ -1217,20 +1217,20 @@
       "documents": 60,
       "defined": true,
       "uzp": {
-        "tp": 1209,
-        "fp": 5,
-        "fn": 5,
-        "precision": 0.9958813838550247,
-        "recall": 0.9958813838550247,
-        "f1": 0.9958813838550247
+        "tp": 1213,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.999176276771005,
+        "recall": 0.999176276771005,
+        "f1": 0.999176276771005
       },
       "exact": {
-        "tp": 1209,
-        "fp": 5,
-        "fn": 5,
-        "precision": 0.9958813838550247,
-        "recall": 0.9958813838550247,
-        "f1": 0.9958813838550247
+        "tp": 1213,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.999176276771005,
+        "recall": 0.999176276771005,
+        "f1": 0.999176276771005
       },
       "fields": {
         "OdwolanieKIO.czynnosc_dzien": {
@@ -1253,38 +1253,38 @@
         },
         "OdwolanieKIO.czynnosc_opis": {
           "uzp": {
-            "tp": 58,
-            "fp": 2,
-            "fn": 2,
-            "precision": 0.9666666666666667,
-            "recall": 0.9666666666666667,
-            "f1": 0.9666666666666667
+            "tp": 60,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 58,
-            "fp": 2,
-            "fn": 2,
-            "precision": 0.9666666666666667,
-            "recall": 0.9666666666666667,
-            "f1": 0.9666666666666667
+            "tp": 60,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.czynnosc_powod_id": {
           "uzp": {
-            "tp": 58,
-            "fp": 2,
-            "fn": 2,
-            "precision": 0.9666666666666667,
-            "recall": 0.9666666666666667,
-            "f1": 0.9666666666666667
+            "tp": 60,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "exact": {
-            "tp": 58,
-            "fp": 2,
-            "fn": 2,
-            "precision": 0.9666666666666667,
-            "recall": 0.9666666666666667,
-            "f1": 0.9666666666666667
+            "tp": 60,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.data": {

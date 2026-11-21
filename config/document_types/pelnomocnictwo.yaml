@@ -53,7 +53,8 @@ output:
     split:
       # Konsorcjum: "1) Prestal ... S.A., ..., KRS ..., NIP ...; 2) Fendor ... sp. z o.o., ..."
       - method: matches
-        pattern: '(?:^|\s)\d\)\s*(?P<nazwa>{company})[^;]{0,300}'
+        # Element kończy się na ";" albo przed numerem następnego ("... 2) Lumidor ...").
+        pattern: '(?:^|\s)\d\)\s*(?P<nazwa>{company})(?:(?!\s\d\)\s)[^;]){0,300}'
         min_items: 2
       # Jeden mocodawca: cała pierwsza strona.
       - method: whole
@@ -84,6 +85,11 @@ output:
             - method: label
               labels: [Mocodawcą jest, Mocodawca, Działając w imieniu, W imieniu, Wykonawca]
               lookahead: 0
+            # "Nordenix Automatyka Sp. z o.o. z siedzibą w Opolu ..." — nagłówek nad treścią
+            # bywa nazwą kancelarii pełnomocnika, więc pierwsza nazwa firmy w tekście to za mało.
+            - method: regex
+              # nazwa zaczyna się w tej samej linii co "z siedzibą" (nie łapie daty/nagłówka wyżej)
+              pattern: '(?:^|(?<=\s))(?=[^\n]*z\s+siedzib)({value})\s*z\s+siedzib'
             - method: nth_match
               n: 1
         nip:

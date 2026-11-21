@@ -53,6 +53,8 @@ class FieldTrace(BaseModel):
     snippet: str | None = None
     raw: Any = None
     warnings: list[str] = []
+    trusted: bool = False
+    """Found by a strategy marked `trusted` — hybrid mode keeps it."""
 
 
 class ExtractionResult(BaseModel):
@@ -186,7 +188,9 @@ class _Extractor:
 
             if isinstance(strategy, KeywordMapStrategy):
                 for candidate in run_keyword_map(strategy, lines):
-                    return _trace(candidate.raw, f"#{index} {candidate.detail}", candidate, rejected)
+                    trace = _trace(candidate.raw, f"#{index} {candidate.detail}", candidate, rejected)
+                    trace.trusted = strategy.trusted
+                    return trace
                 continue
 
             if isinstance(strategy, LabelStrategy):
@@ -199,6 +203,7 @@ class _Extractor:
             for candidate in found:
                 value = normalize(candidate.raw)
                 if value is not None and (trace := accept(value, f"#{index} {candidate.detail}", candidate)):
+                    trace.trusted = strategy.trusted
                     return trace
 
         return FieldTrace(warnings=rejected)

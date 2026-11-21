@@ -1,0 +1,29 @@
+# Skany organizatora (aktualizacja z 2026-11-21): dane/skany/<rodzaj>/<NNNN>/<NNNN>.pdf + .json.
+# Dokumenty bez warstwy tekstowej — sprawdzają OCR i odporność reguł/AI na nowe układy.
+# Reguły NIE były budowane na tych dokumentach, więc wynik jest bliższy realnej ocenie.
+
+name: uzp_skany
+data_dir: dane/skany
+cases: "*/*"
+
+fuzzy_threshold: 0.8
+fuzzy_fields:
+  - Odwolujacy[].pelnomocnik.nazwa
+  - przelew_bankowy.tytul
+  - Odwolujacy[].nazwa
+  - Zamawiajacy[].nazwa
+  - ZamowieniePubliczne.tytul
+
+documents:
+  - cases: "odwolania/*"
+    pdf: "{case}.pdf"
+    reference: "{case}.json"
+    document_type: odwolanie
+  - cases: "pelnomocnictwa/*"
+    pdf: "{case}.pdf"
+    reference: "{case}.json"
+    document_type: pelnomocnictwo
+  - cases: "potwierdzenia/*"
+    pdf: "{case}.pdf"
+    reference: "{case}.json"
+    document_type: przelew

@@ -29,6 +29,9 @@ RegexFlag = Literal["IGNORECASE", "MULTILINE", "DOTALL"]
 class _TextStrategy(_Strict):
     pages: int | None = None
     """Search only the first N pages (e.g. 1 for data from the letter header)."""
+    trusted: bool = False
+    """Hybrid mode: a value found by THIS strategy is kept — the model neither replaces nor
+    arbitrates it (for strong, structural rules; weaker strategies of the field still can be)."""
 
 
 class LabelStrategy(_TextStrategy):

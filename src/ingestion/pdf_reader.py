@@ -1,5 +1,7 @@
 """PDF -> text, page by page: text layer first, OCR only for pages without usable text."""
 
+import hashlib
+import json
 import logging
 import unicodedata
 from pathlib import Path
@@ -34,6 +36,29 @@ def _render_bgr(page: pdfium.PdfPage, dpi: int) -> np.ndarray:
     return np.ascontiguousarray(rgb[:, :, ::-1])
 
 
+def _cached_ocr(page: pdfium.PdfPage, index: int, source: str | Path | bytes, s: Settings) -> tuple[str, float | None]:
+    """OCR of one page, cached on disk by (file content, page, DPI): repeated runs on the same
+    scans take seconds instead of minutes. The cache can be deleted at any time."""
+    if not s.ocr_cache_dir:
+        return ocr_image(_render_bgr(page, s.ocr_dpi))
+    content = source if isinstance(source, bytes) else Path(source).read_bytes()
+    key = hashlib.sha256(content).hexdigest()
+    path = Path(s.ocr_cache_dir) / key[:2] / f"{key}_p{index + 1}_dpi{s.ocr_dpi}.json"
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return data["text"], data.get("confidence")
+        except (ValueError, KeyError):
+            pass  # damaged entry: OCR again
+    text, confidence = ocr_image(_render_bgr(page, s.ocr_dpi))
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"text": text, "confidence": confidence}, ensure_ascii=False), encoding="utf-8")
+    except OSError:
+        log.warning("OCR cache not writable: %s", path)
+    return text, confidence
+
+
 def read_pdf(
     source: str | Path | bytes,
     filename: str | None = None,
@@ -63,7 +88,7 @@ def read_pdf(
                 elif s.ocr_max_pages and ocr_count >= s.ocr_max_pages:
                     pages.append(Page(number=index + 1, text="", source=PageSource.SKIPPED))
                 else:
-                    ocr_text, confidence = ocr_image(_render_bgr(page, s.ocr_dpi))
+                    ocr_text, confidence = _cached_ocr(page, index, source, s)
                     ocr_count += 1
                     pages.append(
                         Page(

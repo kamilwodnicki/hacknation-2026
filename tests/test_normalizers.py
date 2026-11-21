@@ -83,3 +83,20 @@ def test_checksums():
     assert not pesel_valid("44051401358")
     assert iban_pl_valid("61109010140000071219812874")
     assert not iban_pl_valid("61109010140000071219812875")
+
+
+def test_amount_pattern_ignores_digits_inside_identifiers():
+    pattern = VALUE_TYPES["amount"].pattern
+    assert not re.search(pattern, "CEN9057564440515")
+    assert re.search(pattern, "Kwota: -17,00 PLN").group(0) == "17,00"
+
+
+def test_ocr_zero_in_legal_form_is_corrected():
+    assert normalize_text("Kalinex Logistyka Sp. z 0.0.") == "Kalinex Logistyka Sp. z o.o."
+    assert re.fullmatch(VALUE_TYPES["company"].pattern, "Nordenix Automatyka Sp. z 0.o.", re.IGNORECASE)
+
+
+def test_fold_maps_ocr_dotless_i():
+    from src.validation.normalizers import fold
+
+    assert fold("bankowoscı internetowej") == "bankowosci internetowej"

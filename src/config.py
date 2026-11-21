@@ -74,6 +74,8 @@ class Settings(BaseSettings):
     """A page with fewer alphanumeric characters in its text layer is treated as a scan."""
     ocr_max_pages: int = 0
     """Maximum number of pages OCR-ed per document (0 = no limit)."""
+    ocr_cache_dir: Path | None = Path("cache/ocr")
+    """OCR results cached by file content + page + DPI (empty = no cache)."""
 
 
 @lru_cache

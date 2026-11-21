@@ -132,13 +132,49 @@ def test_lists_from_model_when_rules_found_none_and_pairing_by_key():
     rules = extract(d, t)
     assert rules.data == {"osoby": [{"imie": "Anna Nowak", "pesel": None}]}
     llm = {"osoby": [{"imie": "Piotr Zieliński", "pesel": "44051401359"}, {"imie": "Anna Nowak", "pesel": None}]}
-    # Rules found a list -> the model only fills the paired item (matched by name), adds nothing.
-    assert merge(rules, llm, d, t, "fake").data == {"osoby": [{"imie": "Anna Nowak", "pesel": None}]}
+    # Rules found a list -> the paired item (matched by name) is filled; an extra model item is
+    # added only because it carries an identifier (PESEL) found in the document.
+    assert merge(rules, llm, d, t, "fake").data == {
+        "osoby": [{"imie": "Anna Nowak", "pesel": None}, {"imie": "Piotr Zieliński", "pesel": "44051401359"}]
+    }
+    # Without an identifier (or with an invented one) the extra item is not added.
+    no_id = {"osoby": [{"imie": "Piotr Zieliński", "pesel": "90010112345"}, {"imie": "Anna Nowak", "pesel": None}]}
+    assert merge(rules, no_id, d, t, "fake").data == {"osoby": [{"imie": "Anna Nowak", "pesel": None}]}
     # Rules found nothing -> the model's list is used (validated item by item).
     d2 = doc("radca Piotr Zieliński, PESEL 44051401359")
     assert merge(extract(d2, t), llm, d2, t, "fake").data == {
         "osoby": [{"imie": "Piotr Zieliński", "pesel": "44051401359"}]
     }
+
+
+def test_list_items_paired_by_registry_id_when_rule_name_is_wrong():
+    t = doc_type(
+        {
+            "firmy": {
+                "type": "list",
+                "unique_by": ["nazwa"],
+                "split": {"method": "whole"},
+                "item": {
+                    "nazwa": {"type": "company", "extract": [{"method": "nth_match", "n": 1}]},
+                    "nip": {"type": "nip", "checksum": "none", "extract": [{"method": "nth_match", "n": 1}]},
+                    "osoby": {
+                        "type": "list",
+                        "scope": "document",
+                        "split": {"method": "matches", "pattern": r"Podpis:\s*(?P<imie>{person})"},
+                        "item": {"imie": {"type": "person"}},
+                    },
+                },
+            }
+        }
+    )
+    # The letterhead (a law firm) is taken by the rule as the company name.
+    d = doc("Lex Kancelaria sp. k.\nAlfa Budowa S.A. z siedzibą w Opolu, NIP 1234567890\nJan Nowak")
+    rules = extract(d, t)
+    assert rules.data["firmy"][0]["nazwa"] == "Lex Kancelaria sp. k."
+    llm = {"firmy": [{"nazwa": "Alfa Budowa S.A.", "nip": "1234567890", "osoby": [{"imie": "Jan Nowak"}]}]}
+    merged = merge(rules, llm, d, t, "fake").data["firmy"]
+    # Same NIP -> same item: the model's people are kept (rule name stays, policy "fill").
+    assert merged == [{"nazwa": "Lex Kancelaria sp. k.", "nip": "1234567890", "osoby": [{"imie": "Jan Nowak"}]}]
 
 
 def test_derived_and_lookup_fields_are_recomputed_after_merge():
@@ -260,6 +296,27 @@ def test_arbitrate_asks_second_call_on_disagreement(choice, expected):
     assert len(arbiter.calls) == 1
     assert "Kandydat B: 8" in arbiter.calls[0][1]["content"]
     assert "id_cytat" not in merged.data
+
+
+def test_trusted_strategy_is_not_arbitrated_but_weaker_one_is():
+    trusted = {
+        "id": {
+            **ARB_TYPE["id"],
+            "extract": [
+                {"method": "regex", "pattern": r"zarzut (\d+)", "trusted": True},
+                {"method": "regex", "pattern": r"powód (\d+)"},
+            ],
+        }
+    }
+    t = doc_type(trusted)
+    arbiter = FakeLLM({"wybor": "B"})
+    d = doc("zarzut 4\npowód 3")
+    merged = merge(extract(d, t), {"id": 8}, d, t, "f", arbiter=arbiter)
+    assert merged.data == {"id": 4} and arbiter.calls == []
+    assert any("trusted" in w for w in merged.fields["id"].warnings)
+    d2 = doc("powód 3")  # only the weaker strategy matched -> arbitration as usual
+    assert merge(extract(d2, t), {"id": 8}, d2, t, "f", arbiter=arbiter).data == {"id": 8}
+    assert len(arbiter.calls) == 1
 
 
 def test_arbitrate_without_arbiter_keeps_rule_and_agreement_needs_no_call():

@@ -8,6 +8,7 @@ from src.config import Settings
 from src.classification.classifier import _title_form, fold
 from src.extraction import DocumentType, load_document_types
 from src.ingestion import IngestedDocument, Page, PageSource, read_pdf
+from tests.conftest import transfer_pdf
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
@@ -97,4 +98,5 @@ def test_training_documents_are_classified(case):
         ("pelnomocnictwo.pdf", "pelnomocnictwo"),
         ("potwierdzenie_przelewu.pdf", "przelew"),
     ]:
-        assert classify(read_pdf(case / filename), shipped).document_type == expected, filename
+        pdf = transfer_pdf(case) if expected == "przelew" else case / filename
+        assert classify(read_pdf(pdf), shipped).document_type == expected, filename

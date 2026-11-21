@@ -7,6 +7,7 @@ from src.config import Settings
 from src.ingestion import IngestionError, PageSource, read_pdf
 from src.ingestion.ocr import OcrBox, group_into_lines
 from src.ingestion.pdf_reader import clean_text, has_usable_text
+from tests.conftest import transfer_pdf
 
 # Organizer repository mounted read-only (see docker-compose.yml, UZP_DATA_DIR)
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
@@ -61,8 +62,21 @@ def test_digital_pdf_uses_text_layer():
 
 @needs_data
 def test_bytes_input_matches_path_input():
-    path = TRAINING / "potwierdzenie_przelewu.pdf"
+    path = transfer_pdf(TRAINING)
     assert read_pdf(path.read_bytes(), filename=path.name).full_text() == read_pdf(path).full_text()
+
+
+@needs_data
+@pytest.mark.skipif(not SCAN.exists(), reason="scan sample not mounted")
+def test_ocr_cache_returns_same_text_without_ocr(tmp_path, monkeypatch):
+    settings = Settings(ocr_max_pages=1, ocr_cache_dir=tmp_path)
+    first = read_pdf(SCAN, settings=settings)
+    assert list(tmp_path.rglob("*_p1_dpi200.json"))
+
+    import src.ingestion.pdf_reader as reader
+
+    monkeypatch.setattr(reader, "ocr_image", lambda image: pytest.fail("OCR should come from the cache"))
+    assert read_pdf(SCAN, settings=settings).full_text() == first.full_text()
 
 
 @needs_data

@@ -7,6 +7,7 @@ import yaml
 
 from src.extraction import DocumentType, extract, load_document_types
 from src.ingestion import IngestedDocument, Page, PageSource, read_pdf
+from tests.conftest import transfer_pdf
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
@@ -115,4 +116,4 @@ def test_powody_dictionary_matches_training_data():
 def test_przelew_matches_reference(case):
     t = load_document_types(ROOT / "config" / "document_types")["przelew"]
     expected = json.loads((case / "przelew.json").read_text(encoding="utf-8-sig"))
-    assert extract(read_pdf(case / "potwierdzenie_przelewu.pdf"), t).data == expected
+    assert extract(read_pdf(transfer_pdf(case)), t).data == expected
