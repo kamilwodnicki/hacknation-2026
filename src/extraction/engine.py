@@ -1,7 +1,8 @@
 """Config-driven extraction: walks the output template of a document type and fills it.
 
 * field (FieldSpec)   -> strategies tried in order on the current text region,
-* container (dict)    -> each child filled from the same region,
+* container (dict)    -> children filled from the same region; fields depending on other
+                         fields (derived / lookup) are filled last, from their siblings,
 * list (ListSpec)     -> the region is split into item regions, each filled from the item template.
 """
 
@@ -15,13 +16,27 @@ from src.extraction.rules import (
     Line,
     compile_labels,
     document_lines,
+    run_keyword_map,
     run_label,
     run_nth_match,
     run_regex,
     split_matches,
     split_sections,
+    split_whole,
 )
-from src.extraction.schema import DocumentType, FieldSpec, LabelStrategy, ListSpec, NthMatchStrategy, SectionSplit
+from src.extraction.schema import (
+    DerivedStrategy,
+    DocumentType,
+    FieldSpec,
+    KeywordMapStrategy,
+    LabelStrategy,
+    ListSpec,
+    LookupStrategy,
+    MatchesSplit,
+    NthMatchStrategy,
+    RegexStrategy,
+    SectionSplit,
+)
 from src.ingestion import IngestedDocument
 from src.validation.checksums import CHECKSUMS
 from src.validation.normalizers import VALUE_TYPES
@@ -36,7 +51,7 @@ class FieldTrace(BaseModel):
     rule: str | None = None
     page: int | None = None
     snippet: str | None = None
-    raw: str | None = None
+    raw: Any = None
     warnings: list[str] = []
 
 
@@ -48,18 +63,6 @@ class ExtractionResult(BaseModel):
     """Per-field provenance, keyed by path ('przelew_bankowy.kwota', 'Zamawiajacy[1].nip')."""
 
 
-def _candidates(spec: FieldSpec, lines: list[Line], stop: re.Pattern[str] | None):
-    for index, strategy in enumerate(spec.extract, start=1):
-        if isinstance(strategy, LabelStrategy):
-            found = run_label(strategy, lines, spec.type, stop)
-        elif isinstance(strategy, NthMatchStrategy):
-            found = run_nth_match(strategy, lines, spec.type)
-        else:
-            found = run_regex(strategy, lines, spec.type)
-        for candidate in found:
-            yield index, candidate
-
-
 def _check(spec: FieldSpec, value: Any) -> tuple[bool, str | None]:
     """(accept, warning) for the field's checksum policy."""
     checksum_name = spec.effective_checksum()
@@ -69,53 +72,34 @@ def _check(spec: FieldSpec, value: Any) -> tuple[bool, str | None]:
     return spec.on_invalid_checksum == "warn", message
 
 
-def extract_field(
-    spec: FieldSpec,
-    lines: list[Line],
-    stop: re.Pattern[str] | None,
-    preset: tuple[str, Line, str] | None = None,
-) -> FieldTrace:
-    """`preset` = (raw value, line, detail) given by a list split (named regex group)."""
-    normalize = VALUE_TYPES[spec.type].normalize
-    rejected: list[str] = []
-
-    if preset is not None and (value := normalize(preset[0])) is not None:
-        accept, warning = _check(spec, value)
-        if accept:
-            return _trace(value, 0, Candidate(preset[0], preset[1].page, preset[1].text, preset[2]), [warning] if warning else [])
-        rejected.append(warning)
-
-    for index, candidate in _candidates(spec, lines, stop):
-        value = normalize(candidate.raw)
-        if value is None:
-            continue
-        accept, warning = _check(spec, value)
-        if not accept:
-            rejected.append(warning)
-            continue
-        return _trace(value, index, candidate, ([warning] if warning else []) + rejected)
-
-    return FieldTrace(warnings=rejected)
+def _resolve(context: dict[str, Any], path: str) -> Any:
+    value: Any = context
+    for key in path.split("."):
+        if not isinstance(value, dict):
+            return None
+        value = value.get(key)
+    return value
 
 
-def _trace(value: Any, index: int, candidate: Candidate, warnings: list[str]) -> FieldTrace:
+def _lookup(dictionary: dict[Any, Any], key: Any) -> Any:
+    if key is None:
+        return None
+    for candidate in (key, str(key), int(key) if str(key).isdigit() else None):
+        if candidate is not None and candidate in dictionary:
+            return dictionary[candidate]
+    return None
+
+
+def _trace(value: Any, rule: str, candidate: Candidate | None, warnings: list[str]) -> FieldTrace:
     return FieldTrace(
         value=value,
         method="rule",
-        rule=f"#{index} {candidate.detail}" if index else candidate.detail,
-        page=candidate.page,
-        snippet=candidate.snippet,
-        raw=candidate.raw,
+        rule=rule,
+        page=candidate.page if candidate else None,
+        snippet=(candidate.snippet or None) if candidate else None,
+        raw=candidate.raw if candidate else None,
         warnings=warnings,
     )
-
-
-def _is_empty(value: Any) -> bool:
-    if isinstance(value, dict):
-        return all(_is_empty(v) for v in value.values())
-    if isinstance(value, list):
-        return all(_is_empty(v) for v in value)
-    return value is None
 
 
 class _Extractor:
@@ -125,6 +109,10 @@ class _Extractor:
         self.traces: dict[str, FieldTrace] = {}
         self._labels = self._collect_labels()
         self._stop_cache: dict[str, re.Pattern[str] | None] = {}
+        self._document_seen: dict[str, set[tuple]] = {}
+        """Keys already used by document-scope lists, per schema path (shared by all parents)."""
+
+    # --- stop labels -------------------------------------------------------------------
 
     def _collect_labels(self) -> dict[str, list[str]]:
         """Labels by field path ('a[].b') — used to stop search windows at other fields."""
@@ -134,8 +122,9 @@ class _Extractor:
             if isinstance(node, FieldSpec):
                 labels[prefix] = [l for s in node.extract if isinstance(s, LabelStrategy) for l in s.labels]
             elif isinstance(node, ListSpec):
-                if isinstance(node.split, SectionSplit):
-                    labels[f"{prefix}#split"] = node.split.start + node.split.end
+                for split in node.splits():
+                    if isinstance(split, SectionSplit):
+                        labels.setdefault(f"{prefix}#split", []).extend(split.start + split.end)
                 walk(node.item, f"{prefix}[]")
             else:
                 for key, child in node.items():
@@ -153,48 +142,136 @@ class _Extractor:
             self._stop_cache[schema_path] = compile_labels(labels) if labels else None
         return self._stop_cache[schema_path]
 
-    def build(self, node: Any, lines: list[Line], path: str, schema_path: str, presets: dict, item_detail: str) -> Any:
-        if isinstance(node, FieldSpec):
-            key = path.rsplit(".", 1)[-1]
-            preset = (presets[key], lines[0], item_detail) if key in presets and lines else None
-            trace = extract_field(node, lines, self._stop(schema_path), preset)
-            self.traces[path] = trace
-            return trace.value
+    # --- fields --------------------------------------------------------------------------
 
+    def _field(
+        self,
+        spec: FieldSpec,
+        lines: list[Line],
+        schema_path: str,
+        preset: tuple[str, Line, str] | None,
+        context: dict[str, Any],
+    ) -> FieldTrace:
+        normalize = VALUE_TYPES[spec.type].normalize
+        rejected: list[str] = []
+
+        def accept(value: Any, rule: str, candidate: Candidate | None) -> FieldTrace | None:
+            if reason := spec.plausible(value):
+                rejected.append(reason)
+                return None
+            ok, warning = _check(spec, value)
+            if not ok:
+                rejected.append(warning)
+                return None
+            return _trace(value, rule, candidate, ([warning] if warning else []) + rejected)
+
+        if preset is not None and (value := normalize(preset[0])) is not None:
+            if trace := accept(value, preset[2], Candidate(preset[0], preset[1].page, preset[1].text, preset[2])):
+                return trace
+
+        stop = self._stop(schema_path)
+        for index, strategy in enumerate(spec.extract, start=1):
+            if isinstance(strategy, DerivedStrategy):
+                present = _resolve(context, strategy.source) not in (None, "", [])
+                value = strategy.if_present if present else strategy.if_absent
+                if value is not None:
+                    return _trace(value, f"#{index} derived from {strategy.source}", None, rejected)
+                continue
+            if isinstance(strategy, LookupStrategy):
+                key = _resolve(context, strategy.source)
+                value = _lookup(self.doc_type.dictionary(strategy.dictionary), key)
+                if value is not None:
+                    return _trace(value, f"#{index} {strategy.dictionary}[{key}]", None, rejected)
+                continue
+
+            if isinstance(strategy, KeywordMapStrategy):
+                for candidate in run_keyword_map(strategy, lines):
+                    return _trace(candidate.raw, f"#{index} {candidate.detail}", candidate, rejected)
+                continue
+
+            if isinstance(strategy, LabelStrategy):
+                found = run_label(strategy, lines, spec.type, stop)
+            elif isinstance(strategy, NthMatchStrategy):
+                found = run_nth_match(strategy, lines, spec.type)
+            else:
+                assert isinstance(strategy, RegexStrategy)
+                found = run_regex(strategy, lines, spec.type)
+            for candidate in found:
+                value = normalize(candidate.raw)
+                if value is not None and (trace := accept(value, f"#{index} {candidate.detail}", candidate)):
+                    return trace
+
+        return FieldTrace(warnings=rejected)
+
+    # --- template walk -------------------------------------------------------------------
+
+    def build(self, node: Any, lines: list[Line], path: str, schema_path: str, presets: dict, item_detail: str) -> Any:
         if isinstance(node, ListSpec):
             return self._build_list(node, lines, path, schema_path)
+        if isinstance(node, FieldSpec):  # a bare field at the top of a list item
+            return self._build_container({"": node}, lines, path, schema_path, presets, item_detail)[""]
+        return self._build_container(node, lines, path, schema_path, presets, item_detail)
 
-        return {
-            key: self.build(
-                child,
-                lines,
-                f"{path}.{key}" if path else key,
-                f"{schema_path}.{key}" if schema_path else key,
-                presets,
-                item_detail,
-            )
-            for key, child in node.items()
-        }
+    def _build_container(
+        self, node: dict, lines: list[Line], path: str, schema_path: str, presets: dict, item_detail: str
+    ) -> dict:
+        def child_paths(key: str) -> tuple[str, str]:
+            if not key:
+                return path, schema_path
+            return (f"{path}.{key}" if path else key), (f"{schema_path}.{key}" if schema_path else key)
+
+        result: dict[str, Any] = {key: None for key in node}
+        dependent = [k for k, c in node.items() if isinstance(c, FieldSpec) and c.is_dependent]
+        for key, child in node.items():
+            if key in dependent:
+                continue
+            p, sp = child_paths(key)
+            if isinstance(child, FieldSpec):
+                preset = (presets[key], lines[0], item_detail) if key in presets and lines else None
+                trace = self._field(child, lines, sp, preset, result)
+                self.traces[p] = trace
+                result[key] = trace.value
+            else:
+                result[key] = self.build(child, lines, p, sp, presets, item_detail)
+        for key in dependent:
+            p, sp = child_paths(key)
+            trace = self._field(node[key], lines, sp, None, result)
+            self.traces[p] = trace
+            result[key] = trace.value
+        return result
 
     def _build_list(self, spec: ListSpec, lines: list[Line], path: str, schema_path: str) -> list[Any]:
-        if spec.split is None:
-            return []
         region = self.doc_lines if spec.scope == "document" else lines
-        if isinstance(spec.split, SectionSplit):
-            item_texts = split_sections(spec.split, region)
-        else:
-            item_texts = split_matches(spec.split, region)
+        item_texts = []
+        for split in spec.splits():
+            if isinstance(split, SectionSplit):
+                item_texts = split_sections(split, region)
+            elif isinstance(split, MatchesSplit):
+                item_texts = split_matches(split, region)
+            else:
+                item_texts = split_whole(split, region)
+            if item_texts:
+                break
 
         items: list[Any] = []
-        seen: set[tuple] = set()
+        seen: set[tuple] = self._document_seen.setdefault(schema_path, set()) if spec.scope == "document" else set()
         for item_text in item_texts:
             if len(items) >= spec.max_items:
                 break
-            index = len(items)
             before = set(self.traces)
-            value = self.build(spec.item, item_text.lines, f"{path}[{index}]", f"{schema_path}[]", item_text.presets, item_text.detail)
-            key = tuple(value.get(k) for k in spec.unique_by) if spec.unique_by and isinstance(value, dict) else None
-            if _is_empty(value) or (key is not None and key in seen):
+            value = self.build(
+                spec.item, item_text.lines, f"{path}[{len(items)}]", f"{schema_path}[]", item_text.presets, item_text.detail
+            )
+            key = tuple(_resolve(value, k) for k in spec.unique_by) if spec.unique_by and isinstance(value, dict) else None
+            if key is not None and all(k is None for k in key):
+                key = None  # identifying fields not found: cannot tell duplicates apart
+            new_traces = [self.traces[p] for p in set(self.traces) - before]
+            # An item counts only if something was found in its text (not just derived/defaults).
+            found = any(
+                t.value is not None and t.rule and "derived from" not in t.rule and "default value" not in t.rule
+                for t in new_traces
+            )
+            if not found or _is_empty(value) or (key is not None and key in seen):
                 for new in set(self.traces) - before:  # discard traces of a dropped item
                     del self.traces[new]
                 continue
@@ -202,6 +279,14 @@ class _Extractor:
                 seen.add(key)
             items.append(value)
         return items
+
+
+def _is_empty(value: Any) -> bool:
+    if isinstance(value, dict):
+        return all(_is_empty(v) for v in value.values())
+    if isinstance(value, list):
+        return all(_is_empty(v) for v in value)
+    return value is None
 
 
 def extract(doc: IngestedDocument, doc_type: DocumentType) -> ExtractionResult:

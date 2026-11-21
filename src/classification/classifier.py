@@ -1,19 +1,12 @@
 """Rule-based document classification driven by the `classification` section of each YAML."""
 
 import re
-import unicodedata
 
 from pydantic import BaseModel
 
 from src.extraction.schema import DocumentType
 from src.ingestion import IngestedDocument, PageSource
-
-
-def fold(text: str) -> str:
-    """Case-, whitespace- and diacritics-insensitive form ("Pełnomocnictwo" -> "pelnomocnictwo")."""
-    text = text.casefold().replace("ł", "l")
-    text = "".join(ch for ch in unicodedata.normalize("NFKD", text) if not unicodedata.combining(ch))
-    return re.sub(r"\s+", " ", text).strip()
+from src.validation.normalizers import fold
 
 
 def _title_form(line: str) -> str:

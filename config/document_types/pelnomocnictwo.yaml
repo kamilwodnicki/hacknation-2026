@@ -1,6 +1,7 @@
 # Pełnomocnictwo (do reprezentowania w postępowaniu odwoławczym przed KIO).
-# Struktura `output` (oczekiwane-json/pelnomocnictwo.json) zostanie dodana po wprowadzeniu
-# list w silniku ekstrakcji — na razie typ służy tylko do rozpoznawania dokumentu.
+# Struktura `output` odpowiada 1:1 plikowi oczekiwane-json/pelnomocnictwo.json organizatora,
+# z jednym świadomym odstępstwem: PESEL jest stringiem (zera wiodące).
+# Opis strategii i typów wartości: config/document_types/przelew.yaml (nagłówek).
 
 name: pelnomocnictwo
 description: Pełnomocnictwo udzielone przez mocodawcę pełnomocnikom
@@ -37,3 +38,96 @@ classification:
     - potwierdzenie przelewu
   min_score: 4
   pages: 2
+
+output:
+  mocodawca:
+    type: list
+    description: >-
+      Mocodawca — podmiot udzielający pełnomocnictwa; przy konsorcjum każdy członek osobno.
+    max_items: 5
+    unique_by: [data.nazwa]
+    split:
+      # Konsorcjum: "1) Prestal ... S.A., ..., KRS ..., NIP ...; 2) Fendor ... sp. z o.o., ..."
+      - method: matches
+        pattern: '(?:^|\s)\d\)\s*(?P<nazwa>{company})[^;]{0,300}'
+        min_items: 2
+      # Jeden mocodawca: cała pierwsza strona.
+      - method: whole
+        pages: 1
+    item:
+      data:
+        imie_nazwisko:
+          type: person
+          description: Imię i nazwisko mocodawcy, jeśli jest osobą fizyczną (dla osoby prawnej null).
+          extract:
+            - method: regex
+              flags: []
+              pattern: 'niżej\s+podpisan[yaei]+\s+({value})'
+        krs:
+          type: krs
+          extract:
+            - method: regex
+              flags: []
+              pattern: '\bKRS\b[^\d]{0,25}({value})'
+        nazwa:
+          type: company
+          description: Pełna nazwa mocodawcy.
+          extract:
+            # Osoba fizyczna: "prowadzący działalność gospodarczą pod firmą X Y, ul. ..."
+            - method: regex
+              pattern: 'pod\s+firmą\s+([^,]+)'
+            - method: label
+              labels: [Mocodawcą jest, Mocodawca, Działając w imieniu, W imieniu, Wykonawca]
+              lookahead: 0
+            - method: nth_match
+              n: 1
+        nip:
+          type: nip
+          extract:
+            - method: regex
+              flags: []
+              pattern: '\bNIP\b[^\d]{0,25}({value})'
+        typ:
+          type: text
+          description: '"osoba_prawna" albo "osoba_fizyczna".'
+          extract:
+            - method: keyword_map
+              map:
+                - value: osoba_fizyczna
+                  any:
+                    - prowadzący działalność gospodarczą
+                    - prowadząca działalność gospodarczą
+                    - Centralnej Ewidencji i Informacji o Działalności Gospodarczej
+                    - CEIDG
+              default: osoba_prawna
+      podpisujacy:
+        type: list
+        description: >-
+          Osoby podpisujące pełnomocnictwo w imieniu tego mocodawcy. Gdy reguły nie potrafią
+          przypisać podpisów do członków konsorcjum, każda osoba trafia raz — do pierwszego mocodawcy.
+        scope: document
+        unique_by: [imie_nazwisko]
+        split:
+          # Imię i nazwisko pod wykropkowaną linią podpisu (bez "adw."/"r. pr." — to pełnomocnicy);
+          # dopuszczalna linia "Za <firma>:" pomiędzy.
+          method: matches
+          pattern: '\.{5,}[ \t]*\n(?:[ \t]*\.+[ \t]*\n)?(?:[ \t]*Za\s[^\n]*\n)?[ \t]*(?P<imie_nazwisko>{person})'
+        item:
+          imie_nazwisko:
+            type: person
+            description: Imię i nazwisko osoby podpisującej, w mianowniku.
+
+  pelnomocnicy:
+    type: list
+    description: Osoby otrzymujące pełnomocnictwo.
+    unique_by: [imie_nazwisko]
+    split:
+      method: matches
+      pattern: '(?:\badw\.|\br\.\s*pr\.|\bradca\s+prawny|\badwokat|\bapl\.\s*adw\.|\bapl\.\s*radc\.)\s+(?P<imie_nazwisko>{person})(?:[^\n]{0,80}?PESEL\s*:?\s*(?P<pesel>\d{11}))?'
+    item:
+      imie_nazwisko:
+        type: person
+        description: Imię i nazwisko pełnomocnika w mianowniku.
+      pesel:
+        type: pesel
+        description: PESEL pełnomocnika jako string (11 cyfr), jeśli podany.

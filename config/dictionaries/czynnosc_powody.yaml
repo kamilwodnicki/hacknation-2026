@@ -1,0 +1,17 @@
+# Słownik powodów odwołania: czynnosc_powod_id -> czynnosc_opis (kanoniczny, 1:1).
+# Źródło: zbiór treningowy organizatora (dane/przyklad_01..60/odwolanie.json).
+# Używany przez strategię `lookup` w config/document_types/odwolanie.yaml.
+#
+# Id 12 nie występuje w danych organizatora (błąd po stronie organizatora, do uzupełnienia
+# po jego poprawce) — do tego czasu brak wpisu = lookup zwraca null.
+1: "Decyzja o odrzuceniu oferty"
+2: "Ogłoszenie wyboru oferty"
+3: "Decyzja o wykluczeniu wykonawcy"
+4: "Publikacja specyfikacji warunków zamówienia (SWZ)"
+5: "Modyfikacja treści SWZ"
+6: "Odpowiedzi i wyjaśnienia do SWZ"
+7: "Zaniechanie odrzucenia oferty"
+8: "Zaniechanie wykluczenia wykonawcy"
+9: "Decyzja o unieważnieniu postępowania"
+10: "Zaniechanie unieważnienia postępowania"
+11: "Opis przedmiotu zamówienia (OPZ)"

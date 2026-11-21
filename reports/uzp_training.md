@@ -1,6 +1,6 @@
 # Ewaluacja: uzp_training
 
-Wygenerowano: 2026-11-21 13:06
+Wygenerowano: 2026-11-21 13:31
 
 Metryka: F1 na poziomie pól (wartości `null` nie są liczone; błędna wartość = FP + FN).
 
@@ -10,9 +10,9 @@ Typ dokumentu do ekstrakcji: **z klasyfikatora** (pełny pipeline).
 
 | | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
 |---|---|---|---|---|---|---|---|
-| **RAZEM** | 360 | 0 | 1672 | 1.000 | 0.177 | **0.301** | 0.301 |
-| odwolanie (60 dok.) — brak pól w YAML | 0 | 0 | 1214 | 0.000 | 0.000 | **0.000** | 0.000 |
-| pelnomocnictwo (60 dok.) — brak pól w YAML | 0 | 0 | 458 | 0.000 | 0.000 | **0.000** | 0.000 |
+| **RAZEM** | 2027 | 5 | 5 | 0.998 | 0.998 | **0.998** | 0.998 |
+| odwolanie (60 dok.) | 1209 | 5 | 5 | 0.996 | 0.996 | **0.996** | 0.996 |
+| pelnomocnictwo (60 dok.) | 458 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 | przelew (60 dok.) | 360 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
 ## Klasyfikacja
@@ -30,41 +30,41 @@ Trafność: **1.000** (182/182)
 
 | Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
 |---|---|---|---|---|---|---|---|
-| `OdwolanieKIO.czynnosc_dzien` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `OdwolanieKIO.czynnosc_opis` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `OdwolanieKIO.czynnosc_powod_id` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `OdwolanieKIO.data` | 0 | 0 | 45 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `OdwolanieKIO.miejscowosc` | 0 | 0 | 45 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].krs` | 0 | 0 | 56 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].nazwa` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].nip` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].pelnomocnik.imie_nazwisko` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].pelnomocnik.mail` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].pelnomocnik.nazwa` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].przez-pelnomocnika` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Odwolujacy[].regon` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Zamawiajacy[].krs` | 0 | 0 | 58 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Zamawiajacy[].nazwa` | 0 | 0 | 63 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Zamawiajacy[].nip` | 0 | 0 | 63 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Zamawiajacy[].prowadzacy_postepowanie` | 0 | 0 | 6 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `Zamawiajacy[].regon` | 0 | 0 | 63 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `ZamowieniePubliczne.numer_bzp` | 0 | 0 | 48 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `ZamowieniePubliczne.numer_postepowania` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `ZamowieniePubliczne.numer_ted` | 0 | 0 | 47 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `ZamowieniePubliczne.tytul` | 0 | 0 | 60 | 0.000 | 0.000 | **0.000** | 0.000 |
+| `OdwolanieKIO.czynnosc_dzien` | 59 | 1 | 1 | 0.983 | 0.983 | **0.983** | 0.983 |
+| `OdwolanieKIO.czynnosc_opis` | 58 | 2 | 2 | 0.967 | 0.967 | **0.967** | 0.967 |
+| `OdwolanieKIO.czynnosc_powod_id` | 58 | 2 | 2 | 0.967 | 0.967 | **0.967** | 0.967 |
+| `OdwolanieKIO.data` | 45 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `OdwolanieKIO.miejscowosc` | 45 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].krs` | 56 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].nazwa` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].nip` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].pelnomocnik.imie_nazwisko` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].pelnomocnik.mail` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].pelnomocnik.nazwa` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].przez-pelnomocnika` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Odwolujacy[].regon` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Zamawiajacy[].krs` | 58 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Zamawiajacy[].nazwa` | 63 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Zamawiajacy[].nip` | 63 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Zamawiajacy[].prowadzacy_postepowanie` | 6 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `Zamawiajacy[].regon` | 63 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `ZamowieniePubliczne.numer_bzp` | 48 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `ZamowieniePubliczne.numer_postepowania` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `ZamowieniePubliczne.numer_ted` | 47 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `ZamowieniePubliczne.tytul` | 60 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
 ## pelnomocnictwo
 
 | Pole | TP | FP | FN | Precision | Recall | F1 (strict) | F1 (lenient) |
 |---|---|---|---|---|---|---|---|
-| `mocodawca[].data.imie_nazwisko` | 0 | 0 | 4 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `mocodawca[].data.krs` | 0 | 0 | 62 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `mocodawca[].data.nazwa` | 0 | 0 | 66 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `mocodawca[].data.nip` | 0 | 0 | 66 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `mocodawca[].data.typ` | 0 | 0 | 66 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `mocodawca[].podpisujacy[].imie_nazwisko` | 0 | 0 | 95 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `pelnomocnicy[].imie_nazwisko` | 0 | 0 | 98 | 0.000 | 0.000 | **0.000** | 0.000 |
-| `pelnomocnicy[].pesel` | 0 | 0 | 1 | 0.000 | 0.000 | **0.000** | 0.000 |
+| `mocodawca[].data.imie_nazwisko` | 4 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `mocodawca[].data.krs` | 62 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `mocodawca[].data.nazwa` | 66 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `mocodawca[].data.nip` | 66 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `mocodawca[].data.typ` | 66 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `mocodawca[].podpisujacy[].imie_nazwisko` | 95 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `pelnomocnicy[].imie_nazwisko` | 98 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
+| `pelnomocnicy[].pesel` | 1 | 0 | 0 | 1.000 | 1.000 | **1.000** | 1.000 |
 
 ## przelew
 

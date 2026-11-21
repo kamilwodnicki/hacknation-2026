@@ -122,7 +122,8 @@ def test_nested_list_with_document_scope():
     output = {
         "mocodawca": {
             "type": "list",
-            "split": {"method": "section", "start": ["Mocodawca"], "end": ["Pełnomocnik"]},
+            # "Mocodawca Centaur ..." — label followed by the value, not a heading
+            "split": {"method": "section", "start": ["Mocodawca"], "end": ["Pełnomocnik"], "heading_only": False},
             "max_items": 1,
             "item": {
                 "data": {"krs": PARTY["krs"]},

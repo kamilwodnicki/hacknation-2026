@@ -1100,603 +1100,603 @@
   },
   "total": {
     "strict": {
-      "tp": 360,
-      "fp": 0,
-      "fn": 1672,
-      "precision": 1.0,
-      "recall": 0.17716535433070865,
-      "f1": 0.3010033444816054
+      "tp": 2027,
+      "fp": 5,
+      "fn": 5,
+      "precision": 0.9975393700787402,
+      "recall": 0.9975393700787402,
+      "f1": 0.9975393700787402
     },
     "lenient": {
-      "tp": 360,
-      "fp": 0,
-      "fn": 1672,
-      "precision": 1.0,
-      "recall": 0.17716535433070865,
-      "f1": 0.3010033444816054
+      "tp": 2027,
+      "fp": 5,
+      "fn": 5,
+      "precision": 0.9975393700787402,
+      "recall": 0.9975393700787402,
+      "f1": 0.9975393700787402
     }
   },
   "types": {
     "odwolanie": {
       "documents": 60,
-      "defined": false,
+      "defined": true,
       "strict": {
-        "tp": 0,
-        "fp": 0,
-        "fn": 1214,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0
+        "tp": 1209,
+        "fp": 5,
+        "fn": 5,
+        "precision": 0.9958813838550247,
+        "recall": 0.9958813838550247,
+        "f1": 0.9958813838550247
       },
       "lenient": {
-        "tp": 0,
-        "fp": 0,
-        "fn": 1214,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0
+        "tp": 1209,
+        "fp": 5,
+        "fn": 5,
+        "precision": 0.9958813838550247,
+        "recall": 0.9958813838550247,
+        "f1": 0.9958813838550247
       },
       "fields": {
         "OdwolanieKIO.czynnosc_dzien": {
           "strict": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 59,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9833333333333333,
+            "recall": 0.9833333333333333,
+            "f1": 0.9833333333333333
           },
           "lenient": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 59,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9833333333333333,
+            "recall": 0.9833333333333333,
+            "f1": 0.9833333333333333
           }
         },
         "OdwolanieKIO.czynnosc_opis": {
           "strict": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 58,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.9666666666666667,
+            "recall": 0.9666666666666667,
+            "f1": 0.9666666666666667
           },
           "lenient": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 58,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.9666666666666667,
+            "recall": 0.9666666666666667,
+            "f1": 0.9666666666666667
           }
         },
         "OdwolanieKIO.czynnosc_powod_id": {
           "strict": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 58,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.9666666666666667,
+            "recall": 0.9666666666666667,
+            "f1": 0.9666666666666667
           },
           "lenient": {
-            "tp": 0,
-            "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "tp": 58,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.9666666666666667,
+            "recall": 0.9666666666666667,
+            "f1": 0.9666666666666667
           }
         },
         "OdwolanieKIO.data": {
           "strict": {
-            "tp": 0,
+            "tp": 45,
             "fp": 0,
-            "fn": 45,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 45,
             "fp": 0,
-            "fn": 45,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "OdwolanieKIO.miejscowosc": {
           "strict": {
-            "tp": 0,
+            "tp": 45,
             "fp": 0,
-            "fn": 45,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 45,
             "fp": 0,
-            "fn": 45,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].krs": {
           "strict": {
-            "tp": 0,
+            "tp": 56,
             "fp": 0,
-            "fn": 56,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 56,
             "fp": 0,
-            "fn": 56,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].nazwa": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].nip": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].pelnomocnik.imie_nazwisko": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].pelnomocnik.mail": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].pelnomocnik.nazwa": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].przez-pelnomocnika": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Odwolujacy[].regon": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Zamawiajacy[].krs": {
           "strict": {
-            "tp": 0,
+            "tp": 58,
             "fp": 0,
-            "fn": 58,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 58,
             "fp": 0,
-            "fn": 58,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Zamawiajacy[].nazwa": {
           "strict": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Zamawiajacy[].nip": {
           "strict": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Zamawiajacy[].prowadzacy_postepowanie": {
           "strict": {
-            "tp": 0,
+            "tp": 6,
             "fp": 0,
-            "fn": 6,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 6,
             "fp": 0,
-            "fn": 6,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "Zamawiajacy[].regon": {
           "strict": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 63,
             "fp": 0,
-            "fn": 63,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.numer_bzp": {
           "strict": {
-            "tp": 0,
+            "tp": 48,
             "fp": 0,
-            "fn": 48,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 48,
             "fp": 0,
-            "fn": 48,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.numer_postepowania": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.numer_ted": {
           "strict": {
-            "tp": 0,
+            "tp": 47,
             "fp": 0,
-            "fn": 47,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 47,
             "fp": 0,
-            "fn": 47,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "ZamowieniePubliczne.tytul": {
           "strict": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 60,
             "fp": 0,
-            "fn": 60,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         }
       }
     },
     "pelnomocnictwo": {
       "documents": 60,
-      "defined": false,
+      "defined": true,
       "strict": {
-        "tp": 0,
+        "tp": 458,
         "fp": 0,
-        "fn": 458,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
       },
       "lenient": {
-        "tp": 0,
+        "tp": 458,
         "fp": 0,
-        "fn": 458,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
       },
       "fields": {
         "mocodawca[].data.imie_nazwisko": {
           "strict": {
-            "tp": 0,
+            "tp": 4,
             "fp": 0,
-            "fn": 4,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 4,
             "fp": 0,
-            "fn": 4,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].data.krs": {
           "strict": {
-            "tp": 0,
+            "tp": 62,
             "fp": 0,
-            "fn": 62,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 62,
             "fp": 0,
-            "fn": 62,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].data.nazwa": {
           "strict": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].data.nip": {
           "strict": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].data.typ": {
           "strict": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 66,
             "fp": 0,
-            "fn": 66,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "mocodawca[].podpisujacy[].imie_nazwisko": {
           "strict": {
-            "tp": 0,
+            "tp": 95,
             "fp": 0,
-            "fn": 95,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 95,
             "fp": 0,
-            "fn": 95,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "pelnomocnicy[].imie_nazwisko": {
           "strict": {
-            "tp": 0,
+            "tp": 98,
             "fp": 0,
-            "fn": 98,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 98,
             "fp": 0,
-            "fn": 98,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         },
         "pelnomocnicy[].pesel": {
           "strict": {
-            "tp": 0,
+            "tp": 1,
             "fp": 0,
-            "fn": 1,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           },
           "lenient": {
-            "tp": 0,
+            "tp": 1,
             "fp": 0,
-            "fn": 1,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
           }
         }
       }

@@ -13,5 +13,5 @@ def test_health():
 
 
 def test_powody_dictionary():
-    powody = yaml.safe_load((ROOT / "config" / "czynnosc_powody.yaml").read_text(encoding="utf-8"))["powody"]
-    assert sorted(powody) == list(range(1, 13))
+    powody = yaml.safe_load((ROOT / "config" / "dictionaries" / "czynnosc_powody.yaml").read_text(encoding="utf-8"))
+    assert sorted(powody) == list(range(1, 12))  # id 12: pending organizer's fix

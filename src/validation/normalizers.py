@@ -108,6 +108,81 @@ def normalize_text(raw: str) -> str | None:
     return s or None
 
 
+def normalize_integer(raw: str) -> int | None:
+    digits = raw.strip()
+    return int(digits) if digits.isdigit() else None
+
+
+def normalize_email(raw: str) -> str | None:
+    s = raw.strip().strip(".,;:()<>").lower()
+    return s if re.fullmatch(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+", s) else None
+
+
+# Capitalized words that are not first names / surnames (headings, roles, institutions).
+_NOT_NAME_WORDS = {
+    "kancelaria", "kancelarii", "prawna", "prawny", "prawnego", "adwokacka", "radca", "radcy", "radcę",
+    "spółka", "zarząd", "zarządu", "prezes", "członek", "prokurent", "wiceprezes", "pełnomocnik",
+    "krajowa", "krajowej", "izba", "izby", "odwoławcza", "odwoławczej", "sąd", "urząd", "gmina",
+    "miasto", "powiat", "województwo", "dział", "dyrektor", "zamawiający", "odwołujący", "wykonawca",
+    "mocodawca", "data", "strona", "podpis", "pieczęć", "adres", "ulica",
+}
+
+
+def normalize_person(raw: str) -> str | None:
+    s = normalize_text(raw)
+    if not s or any(word.casefold() in _NOT_NAME_WORDS for word in re.split(r"[\s-]+", s)):
+        return None
+    return s
+
+
+def normalize_company(raw: str) -> str | None:
+    s = normalize_text(raw)
+    return s.strip("„”\"") if s else None
+
+
+_UPPER = "A-ZĄĆĘŁŃÓŚŹŻ"
+_LOWER = "a-ząćęłńóśźż"
+_NAME_WORD = rf"[{_UPPER}][{_LOWER}]+(?:-[{_UPPER}][{_LOWER}]+)?"
+_LEGAL_FORM = "|".join(
+    [
+        r"sp\.\s?z\s?o\.\s?o\.(?:\s?sp\.\s?k\.)?",
+        r"spółka z ograniczoną odpowiedzialnością(?: spółka komandytowa)?",
+        r"S\.A\.",
+        r"spółka akcyjna",
+        r"sp\.\s?j\.?",
+        r"spółka jawna",
+        r"sp\.\s?k\.?",
+        r"spółka komandytowa",
+        r"sp\.\s?p\.?",
+        r"spółka partnerska",
+        r"S\.K\.A\.",
+        r"spółka komandytowo-akcyjna",
+    ]
+)
+
+
+def expand_placeholders(pattern: str, value_type: str | None) -> str:
+    """Replace `{value}` (the field's own type) and `{<type>}` (any type) with the type's
+    regex, as a non-capturing group. Other braces (quantifiers like `{2,5}`) are kept."""
+
+    def replace(m: re.Match[str]) -> str:
+        name = value_type if m.group(1) == "value" else m.group(1)
+        if name and name in VALUE_TYPES:
+            return f"(?:{VALUE_TYPES[name].pattern})"
+        return m.group(0)
+
+    return re.sub(r"\{([a-z_]+)\}", replace, pattern)
+
+
+def fold(text: str) -> str:
+    """Case-, whitespace- and diacritics-insensitive form ("Pełnomocnictwo" -> "pelnomocnictwo")."""
+    import unicodedata
+
+    text = text.casefold().replace("ł", "l")
+    text = "".join(ch for ch in unicodedata.normalize("NFKD", text) if not unicodedata.combining(ch))
+    return re.sub(r"\s+", " ", text).strip()
+
+
 @dataclass(frozen=True)
 class ValueType:
     pattern: str
@@ -132,4 +207,16 @@ VALUE_TYPES: dict[str, ValueType] = {
         r"(?<![\w/.-])(?=[A-Za-z/._-]*\d)[A-Z0-9][A-Za-z0-9/._-]{4,}[A-Za-z0-9](?![\w/-])", normalize_text
     ),
     "text": ValueType(r".+", normalize_text),
+    "integer": ValueType(r"(?<!\d)\d+(?!\d)", normalize_integer),
+    # Town name: "Kraków", "Zielona Góra", "Bielsko-Biała", "Ostrów Mazowiecka".
+    "place": ValueType(rf"(?-i:[{_UPPER}][{_LOWER}]+(?:[ -][{_UPPER}][{_LOWER}]+){{0,2}})(?!\w)", normalize_text),
+    "email": ValueType(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+", normalize_email),
+    # "Jan Kowalski", "Anna Nowak-Kowalska" (capitalized words; case-sensitive even when
+    # the surrounding search ignores case).
+    "person": ValueType(rf"(?-i:{_NAME_WORD}\s+{_NAME_WORD}(?!\w))", normalize_person),
+    # Company name ending with a Polish legal form: "Hartica Serwis S.A.", "X sp. z o.o.".
+    # A line break is allowed inside (names wrapped by the layout).
+    "company": ValueType(
+        rf"(?-i:[A-ZĄĆĘŁŃÓŚŹŻ0-9„\"])[^,;:()„”]{{0,120}}?\s(?:{_LEGAL_FORM})(?!\w)", normalize_company
+    ),
 }

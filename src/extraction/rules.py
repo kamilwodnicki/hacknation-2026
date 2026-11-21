@@ -8,9 +8,17 @@ import re
 from collections.abc import Iterator
 from dataclasses import dataclass
 
-from src.extraction.schema import LabelStrategy, MatchesSplit, NthMatchStrategy, RegexStrategy, SectionSplit
+from src.extraction.schema import (
+    KeywordMapStrategy,
+    LabelStrategy,
+    MatchesSplit,
+    NthMatchStrategy,
+    RegexStrategy,
+    SectionSplit,
+    WholeSplit,
+)
 from src.ingestion import IngestedDocument, PageSource
-from src.validation.normalizers import VALUE_TYPES
+from src.validation.normalizers import VALUE_TYPES, expand_placeholders, fold
 
 # Separators allowed between a label and its value: spaces, colon, dot leaders, dashes.
 _LABEL_TAIL = r"[\s:.\-–…]*"
@@ -64,6 +72,27 @@ def compile_labels(labels: list[str]) -> re.Pattern[str]:
     )
 
 
+def limit_pages(lines: list[Line], pages: int | None) -> list[Line]:
+    if not pages or not lines:
+        return lines
+    first = lines[0].page
+    return [line for line in lines if line.page < first + pages]
+
+
+def _flags(names: list[str]) -> int:
+    flags = 0
+    for name in names:
+        flags |= getattr(re, name)
+    return flags
+
+
+def _cut(value: str, until: str | None) -> str:
+    if not until:
+        return value
+    m = re.search(until, value)
+    return value[: m.start()] if m else value
+
+
 def _find_typed(text: str, value_type: str) -> str | None:
     m = re.search(VALUE_TYPES[value_type].pattern, text, re.IGNORECASE)
     return m.group(0) if m else None
@@ -76,6 +105,7 @@ def run_label(
     stop: re.Pattern[str] | None,
 ) -> Iterator[Candidate]:
     label_re = compile_labels(strategy.labels)
+    lines = limit_pages(lines, strategy.pages)
     for i, line in enumerate(lines):
         m = label_re.search(line.text)
         if not m:
@@ -93,12 +123,12 @@ def run_label(
                 parts.append(nxt.text.strip())
             if parts:
                 snippet = "\n".join([line.text, *(p.text for p in following[: len(parts) - bool(rest)])])
-                yield Candidate(" ".join(parts), line.page, snippet, detail)
+                yield Candidate(_cut(" ".join(parts), strategy.until), line.page, snippet, detail)
             continue
 
         if value_type == "text":
             if rest:
-                yield Candidate(rest, line.page, line.text, detail)
+                yield Candidate(_cut(rest, strategy.until), line.page, line.text, detail)
             continue
 
         window = [line]
@@ -118,22 +148,45 @@ def run_label(
                 yield Candidate(raw, line.page, "\n".join(w.text for w in window), detail + " (joined lines)")
 
 
+def _snippet(text: str, start: int, end: int) -> str:
+    """Whole lines around a match."""
+    line_start = text.rfind("\n", 0, start) + 1
+    line_end = text.find("\n", end)
+    return text[line_start : line_end if line_end != -1 else len(text)]
+
+
 def run_regex(strategy: RegexStrategy, lines: list[Line], value_type: str) -> Iterator[Candidate]:
     """Run over whole pages, so `\\s` in the pattern may span line breaks.
 
-    `{value}` in the pattern is replaced with the field type's own value pattern, e.g.
+    `{value}` / `{<type>}` are replaced with value type patterns, e.g.
     'w dniu\\s+({value})' for a date written inside a sentence.
     """
-    flags = 0
-    for name in strategy.flags:
-        flags |= getattr(re, name)
-    pattern = re.compile(strategy.pattern.replace("{value}", f"(?:{VALUE_TYPES[value_type].pattern})"), flags)
-    for page, text in _page_texts(lines).items():
+    pattern = re.compile(expand_placeholders(strategy.pattern, value_type), _flags(strategy.flags))
+    for page, text in _page_texts(limit_pages(lines, strategy.pages)).items():
         for m in pattern.finditer(text):
-            start = text.rfind("\n", 0, m.start()) + 1
-            end = text.find("\n", m.end())
-            snippet = text[start : end if end != -1 else len(text)]
-            yield Candidate(m.group(1) if m.groups() else m.group(0), page, snippet, "regex")
+            group = strategy.group if strategy.group is not None else (1 if m.groups() else 0)
+            raw = m.group(group)
+            if raw is None:
+                continue
+            yield Candidate(raw, page, _snippet(text, m.start(), m.end()), "regex")
+
+
+def run_keyword_map(strategy: KeywordMapStrategy, lines: list[Line]) -> Iterator[Candidate]:
+    """Yields the chosen value as `raw`; it is final (not normalized by the field type)."""
+    within = re.compile(expand_placeholders(strategy.within, None), re.IGNORECASE) if strategy.within else None
+    for page, text in _page_texts(limit_pages(lines, strategy.pages)).items():
+        if within:
+            fragments = [(m.group(1), m.start(), m.end()) for m in within.finditer(text)]
+        else:
+            fragments = [(text, 0, len(text))]
+        for fragment, start, end in fragments:
+            folded = fold(fragment)
+            for rule in strategy.map:
+                if hit := next((k for k in rule.any if fold(k) in folded), None):
+                    yield Candidate(rule.value, page, _snippet(text, start, end), f'keyword "{hit}"')
+                    return
+    if strategy.default is not None:
+        yield Candidate(strategy.default, lines[0].page if lines else 0, "", "default value")
 
 
 @dataclass(frozen=True)
@@ -158,9 +211,20 @@ def split_sections(split: SectionSplit, lines: list[Line]) -> list[ItemText]:
     end_re = compile_labels(split.end) if split.end else None
     marker_re = re.compile(split.item_marker) if split.item_marker else None
     items: list[ItemText] = []
+
+    def opens(line: Line) -> re.Match[str] | None:
+        m = start_re.search(line.text)
+        if m and split.heading_only:
+            before = line.text[: m.start("label")]
+            after = line.text[m.end("label") :].lstrip()
+            # Heading = label at the real start of the line, followed by ':' / '(' / nothing.
+            if before.strip(" \t*•–-") or (after and after[0] not in ":("):
+                return None
+        return m
+
     i = 0
     while i < len(lines):
-        m = start_re.search(lines[i].text)
+        m = opens(lines[i])
         if not m:
             i += 1
             continue
@@ -168,7 +232,7 @@ def split_sections(split: SectionSplit, lines: list[Line]) -> list[ItemText]:
         region = [Line(lines[i].page, m.group("rest"))] if m.group("rest").strip() else []
         j = i + 1
         while j < len(lines) and j - i <= split.max_lines:
-            if start_re.search(lines[j].text) or (end_re and end_re.search(lines[j].text)):
+            if opens(lines[j]) or (end_re and end_re.search(lines[j].text)):
                 break
             region.append(lines[j])
             j += 1
@@ -188,16 +252,19 @@ def split_sections(split: SectionSplit, lines: list[Line]) -> list[ItemText]:
 
 
 def split_matches(split: MatchesSplit, lines: list[Line]) -> list[ItemText]:
-    flags = 0
-    for name in split.flags:
-        flags |= getattr(re, name)
-    pattern = re.compile(split.pattern, flags)
+    pattern = re.compile(expand_placeholders(split.pattern, None), _flags(split.flags))
     items = []
     for page, text in _page_texts(lines).items():
         for m in pattern.finditer(text):
             presets = {k: v for k, v in m.groupdict().items() if v is not None}
-            items.append(ItemText([Line(page, m.group(0))], presets, "pattern match"))
-    return items
+            item_lines = [Line(page, part) for part in m.group(0).split("\n") if part.strip()]
+            items.append(ItemText(item_lines, presets, "pattern match"))
+    return items if len(items) >= split.min_items else []
+
+
+def split_whole(split: WholeSplit, lines: list[Line]) -> list[ItemText]:
+    region = limit_pages(lines, split.pages)
+    return [ItemText(region, {}, "whole text")] if region else []
 
 
 def run_nth_match(strategy: NthMatchStrategy, lines: list[Line], value_type: str) -> Iterator[Candidate]:
@@ -205,7 +272,7 @@ def run_nth_match(strategy: NthMatchStrategy, lines: list[Line], value_type: str
     pattern = re.compile(VALUE_TYPES[value_type].pattern, re.IGNORECASE)
     normalize = VALUE_TYPES[value_type].normalize
     seen: list[object] = []
-    for line in lines:
+    for line in limit_pages(lines, strategy.pages):
         for m in pattern.finditer(line.text):
             value = normalize(m.group(0))
             if value is None or value in seen:

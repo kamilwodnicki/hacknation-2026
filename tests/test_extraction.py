@@ -104,7 +104,7 @@ def test_all_shipped_document_types_load():
 
 
 def test_powody_dictionary_matches_training_data():
-    powody = yaml.safe_load((ROOT / "config" / "czynnosc_powody.yaml").read_text(encoding="utf-8"))["powody"]
+    powody = yaml.safe_load((ROOT / "config" / "dictionaries" / "czynnosc_powody.yaml").read_text(encoding="utf-8"))
     for case in TRAINING:
         ref = json.loads((case / "odwolanie.json").read_text(encoding="utf-8-sig"))["OdwolanieKIO"]
         assert powody[ref["czynnosc_powod_id"]] == ref["czynnosc_opis"]

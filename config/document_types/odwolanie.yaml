@@ -1,6 +1,9 @@
 # Odwołanie do Krajowej Izby Odwoławczej.
-# Struktura `output` (oczekiwane-json/odwolanie.json) zostanie dodana po wprowadzeniu list
-# w silniku ekstrakcji — na razie typ służy tylko do rozpoznawania dokumentu.
+# Struktura `output` odpowiada 1:1 plikowi oczekiwane-json/odwolanie.json organizatora.
+# Opis strategii i typów wartości: config/document_types/przelew.yaml (nagłówek).
+#
+# Pola bez reguł albo z regułami niepewnymi (np. powód odwołania w nietypowym dokumencie)
+# zostaną uzupełnione przez LLM — instrukcją dla modelu jest `description` pola.
 
 name: odwolanie
 description: Odwołanie wnoszone do Prezesa Krajowej Izby Odwoławczej
@@ -35,3 +38,260 @@ classification:
     - potwierdzenie przelewu
   min_score: 4
   pages: 2
+
+# Granice bloków stron (Odwołujący / Zamawiający) i wartości wieloliniowych.
+stop_labels:
+  - dotyczy
+  - Dotyczy
+  - ODWOŁANIE
+  - Prezes Krajowej Izby Odwoławczej
+  - Krajowa Izba Odwoławcza
+  - Działając
+  - Wartość zamówienia
+  - Wpis od odwołania
+  - adres do korespondencji
+  - reprezentowana przez
+  - reprezentowany przez
+
+output:
+  OdwolanieKIO:
+    data:
+      type: date
+      description: Data z nagłówka pierwszej strony (linia "Miejscowość, dnia DD.MM.RRRR").
+      extract:
+        - method: regex
+          pages: 1
+          flags: [MULTILINE]
+          pattern: '^\s*{place}\s*,?\s+(?:dnia\s+)?({value})'
+
+    czynnosc_dzien:
+      type: date
+      description: >-
+        Data czynności zamawiającego uruchamiającej bieg terminu odwołania dla pierwszego
+        zarzutu. Brak wiarygodnej daty = null.
+      extract:
+        - method: regex
+          pattern: 'Zamawiający\s+w\s+dniu\s+({value})'
+
+    czynnosc_powod_id:
+      type: integer
+      description: >-
+        Identyfikator powodu odwołania 1-12, ustalany wyłącznie na podstawie pierwszego
+        zarzutu (słownik config/dictionaries/czynnosc_powody.yaml).
+      extract:
+        # Zdanie "Zamawiający w dniu <data> roku <czynność>." — kolejność reguł ma znaczenie:
+        # zaniechania ("nie odrzucił") muszą być sprawdzone przed czynnościami ("odrzucił").
+        - method: keyword_map
+          within: 'Zamawiający\s+w\s+dniu\s+{date}\s*(?:roku|r\.)?\s*([^.;]{0,250})'
+          map:
+            - value: 7
+              any: [nie odrzucił, zaniechał odrzucenia, zaniechania odrzucenia]
+            - value: 8
+              any: [nie wykluczył, zaniechał wykluczenia, zaniechania wykluczenia]
+            - value: 10
+              any: [zaniechał unieważnienia, zaniechania unieważnienia, nie unieważnił]
+            - value: 1
+              any: [odrzuceniu oferty, odrzucił ofertę, odrzucenia oferty]
+            - value: 3
+              any: [wykluczeniu, wykluczył]
+            - value: 9
+              any: [unieważnił postępowanie, unieważniił postępowanie, unieważnieniu postępowania]
+            - value: 2
+              any: [wybór oferty, wyboru oferty, wyborze oferty]
+            - value: 5
+              any: [zmodyfikował, modyfikacji treści, zmienił treść]
+            - value: 6
+              any: [odpowiedzi i wyjaśnienia, udzielił odpowiedzi, wyjaśnienia treści, odpowiedzi na pytania]
+            - value: 4
+              any: [opublikował specyfikację, specyfikację warunków zamówienia, opublikował swz]
+            - value: 11
+              any: [opis przedmiotu zamówienia, udostępnił opis]
+
+    czynnosc_opis:
+      type: text
+      description: Kanoniczny opis czynności zgodny 1:1 z czynnosc_powod_id.
+      extract:
+        - method: lookup
+          from: czynnosc_powod_id
+          dictionary: czynnosc_powody
+
+    miejscowosc:
+      type: text
+      description: Miejscowość z nagłówka pierwszej strony ("X, dnia ..." albo "X DD.MM.RRRR").
+      extract:
+        - method: regex
+          pages: 1
+          flags: [MULTILINE]
+          pattern: '^\s*({place})\s*,?\s+(?:dnia\s+)?{date}'
+
+  Odwolujacy:
+    type: list
+    description: >-
+      Odwołujący (wykonawca wnoszący odwołanie); przy konsorcjum — tylko Lider konsorcjum.
+    max_items: 1
+    split:
+      method: section
+      start: [Odwołujący, Odwołująca, Wykonawca wnoszący odwołanie]
+      end: [Zamawiający, Zamawiająca, dotyczy, Dotyczy, ODWOŁANIE, O D W O Ł A N I E, Prezes Krajowej Izby Odwoławczej, Krajowa Izba Odwoławcza, Działając, Wykonawca wybrany, Przystępujący, Uczestnik postępowania]
+    item:
+      # Przy konsorcjum dane Lidera są wymienione jako pierwsze, więc pierwsza etykieta
+      # KRS/NIP/REGON w bloku należy do Lidera.
+      krs:
+        type: krs
+        extract:
+          - method: label
+            labels: [KRS, nr KRS]
+            lookahead: 0
+      nazwa:
+        type: text
+        description: Pełna nazwa Odwołującego (lub Lidera konsorcjum).
+        # Zabezpieczenia precyzji: nazwa zaczyna się wielką literą/cyfrą i nie jest samą etykietą.
+        must_match: '^[A-ZĄĆĘŁŃÓŚŹŻ0-9„"]'
+        reject: ['^(KRS|NIP|REGON|tel|fax|e-?mail|adres|ul\.|reprezentowan)\b', '^Konsorcjum\b']
+        extract:
+          - method: regex
+            pattern: 'Lider\w*\s+konsorcjum\s*[:–-]?\s*([^\n]+)'
+          - method: nth_match
+            n: 1
+      nip:
+        type: nip
+        extract:
+          - method: label
+            labels: [NIP]
+            lookahead: 0
+      regon:
+        type: regon
+        extract:
+          - method: label
+            labels: [REGON]
+            lookahead: 0
+      przez-pelnomocnika:
+        type: integer
+        description: 1 — odwołanie wnosi pełnomocnik, 0 — nie.
+        extract:
+          - method: derived
+            from: pelnomocnik.imie_nazwisko
+            if_present: 1
+            if_absent: 0
+      pelnomocnik:
+        imie_nazwisko:
+          type: person
+          description: Imię i nazwisko (pierwszego) pełnomocnika Odwołującego, w mianowniku.
+          extract:
+            - method: regex
+              pattern: 'reprezentowan[aey]\s+przez:?\s*(?:adw\.|r\.\s*pr\.|radcę\s+prawnego|adwokata|apl\.\s*adw\.)?\s*({value})'
+              flags: []
+        nazwa:
+          type: text
+          description: Nazwa podmiotu zatrudniającego pełnomocnika (kancelarii).
+          must_match: '(?i)^\W*(kancelaria|[^,]*\b(sp\.|spółka|s\.a\.|adwokac|radc))'
+          reject: ['@', 'e\s*[-−]\s*mail']
+          extract:
+            - method: label
+              labels: [adres do korespondencji, adres do doręczeń]
+              multiline: true
+              max_lines: 2
+              until: ',\s*(?:ul\.|al\.|pl\.|os\.|\d{2}-\d{3})'
+        mail:
+          type: email
+          description: Adres e-mail kontaktowy pełnomocnika.
+          extract:
+            - method: nth_match
+              n: 1
+
+  Zamawiajacy:
+    type: list
+    description: >-
+      Zamawiający; przy kilku zamawiających — każdy osobno, z oznaczeniem prowadzącego postępowanie.
+    split:
+      method: section
+      start: [Zamawiający, Zamawiająca]
+      end: [Odwołujący, Odwołująca, dotyczy, Dotyczy, ODWOŁANIE, O D W O Ł A N I E, Prezes Krajowej Izby Odwoławczej, Krajowa Izba Odwoławcza, Działając, Wartość zamówienia, Wpis od odwołania, Wykonawca wybrany, Przystępujący, Uczestnik postępowania]
+      item_marker: '^\s*\d+\)\s*Zamawiający'
+    unique_by: [nazwa]
+    item:
+      krs:
+        type: krs
+        extract:
+          - method: label
+            labels: [KRS, nr KRS]
+            lookahead: 0
+      nazwa:
+        type: text
+        description: Pełna nazwa Zamawiającego.
+        must_match: '^[A-ZĄĆĘŁŃÓŚŹŻ0-9„"]'
+        reject: ['^(KRS|NIP|REGON|tel|fax|e-?mail|adres|ul\.)\b']
+        extract:
+          # Pierwsza linia bloku; przy numerowanych zamawiających — linia po "1) Zamawiający – ...:".
+          - method: regex
+            flags: []
+            pattern: '\A(?:\s*\d+\)[^\n]*\n)?\s*(?!\()([^\n]+)'
+      nip:
+        type: nip
+        extract:
+          - method: label
+            labels: [NIP]
+            lookahead: 0
+      regon:
+        type: regon
+        extract:
+          - method: label
+            labels: [REGON]
+            lookahead: 0
+      prowadzacy_postepowanie:
+        type: integer
+        description: >-
+          null — jeden zamawiający; 1 — jeden z kilku, oznaczony jako prowadzący/lider;
+          0 — jeden z kilku, nieoznaczony.
+        extract:
+          - method: keyword_map
+            map:
+              - value: 1
+                any: [prowadzący postępowanie, lider]
+              - value: 0
+                any: [partner, zamawiający –, zamawiający -]
+
+  ZamowieniePubliczne:
+    numer_bzp:
+      type: bzp
+      description: Numer ogłoszenia w BZP, format 'YYYY/BZP ########' bez spacji (nie TED).
+      extract:
+        # regex działa na całej stronie, więc łapie też numer złamany między liniami.
+        - method: regex
+          pages: 3
+          pattern: '({value})'
+    numer_postepowania:
+      type: reference
+      description: Numer referencyjny / numer postępowania nadany przez zamawiającego.
+      extract:
+        - method: regex
+          pages: 3
+          flags: [IGNORECASE]
+          pattern: '(?:nr\s+referencyjny(?:\s+sprawy)?|numer\s+referencyjny(?:\s+sprawy)?|numer\s+postępowania|nr\s+postępowania|znak\s+sprawy|postępowanie\s+nr|nr\s+sprawy|sygn\.\s*sprawy)\s*:?\s*({value})'
+    numer_ted:
+      type: ted
+      description: Numer ogłoszenia TED w formacie 'NNNNNN-YYYY'.
+      extract:
+        - method: regex
+          pages: 3
+          pattern: '(?:TED|Dzienniku\s+Urzędowym(?:\s+Unii\s+Europejskiej|\s+UE)?)\s*(?:nr\s*)?:?\s*({value})'
+        - method: nth_match
+          n: 1
+          pages: 3
+    tytul:
+      type: text
+      description: Tytuł (nazwa) zamówienia lub postępowania.
+      extract:
+        - method: regex
+          pages: 3
+          flags: [IGNORECASE]
+          pattern: '\bpn\.?\s*:?\s*[„"]([^”"]{5,400})[”"]'
+        - method: regex
+          pages: 3
+          flags: [IGNORECASE]
+          pattern: 'postępowani\w+\s+[„"]([^”"]{5,400})[”"]'
+        # OCR często gubi cudzysłów otwierający: 'pn.:\nDostawa ... w Warszawie"'.
+        - method: regex
+          pages: 3
+          flags: [IGNORECASE]
+          pattern: '\bpn\.?\s*:?\s*([A-ZĄĆĘŁŃÓŚŹŻ][^”"„]{5,400})[”"]'
