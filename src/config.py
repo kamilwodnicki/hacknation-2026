@@ -1,18 +1,37 @@
-"""Application settings read from environment variables / .env."""
+"""Application settings read from environment variables and ONE settings file:
 
+* `.env.overdrive` when it exists — then `.env` is ignored completely,
+* otherwise `.env`.
+
+Files are looked up in PISMO_ENV_DIR (the project folder mounted read-only in Docker) or the
+current directory. Explicit environment variables always win over the file.
+"""
+
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+OVERDRIVE_FILE = ".env.overdrive"
+DEFAULT_FILE = ".env"
+
+
+def settings_file() -> Path:
+    """The settings file in use: .env.overdrive if present, else .env (may not exist)."""
+    directory = Path(os.getenv("PISMO_ENV_DIR", "."))
+    overdrive = directory / OVERDRIVE_FILE
+    return overdrive if overdrive.is_file() else directory / DEFAULT_FILE
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=None, extra="ignore")
 
-    # LLM — which provider to use: none (rules only), vertex (Google Cloud), openai (any
-    # OpenAI-compatible API, e.g. OVHcloud / Scaleway / Mistral EU endpoint).
-    llm_provider: Literal["none", "vertex", "openai"] = "none"
+    # LLM — which provider to use: openai (any OpenAI-compatible API — by default Mistral AI,
+    # EU endpoint), vertex (Google Cloud), none (rules only). Without a key the application
+    # falls back to rules and says so.
+    llm_provider: Literal["none", "vertex", "openai"] = "openai"
     llm_timeout: float = 120.0
     extraction_mode: Literal["rules", "llm", "hybrid"] = "hybrid"
     """rules = YAML rules only; llm = the model fills the whole JSON; hybrid = rules first,
@@ -34,10 +53,10 @@ class Settings(BaseSettings):
     vertex_publisher: str = "mistralai"
     vertex_model: str = "mistral-small-2503"
 
-    # OpenAI-compatible API (alternative provider)
-    llm_api_base_url: str | None = None
+    # OpenAI-compatible API — defaults: Mistral AI EU endpoint, Ministral 3 14B (Apache 2.0)
+    llm_api_base_url: str | None = "https://api.eu.mistral.ai/v1"
     llm_api_key: str | None = None
-    llm_model_name: str | None = None
+    llm_model_name: str | None = "ministral-14b-2512"
 
     # Paths
     input_dir: Path = Path("input")
@@ -59,4 +78,5 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    path = settings_file()
+    return Settings(_env_file=path if path.is_file() else None, _env_file_encoding="utf-8")

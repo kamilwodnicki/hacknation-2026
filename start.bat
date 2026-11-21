@@ -15,16 +15,20 @@ if errorlevel 1 (
     exit /b 2
 )
 
-if not exist ".env" (
+rem Ustawienia: .env.overdrive (jesli istnieje, .env jest pomijany) albo .env
+set ENVFILE=.env
+if exist ".env.overdrive" set ENVFILE=.env.overdrive
+if not exist "%ENVFILE%" (
     copy ".env.example" ".env" >nul
-    echo [UWAGA] Utworzono .env z .env.example - uzupelnij LLM_API_KEY, jesli uzywasz LLM.
+    echo [UWAGA] Utworzono .env z .env.example - wpisz LLM_API_KEY, aby wlaczyc AI ^(bez klucza: same reguly^).
 )
+echo Ustawienia: %ENVFILE%
 if not exist "input" mkdir "input"
 if not exist "output" mkdir "output"
 if not exist "meta" mkdir "meta"
 
 echo Przetwarzanie .\input -^> .\output ...
-docker compose --profile batch run --rm --build cli
+docker compose --env-file "%ENVFILE%" --profile batch run --rm --build cli
 set RESULT=%ERRORLEVEL%
 
 if %RESULT%==0 (

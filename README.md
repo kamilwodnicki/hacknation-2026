@@ -44,19 +44,26 @@ Przy pierwszym uruchomieniu Docker buduje obraz (kilka minut); kolejne uruchomie
 
 Bez Dockera (Python 3.13+): `pip install -r requirements.txt`, potem `python -m src process --input input --output output`.
 
-## Tryb z AI (klucz API)
+## Ustawienia i tryb z AI (klucz API)
 
-Bez klucza aplikacja działa na samych regułach. Aby włączyć AI:
+**Domyślnie aplikacja korzysta z AI** (tryb `hybrid`, Mistral AI — endpoint UE). Potrzebny jest tylko klucz API; bez klucza aplikacja działa na samych regułach i informuje o tym.
 
-1. Skopiuj `.env.example` do `.env` (robi to `start.bat`, jeśli pliku nie ma).
-2. W `.env` ustaw:
-   ```
-   LLM_PROVIDER=openai
-   EXTRACTION_MODE=hybrid
-   LLM_API_KEY=<klucz>
-   ```
-   **Dla jury:** gotowy plik `.env` z kluczem przekazujemy osobno, poza publicznym repozytorium — wystarczy umieścić go w głównym folderze projektu.
-3. Uruchom `start.bat` / `start.sh` jak wyżej.
+Ustawienia są czytane z **jednego** pliku w głównym folderze projektu:
+
+| Plik | Kiedy jest używany |
+|---|---|
+| `.env.overdrive` | **jeśli istnieje — ma pierwszeństwo, a `.env` jest całkowicie pomijany** |
+| `.env` | gdy nie ma `.env.overdrive` (tworzony z `.env.example` przy pierwszym uruchomieniu `start.bat` / `start.sh`) |
+
+Oba pliki są w `.gitignore` — klucz nigdy nie trafia do repozytorium.
+
+**Dla jury:** plik `.env.overdrive` z kluczem przekazujemy osobno, poza publicznym repozytorium — wystarczy umieścić go w głównym folderze projektu i uruchomić `start.bat` / `start.sh`.
+
+Własna konfiguracja (w `.env` lub `.env.overdrive`):
+```
+LLM_API_KEY=<klucz z https://console.mistral.ai>
+EXTRACTION_MODE=hybrid        # rules | hybrid | llm
+```
 
 | `EXTRACTION_MODE` | Działanie |
 |---|---|

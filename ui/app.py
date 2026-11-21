@@ -76,8 +76,7 @@ def llm_summary(result: dict) -> str:
     if mode == "rules":
         return "tryb: tylko reguły"
     if info.get("used"):
-        source = "z pamięci podręcznej" if info.get("cached") else f"{info.get('input_tokens')}+{info.get('output_tokens')} tokenów"
-        return f"tryb: {mode} · AI: {info.get('model')} ({source})"
+        return f"tryb: {mode} · AI: {info.get('model')}"
     if info.get("error"):
         return f"tryb: {mode} · AI niedostępne ({info['error']}) — wynik z reguł"
     return f"tryb: {mode} · AI nie było potrzebne ({info.get('skipped_reason', '')})"

@@ -1,10 +1,12 @@
 x-app: &app
   build: .
   image: odwolania2json:latest
-  env_file:
-    - path: .env
-      required: false
+  # Ustawienia: aplikacja sama czyta .env.overdrive (jeśli istnieje — wtedy .env jest pomijany)
+  # albo .env, z folderu projektu zamontowanego tylko do odczytu w /pismo-env.
+  environment:
+    PISMO_ENV_DIR: /pismo-env
   volumes:
+    - ./:/pismo-env:ro
     - ./input:/app/input
     - ./output:/app/output
     - ./meta:/app/meta
@@ -38,6 +40,7 @@ services:
     command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501 --server.maxUploadSize 50 --client.toolbarMode viewer
     environment:
       API_URL: http://api:8000
+      PISMO_ENV_DIR: /pismo-env
     ports:
       - "${UI_PORT:-8501}:8501"
     depends_on:
@@ -52,10 +55,12 @@ services:
     command: pytest -q
     environment:
       DATA_DIR: /data
+      PISMO_ENV_DIR: /pismo-env
       # Ochrona budżetu: kontener narzędziowy domyślnie NIE woła płatnego API.
       # Świadome użycie LLM: docker compose run --rm -e LLM_PROVIDER=openai tests ...
       LLM_PROVIDER: none
     volumes:
+      - ./:/pismo-env:ro
       - ./input:/app/input
       - ./output:/app/output
       - ./meta:/app/meta

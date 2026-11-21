@@ -17,3 +17,6 @@ secrets/*
 
 # Pamięć odpowiedzi LLM (może zawierać treść dokumentów)
 cache/
+
+# Plik ustawień o pierwszeństwie nad .env (może zawierać klucz API)
+.env.overdrive

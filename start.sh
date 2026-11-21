@@ -13,14 +13,18 @@ if ! docker info >/dev/null 2>&1; then
     exit 2
 fi
 
-if [ ! -f .env ]; then
+# Ustawienia: .env.overdrive (jeśli istnieje, .env jest pomijany) albo .env
+envfile=.env
+[ -f .env.overdrive ] && envfile=.env.overdrive
+if [ ! -f "$envfile" ]; then
     cp .env.example .env
-    echo "[UWAGA] Utworzono .env z .env.example — uzupełnij LLM_API_KEY, jeśli używasz LLM."
+    echo "[UWAGA] Utworzono .env z .env.example — wpisz LLM_API_KEY, aby włączyć AI (bez klucza: same reguły)."
 fi
+echo "Ustawienia: $envfile"
 mkdir -p input output meta
 
 echo "Przetwarzanie ./input -> ./output ..."
-docker compose --profile batch run --rm --build cli
+docker compose --env-file "$envfile" --profile batch run --rm --build cli
 result=$?
 
 if [ "$result" -eq 0 ]; then

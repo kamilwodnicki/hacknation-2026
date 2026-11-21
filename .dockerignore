@@ -14,3 +14,4 @@ dane
 secrets
 *-sa.json
 cache
+.env.overdrive

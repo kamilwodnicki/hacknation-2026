@@ -15,8 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from src.config import get_settings
-from src.llm.cache import USAGE
-from src.pipeline import PipelineResult, document_types, effective_mode, process_pdf
+from src.pipeline import PipelineResult, document_types, process_pdf
 
 log = logging.getLogger("odwolania2json")
 
@@ -111,7 +110,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  w tym ze skanem (OCR): {summary.ocr_documents}")
     if meta_dir is not None and total:
         print(f"Metadane ekstrakcji: {meta_dir}")
-    print(f"Tryb ekstrakcji: {effective_mode(settings)}" + (f" · LLM: {USAGE.summary()}" if USAGE.api_calls or USAGE.cache_hits else ""))
     for error in summary.errors:
         print(f"BŁĄD {error}", file=sys.stderr)
     return 1 if summary.errors else 0
