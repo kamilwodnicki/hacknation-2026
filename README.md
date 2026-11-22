@@ -24,6 +24,8 @@ Pierwsze uruchomienie buduje obraz Dockera (kilka minut, jednorazowo); kolejne s
 
 > W terminalu `cmd` uruchamiaj `.\start.bat` (samo `start.bat` cmd myli z wbudowanym poleceniem `START`).
 
+**Serwer oceniający (Linux, `/opt/solution`):** komenda i opis usług są w [`RUN.md`](RUN.md) — `docker compose --profile batch run --rm -T cli`, bez interakcji, z kluczem w `/opt/solution/.env`.
+
 ---
 
 ## Co robi PISMO

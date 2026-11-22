@@ -23,10 +23,12 @@ services:
     command: python -m src process
     profiles: ["batch"]
 
-  # API + GUI: docker compose up -d  ->  http://localhost:8501
+  # API + GUI: docker compose up -d  ->  http://localhost:8501 (port GUI: UI_PORT)
+  # restart: unless-stopped — po restarcie serwera usługi wstają same (wymóg serwera oceniającego).
   api:
     <<: *app
     command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
     ports:
       - "${API_PORT:-8000}:8000"
     healthcheck:
@@ -38,6 +40,7 @@ services:
   ui:
     <<: *app
     command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501 --server.maxUploadSize 50 --client.toolbarMode viewer
+    restart: unless-stopped
     environment:
       API_URL: http://api:8000
       PISMO_ENV_DIR: /pismo-env
